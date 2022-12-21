@@ -3,7 +3,7 @@ import sys
 from collections import OrderedDict
 
 # path of local project
-folder_path = "/home/jiaxiangyi/Documents/rvesimulator"
+folder_path = "/home/yaga/Documents/GitHub/rvesimulator"
 sys.path.insert(0, folder_path)
 # local packages
 from rvesimulator.design_of_experiment.samplers import SobolSequence
@@ -22,4 +22,4 @@ samples = doe_sampler.sampling(
     seed=123456,
 )
 print(samples)
-doe_sampler.plot_samples(fig_name="lhs", save_fig=True)
+doe_sampler.plot_samples(fig_name="sobol", save_fig=True) 

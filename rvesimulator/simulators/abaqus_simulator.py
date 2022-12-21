@@ -5,7 +5,7 @@ import subprocess
 import time
 
 # import local functions
-from simulators.utils import (
+from rvesimulator.simulators.utils import (
     create_dir,
     kill_abaqus_process,
     make_new_script,
