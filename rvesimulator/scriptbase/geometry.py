@@ -17,7 +17,7 @@ class HollowPlate:
         self.radius = radius
 
 
-    def CreatPart(self):
+    def creat_part(self):
         sketch = self.model.ConstrainedSketch(name='sketch_profile', sheetSize=10.0)
         sketch.rectangle(point1=self.point1, point2=self.point2)
         sketch.CircleByCenterPerimeter(center=self.center, point1=(self.radius, 0.0))
@@ -50,7 +50,7 @@ class CircleInclusion:
         self.part = None
         self.assembly = None
 
-    def CreatePart(self):
+    def creat_part(self):
 
         # Create the  fibers
         sketch = self.model.ConstrainedSketch(name='__profile__', sheetSize=0.050)

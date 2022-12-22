@@ -4,7 +4,7 @@ class Simulator:
     def pre_process(self) -> None:
         """Function that handles the pre-processing"""
 
-        raise NotImplementedError("should be implemented in subclass")
+        pass
 
     def execute(self) -> None:
         """Function that calls the FEM simulator the pre-processing"""

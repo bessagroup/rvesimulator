@@ -1,20 +1,20 @@
 # abaqus
+# import python libraries
+import numpy
 from abaqus import *
 from abaqusConstants import *
 from caeModules import *
 ## import packages for abaqus post-processing
 from odbAccess import *
-# import python libraries
-import numpy
 
 try:
     import cPickle as pickle  # Improve speed
 except ValueError:
     import pickle
 
-from PeriodicalBoundaryCondition import PBC2D
-from LoadingCondition import Loading2D
-from AbaqusJobs import AbaqusJobs
+from jobs import AbaqusJobs
+from loadings import Loading2D
+from pbc import PBC2D
 
 
 class RVE2DBase(object):

@@ -12,14 +12,12 @@ class Loading2D:
         self.model = model
         self.assembly = assembly
         self.instance = instance_name 
-        
-    
+         
     def create_loads(self, loads):
         # loads should be a list with three elemnts 
         E11 = loads[0] 
         E22 = loads[1]
-        E12 = loads[2]
-        
+        E12 = loads[2]      
         if E22 == E12 == 0.0 : 
             # x axis tension 
             self.E11(E11=E11)
@@ -34,7 +32,6 @@ class Loading2D:
         else: 
             self.Complex(loads=loads) 
             
-
     def E11(self, E11):
         self.model.DisplacementBC(name='E_11', createStepName='Step-1',
                                   region=self.assembly.sets['Ref-R'], u1=E11, u2=UNSET, ur3=UNSET, amplitude=UNSET, fixed=OFF,
@@ -70,6 +67,3 @@ class Loading2D:
                                   fixed=OFF, localCsys=None, name='RigidConsE221', region=self.assembly.instances[self.instance].sets['VertexLB'], u1=0.0, u2=0.0, ur3=UNSET)
         self.model.DisplacementBC(amplitude=UNSET, createStepName='Step-1', distributionType=UNIFORM, fieldName='',
                                   fixed=OFF, localCsys=None, name='RigidConsE222', region=self.assembly.instances[self.instance].sets['VertexRB'], u1=UNSET, u2=0.0, ur3=UNSET)
-
-
-

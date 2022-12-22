@@ -3,13 +3,11 @@ import sys
 
 # import python libraries
 import numpy
-
 # abaqus
 from abaqus import *
 from abaqusConstants import *
 from caeModules import *
-
-## import packages for abaqus post-processing
+# import packages for abaqus post-processing
 from odbAccess import *
 
 try:
@@ -17,9 +15,9 @@ try:
 except ValueError:
     import pickle
 
-from AbaqusMaterial import AbaqusMaterialLib
-from MicroStrucGenerator import CircleInclusion
-from RVE2DBase import RVE2DBase
+from base import RVE2DBase
+from geometry import CircleInclusion
+from material import AbaqusMaterialLib
 
 
 class ASCARVE(RVE2DBase):
@@ -37,20 +35,20 @@ class ASCARVE(RVE2DBase):
         self.material = None
         # information of geometry of RVE
         self.loc_info = sim_info
-        ## mech and sets information
+        # mech and sets information
         self.loc = sim_info["location_information"]
         self.length = (
-            sim_info["LenEnd"] - sim_info["LenStart"]
-        ) - 2 * sim_info["Radius"]
+            sim_info["len_end"] - sim_info["len_start"]
+        ) - 2 * sim_info["radius"]
         self.width = (
-            sim_info["WidEnd"] - sim_info["WidStart"]
-        ) - 2 * sim_info["Radius"]
+            sim_info["wid_end"] - sim_info["wid_start"]
+        ) - 2 * sim_info["radius"]
         self.center = [
-            (sim_info["LenEnd"] + sim_info["LenStart"]) / 2.0,
-            (sim_info["WidEnd"] + sim_info["WidStart"]) / 2.0,
+            (sim_info["len_end"] + sim_info["len_start"]) / 2.0,
+            (sim_info["wid_end"] + sim_info["wid_start"]) / 2.0,
         ]
-        self.radius = sim_info["Radius"]
-        ## information of RVE modeling
+        self.radius = sim_info["radius"]
+        # information of RVE modeling
         self.loads = sim_info["loads"]
         self.mesh_size = (
             min(self.length, self.width) / sim_info["mesh_partition"]
@@ -107,7 +105,7 @@ class ASCARVE(RVE2DBase):
                 sets=(p.sets["fiberface_1"], p.sets["fiberface"]),
                 operation=UNION,
             )
-        ## delete fiberface_1
+        # delete fiberface_1
         del self.part.sets["fiberface_1"]
         p.SetByBoolean(
             name="matrixface",
@@ -116,7 +114,7 @@ class ASCARVE(RVE2DBase):
         )
         name_faces = ["matrixface", "fiberface"]
 
-        ## create sets for edges:
+        # create sets for edges:
         name_edges = self.create_sets_for_edges()
         name_vertex = self.create_sets_for_vertices()
 
@@ -149,7 +147,6 @@ class ASCARVE(RVE2DBase):
             name_set=name_faces[1],
         )
         MaterialGenerator.CreateElasticMaterial(E=1.0, v=0.19)
-        # MaterialGenerator.CreateVonMisesPlasticMaterial(E=100, v=0.3, yield_criterion=yield_criterion)
 
     def _create_step(
         self,

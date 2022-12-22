@@ -127,3 +127,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+
+# folders
+examples/hollow_plate_simulation/Data/

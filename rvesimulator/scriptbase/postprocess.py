@@ -1,10 +1,11 @@
 # abaqus
+# import python libraries
+import numpy
 from abaqus import *
 from abaqusConstants import *
 from caeModules import *
 from odbAccess import *
-# import python libraries
-import numpy
+
 try:
     import cPickle as pickle  # Improve speed
 except ValueError:
@@ -182,4 +183,3 @@ class RVEPostProcess(object):
         # Save post-processing information to pkl file:
         with open('results.p', 'w') as fp:
             pickle.dump(RVE_variables, fp)
-

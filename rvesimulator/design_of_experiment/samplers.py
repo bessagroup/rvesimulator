@@ -16,7 +16,7 @@ class Sampler:
         self.num_samples = None
         self.num_dim = None
         self.samples = None
-        self.num_outs = None
+        self.responses = None
         self.out_names = None
 
     def set_seed(self, seed: int = 123456) -> None:
@@ -69,17 +69,21 @@ class Sampler:
         None
         """
         # load the number of outputs and corresponding names
-        self.out_names = out_names
         self.num_outs = len(out_names)
 
         # transfer the variables to a pandas dataframe
         self.samples = pd.DataFrame(
             self.samples, columns=list(self.design_space.keys())
         )
-        self.samples[self.out_names] = np.nan
-        self.samples[self.out_names] = self.samples[self.out_names].astype(
-            object
+        responses = np.empty(
+            (
+                self.num_samples,
+                self.num_outs,
+            )
         )
+        responses[:] = np.nan
+        self.responses = pd.DataFrame(responses, columns=out_names)
+        self.responses[out_names] = self.responses[out_names].astype(object)
 
     def save_doe(self, name: str = "doe") -> None:
         """
@@ -142,6 +146,18 @@ class Sampler:
                 plt.show()
         else:
             raise Exception("expect 1or2 dimesion problems\n")
+
+    @property
+    def samples_(self) -> pd.DataFrame:
+        return self.samples
+
+    @property
+    def responses_(self) -> pd.DataFrame:
+        return self.responses
+
+    @property
+    def data(self) -> dict:
+        return {"samples": self.samples, "responses": self.responses}
 
 
 class LatinHyperCube(Sampler):
