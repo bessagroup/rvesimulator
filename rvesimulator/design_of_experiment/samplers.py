@@ -223,7 +223,11 @@ class RandomSampler(Sampler):
 
 class FixNumberSampler(Sampler):
     def sampling(
-        self, num_samples: int, design_space: dict, out_names: dict
+        self,
+        num_samples: int,
+        design_space: dict,
+        out_names: dict,
+        seed: int = None,
     ) -> pd.DataFrame:
         self.set_design_space(design_space=design_space)
         self.get_samples(num_samples=num_samples)

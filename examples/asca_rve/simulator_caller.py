@@ -1,9 +1,9 @@
 # import system packages
+import json
 import os
 import pickle
 
-import pandas
-
+# local functions
 import rvesimulator
 from rvesimulator.microstructures.disks import CircleInclusion
 from rvesimulator.simulators.abaqus_simulator import AbaqusSimulator
@@ -28,6 +28,7 @@ class SimulatorCaller:
             "post_script": "RVEPostProcess",
         }
         self.vol_req = None
+        self.update_sim_info()
 
     def run_simulation(self, data: dict = None) -> dict:
         """run simulation sequentially
@@ -55,30 +56,37 @@ class SimulatorCaller:
                 dirname=self.folder_info["current_work_directory"],
             )
             os.chdir(new_path)
-            self._update_sim_info(samples[ii])
-            volume_frac = self.micro_structure_generation(
+            # update the geometry info for microstructure
+            self._update_sample_info(sample=samples[ii])
+
+            # generating the micro-structure
+            vol_frac = self.micro_structure_generation(
                 length=self.rve_geometry["length"],
                 width=self.rve_geometry["width"],
                 radius=self.rve_geometry["radius"],
                 vol_req=self.vol_req,
             )
-            responses.at[ii, list(responses.keys())[0]] = volume_frac
-            self._CompleteInformation()
+            list_iter = list(responses.keys())
+            if "vol_frac" in list_iter:
+                responses.at[ii, "vol_frac"] = vol_frac
+                list_iter.remove("vol_frac")
+
+            # complete simulation info for Abaqus
+            self._complete_information()
             os.chdir(self.main_folder)
+
+            # initilize the abaqus simulator
             abaqus_wrapper = AbaqusSimulator(
                 sim_info=self.sim_info, folder_info=self.folder_info
             )
-            abaqus_wrapper.Run()
-            results = abaqus_wrapper.ReadBackResults()
-            self.samples.at[ii, list(self.samples.keys())[2]] = results[
-                list(self.samples.keys())[2]
-            ]
-            self.samples.at[ii, list(self.samples.keys())[3]] = results[
-                list(self.samples.keys())[3]
-            ]
-            self._SaveData()
+            abaqus_wrapper.run()
+            results = abaqus_wrapper.read_back_results()
+            # update DoE information
+            for jj in range(len(list_iter)):
+                responses.at[ii, list_iter[jj]] = results[list_iter[jj]]
+            self._save_data(responses)
 
-        return self.samples
+        return self.data
 
     def update_sim_info(
         self,
@@ -90,21 +98,26 @@ class SimulatorCaller:
         simulation_time: float = 10.0,
         print_info: bool = False,
     ) -> None:
-        """
-        function to update the fixed simulation information
+        """update parameters of asca rve simulation
+
         Parameters
         ----------
-        size (float): the size of the RVE, length=width=size
-        radius (float): radius of the disks
-        mesh_partition (int): the number of partition of every edge of the RVE
-        loads(list): a list of loads [Exx, Eyy, Exy]
-        simulation_time (float): total simulation time of Abaqus
-        print_info(bool): a flag to print info or not
-
-        Returns
-        -------
-        None
+        size : float, optional
+            the size of the RVE, by default 0.048
+        radius : float, optional
+            radius of , by default 0.003
+        vol_req : float, optional
+            volume requirement, by default 0.30
+        mesh_partition : int, optional
+            number of partition of every edge of the RVE, by default 30
+        loads : list, optional
+            a list of loads [Exx, Eyy, Exy], by default [0.05, 0.0, 0.0]
+        simulation_time : float, optional
+            total simulation time of Abaqus, by default 10.0
+        print_info : bool, optional
+            a flag to print info or not, by default False
         """
+
         self.vol_req = vol_req
         self.rve_geometry = {"length": size, "width": size, "radius": radius}
         self.abaqus_paras = {
@@ -113,17 +126,53 @@ class SimulatorCaller:
             "simulation_time": simulation_time,
         }
         if print_info:
-            print(
-                f"The general geometry information of RVE: {self.rve_geometry}"
-            )
-            print(f"The required volume fraction is: {self.volume_req}")
-            print(
-                f"The information of the Abaqus simulation : {self.abaqus_paras} \n"
-            )
+            print(f"geometry information of RVE: {self.rve_geometry}")
+            print(f"vol_req is: {self.vol_req}")
+            print(f"Info of Abaqus simulation : {self.abaqus_paras} \n")
 
-    def _update_sim_info(self, sample) -> None:
-        """update the design variables"""
-        self.sim_info.update(sample)
+    def _update_sample_info(self, sample: dict) -> None:
+
+        # update 'vol_req'
+        if "vol_req" in sample.keys():
+            self.vol_req = sample["vol_req"]
+
+        # update 'size'
+        if "size" in sample.keys():
+            self.rve_geometry["length"] = sample["size"]
+            self.rve_geometry["width"] = sample["size"]
+
+        # update 'radius'
+        if "radius" in sample.keys():
+            self.rve_geometry["radius"] = sample["radius"]
+
+        if "mesh_partition" in sample.keys():
+            self.abaqus_paras["mesh_partition"] = sample["mesh_partition"]
+
+    def _complete_information(self) -> None:
+        """
+        This function is used to complete information for abaqus simulation
+
+        Returns
+        -------
+        """
+
+        # open the json file for micro-structures
+        file = "micro_structure_info.json"
+        with open(file, "r") as f:
+            location_info = json.load(f)
+
+        self.sim_info = {
+            "job_name": "asca_rve",
+            "location_information": location_info["location_information"],
+            "radius": location_info["radius"],
+            "len_start": location_info["len_start"],
+            "len_end": location_info["len_end"],
+            "wid_start": location_info["wid_start"],
+            "wid_end": location_info["wid_end"],
+            "mesh_partition": self.abaqus_paras["mesh_partition"],
+            "loads": self.abaqus_paras["loads"],
+            "simulation_time": self.abaqus_paras["simulation_time"],
+        }
 
     @staticmethod
     def micro_structure_generation(
@@ -153,45 +202,18 @@ class SimulatorCaller:
             width=width,
             radius=radius,
             vol_req=vol_req,
+            second_heuristic=False,
         )
         volume_frac = microstructure_generator.generate_rve()
         microstructure_generator.save_results()
-        microstructure_generator.plot_rve()
+        microstructure_generator.plot_rve(save_figure=True)
 
         return volume_frac
 
-    def _CompleteInformation(self) -> None:
-        """
-        This function is used to complete information for abaqus simulation
-
-        Returns
-        -------
-        """
-
-        file = "MicroStructureInfo.json"
-        with open(file, "r") as f:
-            location_info = json.load(f)
-
-        self.sim_info = {
-            "job_name": "ASCARVE",
-            "location_information": location_info["location_information"],
-            "Radius": location_info["Radius"],
-            "LenStart": location_info["LenStart"],
-            "LenEnd": location_info["LenEnd"],
-            "WidStart": location_info["WidStart"],
-            "WidEnd": location_info["WidEnd"],
-            "mesh_partition": self.Abaqus_paras["mesh_partition"],
-            "loads": self.Abaqus_paras["loads"],
-            "simulation_time": self.Abaqus_paras["simulation_time"],
-        }
-
-    def _SaveData(self) -> None:
-        """
-        Function to save the simulation results into a Json file
-        Returns
-        -------
-
-        """
+    def _save_data(self, responses) -> None:
+        """save data to json file"""
+        self.data["responses"] = responses
         working_folder = os.getcwd()
-        self.samples.to_json("doe.json", index=True)
+        with open("data.pickle", "wb") as file:
+            pickle.dump(self.data, file)
         os.chdir(working_folder)

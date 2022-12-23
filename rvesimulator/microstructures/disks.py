@@ -117,7 +117,7 @@ class CircleInclusion(MicrosctucturaGenerator2D, DrawRVE2D):
         end_time = time.time()
         print(
             f"Time of generate the 2D RVE with volume fraction\
-            = {self.vol_frac*100:.2f} $%$ is {(end_time - start_time):.2f} s"
+            = {self.vol_frac:.2f}  is {(end_time - start_time):.2f} s"
         )
 
         return self.vol_frac

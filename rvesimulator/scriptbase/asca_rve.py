@@ -79,7 +79,7 @@ class ASCARVE(RVE2DBase):
             self.part_name,
             self.instance_name,
         )
-        PartGenerator.CreatePart()
+        PartGenerator.create_part()
 
     def _create_geometry_set(self):
 

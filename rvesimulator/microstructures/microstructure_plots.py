@@ -90,14 +90,24 @@ class DrawRVE2D:
             colors="red",
             ls="--",
         )
-        plt.vlines(x=len_start, ymin=wid_start, ymax=wid_end, colors="green", ls=":")
-        plt.vlines(x=len_end, ymin=wid_start, ymax=wid_end, colors="green", ls=":")
-        plt.hlines(xmin=len_start, xmax=len_end, y=wid_end, colors="green", ls=":")
-        plt.hlines(xmin=len_start, xmax=len_end, y=wid_start, colors="green", ls=":")
+        plt.vlines(
+            x=len_start, ymin=wid_start, ymax=wid_end, colors="green", ls=":"
+        )
+        plt.vlines(
+            x=len_end, ymin=wid_start, ymax=wid_end, colors="green", ls=":"
+        )
+        plt.hlines(
+            xmin=len_start, xmax=len_end, y=wid_end, colors="green", ls=":"
+        )
+        plt.hlines(
+            xmin=len_start, xmax=len_end, y=wid_start, colors="green", ls=":"
+        )
         plt.xlim((len_start - radius, len_end + radius))
         plt.ylim((wid_start - radius, wid_end + radius))
         plt.title(f"$V_f$ = {vol_frac*100:.2f}")
         if not save_figure:
             plt.show()
+            plt.close()
         else:
             plt.savefig(fig_name, dpi=300, bbox_inches="tight")
+            plt.close()

@@ -80,7 +80,7 @@ class HollowPlateRVE(RVE2DBase):
             model=self.model,
             name_part=self.part_name,
         )
-        self.part = PartGenerator.creat_part()
+        self.part = PartGenerator.create_part()
 
     def _create_material(self, name_faces):
         MaterialGenerator = AbaqusMaterialLib(
