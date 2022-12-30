@@ -39,7 +39,6 @@ def write_json(sim_info: dict, filename: str) -> None:
     with open(filename, "w") as fp:
         json.dump(sim_info, fp)
 
-
 def make_new_script(
     new_file_name: str,
     folder_info: dict,
