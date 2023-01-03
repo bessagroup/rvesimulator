@@ -237,5 +237,7 @@ class FixNumberSampler(Sampler):
     def get_samples(self, num_samples: int = None) -> np.ndarray:
         self.num_samples = num_samples
         fixedvalue = list(self.design_space.values())
-        sample = np.repeat(fixedvalue[0], num_samples)
+        sample = np.zeros((num_samples, self.num_dim))
+        for ii, value in enumerate(fixedvalue):
+            sample[:, ii] = np.repeat(value, num_samples)
         self.samples = sample

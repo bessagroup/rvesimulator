@@ -38,12 +38,12 @@ class RVEPostProcess(object):
             ].elementSets["MATRIXFACE"]
         elif self.job_name == "PPandPEComposie":
             entireRVE_elSet = RVEodb.rootAssembly.elementSets[" ALL ELEMENTS"]
-        elif self.job_name == "pnas_composite": 
+        elif self.job_name == "pnas_composite":
             entireRVE_elSet = RVEodb.rootAssembly.elementSets[" ALL ELEMENTS"]
-        elif self.job_name == "pnas_hollow_plate": 
+        elif self.job_name == "pnas_hollow_plate":
             entireRVE_elSet = RVEodb.rootAssembly.elementSets[" ALL ELEMENTS"]
         else:
-            raise Exception('The job name is not defined \n') 
+            raise Exception("The job name is not defined \n")
 
         return entireRVE_elSet
 
@@ -73,11 +73,16 @@ class RVEPostProcess(object):
             step = mySteps[stepKey]
             numFrames = len(step.frames)
             totalNumFrames = totalNumFrames + numFrames
-        # getting the history output 
-        ALLPD_data = RVEodb.steps[mySteps.keys()[0]].historyRegions['Assembly ASSEMBLY'].historyOutputs['ALLPD'].data 
-        ALLPD = numpy.zeros((len(ALLPD_data),2))
-        for ii in range(len(ALLPD_data)): 
-            ALLPD[ii, 0] = ALLPD_data[ii][0] 
+        # getting the history output
+        ALLPD_data = (
+            RVEodb.steps[mySteps.keys()[0]]
+            .historyRegions["Assembly ASSEMBLY"]
+            .historyOutputs["ALLPD"]
+            .data
+        )
+        ALLPD = numpy.zeros((len(ALLPD_data), 2))
+        for ii in range(len(ALLPD_data)):
+            ALLPD[ii, 0] = ALLPD_data[ii][0]
             ALLPD[ii, 1] = ALLPD_data[ii][1]
 
         # Preallocate quantities for speed
@@ -240,7 +245,8 @@ class RVEPostProcess(object):
             "total_vol": tot_vol,
             "Green_strain": Green_strain,
             "PK2": PK2,
-            "ALLPD": ALLPD}
+            "ALLPD": ALLPD,
+        }
         # Save post-processing information to pkl file:
         with open("results.p", "w") as fp:
             pickle.dump(RVE_variables, fp)

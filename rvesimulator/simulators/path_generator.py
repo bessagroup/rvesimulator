@@ -14,18 +14,18 @@ class PathGenerator:
         num_control_points : int, optional
             number of control point, by default 6
         """
-        self.num_control_point = num_control_points
-        self.num_increment = num_increment
+        self.num_control_point = np.int64(num_control_points)
+        self.num_increment = np.int64(num_increment)
 
         # generate control points
         self.x_control = np.linspace(
-            0, num_increment, num_control_points, endpoint=True
+            0, self.num_increment, self.num_control_point, endpoint=True
         )
         self.y_control = np.zeros((1, 3))
         self.y_control = np.vstack(
             (
                 self.y_control,
-                np.random.uniform(-1, 1, (num_control_points - 1, 3)),
+                np.random.uniform(-1, 1, (self.num_control_point - 1, 3)),
             )
         )
 

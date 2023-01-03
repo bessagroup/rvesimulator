@@ -3,6 +3,9 @@ import json
 import os
 import pickle
 
+import numpy as np
+import pandas as pd
+
 # local functions
 import rvesimulator
 from rvesimulator.microstructures.disks import CircleInclusion
@@ -23,21 +26,29 @@ class SimulatorCaller:
             "main_work_directory": os.path.join(os.getcwd(), "Data"),
             "script_path": os.path.dirname(rvesimulator.__file__),
             "current_work_directory": "point_1",
-            "sim_path": "scriptbase.asca_rve",
-            "sim_script": "ASCARVE",
+            "sim_path": "scriptbase.pnas_rve",
+            "sim_script": "PnasCompositeRVE",
             "post_path": "scriptbase.postprocess",
             "post_script": "RVEPostProcess",
         }
         self.vol_req = None
         self.update_sim_info()
 
-    def run_simulation(self, data: dict = None) -> dict:
+    def run_simulation(
+        self, data: dict = None, save_source_files: bool = True
+    ) -> dict:
         """run simulation sequentially
 
         Parameters
         ----------
         data : dict, optional
             design of experiments without responses
+        save_source_files: bool, optional
+            if True, it will create a new folder for every sample and
+            more memory is needed for the simulation task
+            other wise the simulation will be excuted in the Data/data
+            folder and the simulation result will be save as Data/data.pickle
+            file.
 
         Returns
         -------
@@ -51,12 +62,20 @@ class SimulatorCaller:
         num_samples = len(samples)
         for ii in range(num_samples):
             # update the simulation information
-            self.folder_info["current_work_directory"] = "point_" + str(ii)
-            new_path = create_dir(
-                current_folder=self.folder_info["main_work_directory"],
-                dirname=self.folder_info["current_work_directory"],
-            )
-            os.chdir(new_path)
+            if save_source_files is True:
+                self.folder_info["current_work_directory"] = "point_" + str(ii)
+                new_path = create_dir(
+                    current_folder=self.folder_info["main_work_directory"],
+                    dirname=self.folder_info["current_work_directory"],
+                )
+                os.chdir(new_path)
+            else:
+                self.folder_info["current_work_directory"] = "data"
+                new_path = create_dir(
+                    current_folder=self.folder_info["main_work_directory"],
+                    dirname=self.folder_info["current_work_directory"],
+                )
+                os.chdir(new_path)
             # update the geometry info for microstructure
             self._update_sample_info(sample=samples[ii])
 
@@ -96,35 +115,76 @@ class SimulatorCaller:
         vol_req: float = 0.30,
         mesh_partition: int = 30,
         loads: list = [0.05, 0.0, 0.0],
-        simulation_time: float = 10.0,
+        loads_path: list = None,
+        E_matrix: float = 100.0,
+        Pr_matrix: float = 0.30,
+        matrix_yield_law: str = "Von_mises",
+        E_fiber: float = 1.0,
+        Pr_fiber: float = 0.19,
+        time_period: float = 1.0,
         print_info: bool = False,
     ) -> None:
-        """update parameters of asca rve simulation
+        """update some default information
 
         Parameters
         ----------
         size : float, optional
-            the size of the RVE, by default 0.048
+            size of RVE, by default 0.048
         radius : float, optional
-            radius of , by default 0.003
+            radius of particles, by default 0.003
         vol_req : float, optional
-            volume requirement, by default 0.30
+            required volume fraction, by default 0.30
         mesh_partition : int, optional
-            number of partition of every edge of the RVE, by default 30
+            mesh partition, by default 30
         loads : list, optional
-            a list of loads [Exx, Eyy, Exy], by default [0.05, 0.0, 0.0]
-        simulation_time : float, optional
-            total simulation time of Abaqus, by default 10.0
+            boundary of loads, by default [0.05, 0.0, 0.0]
+        loads_path : list, optional
+            loads path, by default None
+        E_matrix : float, optional
+            Young's modulus of matrix material, by default 100.0
+        Pr_matrix : float, optional
+            poission ratio of matrix material, by default 0.30
+        matrix_yield_law : str, optional
+            plasticity law of matrix material, by default "Von_mises"
+        E_fiber : float, optional
+            Young's modulus of fiber material, by default 1.0
+        Pr_fiber : float, optional
+            poission ratio of fiber material, by default 0.19
+        time_period : float, optional
+            simulation time, by default 1.0
         print_info : bool, optional
-            a flag to print info or not, by default False
+            a flag to indicate print the default/update simulation information
+            , by default False
+
+        Raises
+        ------
+        KeyError
+            key error for matrix material plasticity law definition string
         """
+        if matrix_yield_law == "Von_mises":
+            yield_criterion = np.zeros((101, 2))
+            yield_criterion[:, 1] = np.linspace(0, 1, 101)
+            yield_criterion[:, 0] = 0.5 + 0.2 * (yield_criterion[:, 1]) ** 0.4
+            yield_criterion[-1, 1] = 10.0
+            yield_criterion[-1, 0] = (
+                0.5 + 0.2 * (yield_criterion[-1, 1]) ** 0.4
+            )
+            yield_criterion = yield_criterion.T
+        else:
+            raise KeyError("The material's yield criterion is not defined! \n")
 
         self.vol_req = vol_req
         self.rve_geometry = {"length": size, "width": size, "radius": radius}
         self.abaqus_paras = {
             "mesh_partition": mesh_partition,
             "loads": loads,
-            "simulation_time": simulation_time,
+            "time_period": time_period,
+            "loads_path": loads_path,
+            "E_matrix": E_matrix,
+            "Pr_matrix": Pr_matrix,
+            "yield_table_matrix": yield_criterion.tolist(),
+            "E_fiber": E_fiber,
+            "Pr_fiber": Pr_fiber,
         }
         if print_info:
             print(f"geometry information of RVE: {self.rve_geometry}")
@@ -132,6 +192,13 @@ class SimulatorCaller:
             print(f"Info of Abaqus simulation : {self.abaqus_paras} \n")
 
     def _update_sample_info(self, sample: dict) -> None:
+        """_summary_
+
+        Parameters
+        ----------
+        sample : dict
+            samples at current iteration
+        """
 
         # update 'vol_req'
         if "vol_req" in sample.keys():
@@ -145,9 +212,24 @@ class SimulatorCaller:
         # update 'radius'
         if "radius" in sample.keys():
             self.rve_geometry["radius"] = sample["radius"]
-
+        # update 'mesh'
         if "mesh_partition" in sample.keys():
             self.abaqus_paras["mesh_partition"] = sample["mesh_partition"]
+        # update 'loads path'
+        if "loads_path" in sample.keys():
+            self.abaqus_paras["loads_path"] = sample["loads_path"]
+
+        if "E_matrix" in sample.keys():
+            self.abaqus_paras["E_matrix"] = sample["E_matrix"]
+
+        if "Pr_matrix" in sample.keys():
+            self.abaqus_paras["Pr_matrix"] = sample["Pr_matrix"]
+
+        if "E_fiber" in sample.keys():
+            self.abaqus_paras["E_fiber"] = sample["E_fiber"]
+
+        if "Pr_fiber" in sample.keys():
+            self.abaqus_paras["Pr_fiber"] = sample["Pr_fiber"]
 
     def _complete_information(self) -> None:
         """
@@ -163,7 +245,7 @@ class SimulatorCaller:
             location_info = json.load(f)
 
         self.sim_info = {
-            "job_name": "asca_rve",
+            "job_name": "pnas_composite",
             "location_information": location_info["location_information"],
             "radius": location_info["radius"],
             "len_start": location_info["len_start"],
@@ -172,7 +254,13 @@ class SimulatorCaller:
             "wid_end": location_info["wid_end"],
             "mesh_partition": self.abaqus_paras["mesh_partition"],
             "loads": self.abaqus_paras["loads"],
-            "simulation_time": self.abaqus_paras["simulation_time"],
+            "loads_path": self.abaqus_paras["loads_path"],
+            "E_matrix": self.abaqus_paras["E_matrix"],
+            "Pr_matrix": self.abaqus_paras["Pr_matrix"],
+            "yield_table_matrix": self.abaqus_paras["yield_table_matrix"],
+            "E_fiber": self.abaqus_paras["E_fiber"],
+            "Pr_fiber": self.abaqus_paras["Pr_fiber"],
+            "time_period": self.abaqus_paras["time_period"],
         }
 
     @staticmethod

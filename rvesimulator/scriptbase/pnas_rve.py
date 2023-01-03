@@ -208,7 +208,7 @@ class PnasCompositeRVE(RVE2DBase):
             "wid_end": None,
             "radius": None,
             "job_name": "pnas_composite",
-            "loads": [0.1, 0.0, 0.0],
+            "loads": [0.02, 0.02, 0.02],
             "loads_path": None,
             "E_matrix": None,
             "Pr_matrix": None,
@@ -216,7 +216,7 @@ class PnasCompositeRVE(RVE2DBase):
             "E_fiber": None,
             "Pr_fiber": None,
             "mesh_partition": None,
-            "time_period": 1,
+            "time_period": 1.0,
         },
     ):
         # names of model, part, instance
@@ -286,7 +286,6 @@ class PnasCompositeRVE(RVE2DBase):
         self._create_step(timePeriod=self.time_period)
         self._create_path_load()
         self.create_sequential_jobs(subroutine_path="")
-        self._rve_results()
 
     def _create_part(self):
         PartGenerator = CircleInclusion(
