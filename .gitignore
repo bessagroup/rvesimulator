@@ -132,3 +132,4 @@ dmypy.json
 # folders
 examples/hollow_plate_simulation/Data/
 examples/asca_rve/Data/
+examples/pnas_hollow_plate/Data/

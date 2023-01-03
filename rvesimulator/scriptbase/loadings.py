@@ -1,6 +1,7 @@
 # abaqus
 import json
 
+import numpy
 from abaqus import *
 from abaqusConstants import *
 from caeModules import *

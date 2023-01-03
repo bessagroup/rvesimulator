@@ -3,15 +3,17 @@ import sys
 
 # import python libraries
 import numpy
+
 # abaqus
 from abaqus import *
 from abaqusConstants import *
 from caeModules import *
+
 # import packages for abaqus post-processing
 from odbAccess import *
 
 try:
-    import cPickle as pickle  
+    import cPickle as pickle
 except ValueError:
     import pickle
 
@@ -34,7 +36,7 @@ class PnasHollowPlate(RVE2DBase):
             "mesh_partition": 30,
             "loads": [0.1, 0.0, 0.0],
             "loads_path": None,
-            "time_period": 1
+            "time_period": 1,
         },
     ):
         """
@@ -65,23 +67,23 @@ class PnasHollowPlate(RVE2DBase):
 
         # loading condition
         self.loads = sim_info["loads"]
-       
+
         self.youngs_modulus = sim_info["youngs_modulus"]
         self.poission_ratio = sim_info["poission_ratio"]
         self.time_period = sim_info["time_period"]
 
-        # opreation on transfer list to numpy 
-        num_yield_points = len(sim_info["yield_table"][0]) 
-        self.yield_criterion =numpy.zeros((num_yield_points,2)) 
+        # opreation on transfer list to numpy
+        num_yield_points = len(sim_info["yield_table"][0])
+        self.yield_criterion = numpy.zeros((num_yield_points, 2))
         for ii in range(2):
-            self.yield_criterion[:,ii] = sim_info["yield_table"][ii] 
+            self.yield_criterion[:, ii] = sim_info["yield_table"][ii]
 
-        num_path_points = len(sim_info["loads_path"][0]) 
-        self.loads_path =numpy.zeros((num_path_points,3))
+        num_path_points = len(sim_info["loads_path"][0])
+        self.loads_path = numpy.zeros((num_path_points, 3))
         for ii in range(3):
-            self.loads_path[:, ii] = sim_info["loads_path"][ii] 
+            self.loads_path[:, ii] = sim_info["loads_path"][ii]
 
-        # run the simulation 
+        # run the simulation
         self.ScriptGenerator()
 
     def ScriptGenerator(self):
@@ -107,19 +109,28 @@ class PnasHollowPlate(RVE2DBase):
             model=self.model,
             name_part=self.part_name,
         )
-        self.part = PartGenerator.CreatPart()
+        self.part = PartGenerator.create_part()
 
     def _create_material(self, name_faces):
         # use plasticity material
-        MaterialGenerator = AbaqusMaterialLib(name_mat="Matrix", model=self.model, part=self.part, name_set=name_faces[0])
-        MaterialGenerator.CreateVonMisesPlasticMaterial(E=self.youngs_modulus,
-                                                        v=self.poission_ratio, 
-                                                        yield_criterion=self.yield_criterion)
+        MaterialGenerator = AbaqusMaterialLib(
+            name_mat="Matrix",
+            model=self.model,
+            part=self.part,
+            name_set=name_faces[0],
+        )
+        MaterialGenerator.CreateVonMisesPlasticMaterial(
+            E=self.youngs_modulus,
+            v=self.poission_ratio,
+            yield_criterion=self.yield_criterion,
+        )
 
-    def _create_path_load(self): 
+    def _create_path_load(self):
         load_creater = Loading2D(self.model, self.assembly, self.instance_name)
-        load_creater.create_path_load(self.loads, self.loads_path, self.time_period) 
-    
+        load_creater.create_path_load(
+            self.loads, self.loads_path, self.time_period
+        )
+
     def _create_geometry_set(self):
 
         #  create part for faces
@@ -132,7 +143,14 @@ class PnasHollowPlate(RVE2DBase):
         name_vertex = self.create_sets_for_vertices()
         return name_faces, name_edges, name_vertex
 
-    def _create_step(self,initialInc=0.1,maxInc=1,maxNumInc=1000000, minInc=1e-20,timePeriod=10):
+    def _create_step(
+        self,
+        initialInc=0.1,
+        maxInc=1,
+        maxNumInc=1000000,
+        minInc=1e-20,
+        timePeriod=10,
+    ):
 
         self.model.StaticStep(name="Step-1", previous="Initial", nlgeom=ON)
         self.model.StaticStep(
@@ -145,9 +163,18 @@ class PnasHollowPlate(RVE2DBase):
             timePeriod=timePeriod,
         )
 
-        #create Final-outputs
+        # create Final-outputs
         self.model.fieldOutputRequests["F-Output-1"].setValues(
-            variables=("S", "E", "LE", "ENER", "ELEN", "ELEDEN", "EVOL", "IVOL" ),
+            variables=(
+                "S",
+                "E",
+                "LE",
+                "ENER",
+                "ELEN",
+                "ELEDEN",
+                "EVOL",
+                "IVOL",
+            ),
             timeInterval=0.01,
         )
         self.model.FieldOutputRequest(
@@ -157,28 +184,41 @@ class PnasHollowPlate(RVE2DBase):
             timeInterval=0.01,
         )
         self.model.historyOutputRequests["H-Output-1"].setValues(
-            variables=("ALLAE", "ALLCD", "ALLIE", "ALLKE", "ALLPD", "ALLSE", "ALLWK"),
+            variables=(
+                "ALLAE",
+                "ALLCD",
+                "ALLIE",
+                "ALLKE",
+                "ALLPD",
+                "ALLSE",
+                "ALLWK",
+            ),
             timeInterval=0.01,
         )
 
-class PnasCompositeRVE(RVE2DBase):
 
-    def __init__(self, sim_info={"location_information": None,
-                                "len_start": None, 
-                                "len_end":None, 
-                                "wid_start":None, 
-                                "wid_end":None, 
-                                "radius":None, 
-                                "job_name": "pnas_composite",
-                                "loads": [0.1, 0.0, 0.0],
-                                "loads_path": None,
-                                "E_matrix": None,
-                                "Pr_matrix": None,
-                                "yield_table_matrix": None,
-                                "E_fiber": None,
-                                "Pr_fiber": None,
-                                "mesh_partition": None,   
-                                "time_period": 1 }):
+class PnasCompositeRVE(RVE2DBase):
+    def __init__(
+        self,
+        sim_info={
+            "location_information": None,
+            "len_start": None,
+            "len_end": None,
+            "wid_start": None,
+            "wid_end": None,
+            "radius": None,
+            "job_name": "pnas_composite",
+            "loads": [0.1, 0.0, 0.0],
+            "loads_path": None,
+            "E_matrix": None,
+            "Pr_matrix": None,
+            "yield_table_matrix": None,
+            "E_fiber": None,
+            "Pr_fiber": None,
+            "mesh_partition": None,
+            "time_period": 1,
+        },
+    ):
         # names of model, part, instance
         self.model_name = "RVE"
         self.part_name = "Final_Stuff"
@@ -204,29 +244,33 @@ class PnasCompositeRVE(RVE2DBase):
             (sim_info["len_end"] + sim_info["len_start"]) / 2.0,
             (sim_info["wid_end"] + sim_info["wid_start"]) / 2.0,
         ]
-        self.radius = sim_info["radius"] 
+        self.radius = sim_info["radius"]
 
         # information of RVE modeling
-        self.loads = sim_info["loads"]     
-        self.mesh_size = (min(self.length, self.width) / sim_info["mesh_partition"])
+        self.loads = sim_info["loads"]
+        self.mesh_size = (
+            min(self.length, self.width) / sim_info["mesh_partition"]
+        )
         self.time_period = sim_info["time_period"]
 
         # material properties
         self.E_matrix = sim_info["E_matrix"]
         self.Pr_matrix = sim_info["Pr_matrix"]
-        self.E_fiber = sim_info["E_fiber"] 
-        self.Pr_fiber = sim_info["Pr_fiber"] 
-        
-        # opreation on transfer list to numpy 
-        num_yield_points = len(sim_info["yield_table_matrix"][0]) 
-        self.yield_crtierion_matrix = numpy.zeros((num_yield_points, 2)) 
+        self.E_fiber = sim_info["E_fiber"]
+        self.Pr_fiber = sim_info["Pr_fiber"]
+
+        # opreation on transfer list to numpy
+        num_yield_points = len(sim_info["yield_table_matrix"][0])
+        self.yield_crtierion_matrix = numpy.zeros((num_yield_points, 2))
         for ii in range(2):
-            self.yield_crtierion_matrix[:, ii] = sim_info["yield_table_matrix"][ii] 
+            self.yield_crtierion_matrix[:, ii] = sim_info[
+                "yield_table_matrix"
+            ][ii]
 
         num_path_points = len(sim_info["loads_path"][0])
         self.loads_path = numpy.zeros((num_path_points, 3))
         for ii in range(3):
-            self.loads_path[:, ii] = sim_info["loads_path"][ii] 
+            self.loads_path[:, ii] = sim_info["loads_path"][ii]
 
         self.ScriptGenerator()
 
@@ -241,21 +285,25 @@ class PnasCompositeRVE(RVE2DBase):
         self.create_2d_pbc()
         self._create_step(timePeriod=self.time_period)
         self._create_path_load()
-        self.create_sequential_jobs(subroutine_path='')
+        self.create_sequential_jobs(subroutine_path="")
         self._rve_results()
 
     def _create_part(self):
-        PartGenerator = CircleInclusion(self.model,
-                                        self.loc_info,
-                                        self.model_name,
-                                        self.part_name,
-                                        self.instance_name)
+        PartGenerator = CircleInclusion(
+            self.model,
+            self.loc_info,
+            self.model_name,
+            self.part_name,
+            self.instance_name,
+        )
         PartGenerator.create_part()
 
     def _create_assembly(self):
-        self.model.rootAssembly.features.changeKey(fromName='Final_Stuff-1', toName='Final_Stuff')
+        self.model.rootAssembly.features.changeKey(
+            fromName="Final_Stuff-1", toName="Final_Stuff"
+        )
         self.assembly = self.model.rootAssembly
-        self.part = self.model.parts['Final_Stuff']
+        self.part = self.model.parts["Final_Stuff"]
 
     def _create_geometry_set(self):
 
@@ -286,7 +334,8 @@ class PnasCompositeRVE(RVE2DBase):
         p.SetByBoolean(
             name="matrixface",
             sets=(p.sets["all_faces"], p.sets["fiberface"]),
-            operation=DIFFERENCE)
+            operation=DIFFERENCE,
+        )
         name_faces = ["matrixface", "fiberface"]
 
         # create sets for edges:
@@ -298,39 +347,109 @@ class PnasCompositeRVE(RVE2DBase):
     def _creat_mesh(self, name_edges):
 
         import mesh
-        elemType1 = mesh.ElemType(elemCode=CPE8R, elemLibrary=STANDARD)                                  
-        elemType2 = mesh.ElemType(elemCode=CPE6M, elemLibrary=STANDARD, 
-                                  secondOrderAccuracy=ON, distortionControl=DEFAULT)                                 
-        self.part.setElementType(regions=(self.part.faces[:],), elemTypes=(elemType1, elemType2))
-        self.part.seedPart(size=self.mesh_size, deviationFactor=0.2, minSizeFactor=0.9)
+
+        elemType1 = mesh.ElemType(elemCode=CPE8R, elemLibrary=STANDARD)
+        elemType2 = mesh.ElemType(
+            elemCode=CPE6M,
+            elemLibrary=STANDARD,
+            secondOrderAccuracy=ON,
+            distortionControl=DEFAULT,
+        )
+        self.part.setElementType(
+            regions=(self.part.faces[:],), elemTypes=(elemType1, elemType2)
+        )
+        self.part.seedPart(
+            size=self.mesh_size, deviationFactor=0.2, minSizeFactor=0.9
+        )
         for ii in range(len(name_edges)):
-            self.part.seedEdgeBySize(edges=self.part.sets[name_edges[ii]].edges, size=self.mesh_size, deviationFactor=0.9, constraint=FIXED)
+            self.part.seedEdgeBySize(
+                edges=self.part.sets[name_edges[ii]].edges,
+                size=self.mesh_size,
+                deviationFactor=0.9,
+                constraint=FIXED,
+            )
         self.part.generateMesh()
 
     def _create_material(self, name_faces):
-        # assign material property to matrix material 
-        MaterialGenerator = AbaqusMaterialLib(name_mat='Matrix', model=self.model,
-                                              part=self.part, name_set=name_faces[0]) 
-        MaterialGenerator.CreateVonMisesPlasticMaterial(E=self.E_matrix,
-                                                        v=self.Pr_matrix,
-                                                        yield_criterion=self.yield_crtierion_matrix)
-        # assign material property to fiber material 
-        MaterialGenerator = AbaqusMaterialLib(name_mat='Fiber', model=self.model,
-                                              part=self.part, name_set=name_faces[1])
-        MaterialGenerator.CreateElasticMaterial(E=self.E_fiber, v=self.Pr_fiber)
+        # assign material property to matrix material
+        MaterialGenerator = AbaqusMaterialLib(
+            name_mat="Matrix",
+            model=self.model,
+            part=self.part,
+            name_set=name_faces[0],
+        )
+        MaterialGenerator.CreateVonMisesPlasticMaterial(
+            E=self.E_matrix,
+            v=self.Pr_matrix,
+            yield_criterion=self.yield_crtierion_matrix,
+        )
+        # assign material property to fiber material
+        MaterialGenerator = AbaqusMaterialLib(
+            name_mat="Fiber",
+            model=self.model,
+            part=self.part,
+            name_set=name_faces[1],
+        )
+        MaterialGenerator.CreateElasticMaterial(
+            E=self.E_fiber, v=self.Pr_fiber
+        )
 
-    def _create_step(self, initialInc=0.1, maxInc=1, maxNumInc=1000000, minInc=1e-20, timePeriod=1):
-        self.model.StaticStep(name='Step-1', previous='Initial')
-        self.model.StaticStep(initialInc=initialInc, maxInc=maxInc, maxNumInc=maxNumInc, minInc=minInc, name='Step-1',
-                              previous='Initial', timePeriod=timePeriod,  nlgeom=ON)
+    def _create_step(
+        self,
+        initialInc=0.1,
+        maxInc=1,
+        maxNumInc=1000000,
+        minInc=1e-20,
+        timePeriod=1,
+    ):
+        self.model.StaticStep(name="Step-1", previous="Initial")
+        self.model.StaticStep(
+            initialInc=initialInc,
+            maxInc=maxInc,
+            maxNumInc=maxNumInc,
+            minInc=minInc,
+            name="Step-1",
+            previous="Initial",
+            timePeriod=timePeriod,
+            nlgeom=ON,
+        )
 
         # create Final-outputs
-        self.model.fieldOutputRequests['F-Output-1'].setValues(
-            variables=('S', 'E', 'LE', 'ENER', 'ELEN', 'ELEDEN', 'EVOL', 'IVOL'), timeInterval=0.01)
-        self.model.FieldOutputRequest(name='F-Output-2', createStepName='Step-1', variables=('U', 'RF'), timeInterval=0.01)
-        self.model.historyOutputRequests['H-Output-1'].setValues(
-            variables=('ALLAE', 'ALLCD', 'ALLIE', 'ALLKE', 'ALLPD', 'ALLSE', 'ALLWK', 'ETOTAL'), timeInterval=0.01)
+        self.model.fieldOutputRequests["F-Output-1"].setValues(
+            variables=(
+                "S",
+                "E",
+                "LE",
+                "ENER",
+                "ELEN",
+                "ELEDEN",
+                "EVOL",
+                "IVOL",
+            ),
+            timeInterval=0.01,
+        )
+        self.model.FieldOutputRequest(
+            name="F-Output-2",
+            createStepName="Step-1",
+            variables=("U", "RF"),
+            timeInterval=0.01,
+        )
+        self.model.historyOutputRequests["H-Output-1"].setValues(
+            variables=(
+                "ALLAE",
+                "ALLCD",
+                "ALLIE",
+                "ALLKE",
+                "ALLPD",
+                "ALLSE",
+                "ALLWK",
+                "ETOTAL",
+            ),
+            timeInterval=0.01,
+        )
 
-    def _create_path_load(self): 
+    def _create_path_load(self):
         load_creater = Loading2D(self.model, self.assembly, self.instance_name)
-        load_creater.create_path_load(self.loads, self.loads_path, self.time_period)
+        load_creater.create_path_load(
+            self.loads, self.loads_path, self.time_period
+        )

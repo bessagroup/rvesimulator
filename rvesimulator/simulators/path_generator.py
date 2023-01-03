@@ -75,7 +75,7 @@ class PathGenerator:
     ) -> None:
         """plot the loads path"""
 
-        fig, ax = plt.subplots()
+        fig, ax = plt.subplots(figsize=(4, 3))
         ax.plot(
             self.x_control,
             self.y_control[:, 0],
@@ -97,7 +97,13 @@ class PathGenerator:
         ax.plot(self.x_test, self.y1, label="path xx")
         ax.plot(self.x_test, self.y2, label="path yy")
         ax.plot(self.x_test, self.y3, label="path xy")
-        plt.legend()
+        plt.legend(
+            bbox_to_anchor=(0.0, 1.02, 1.0, 0.102),
+            loc="lower left",
+            mode="expand",
+            borderaxespad=0.0,
+            ncol=2,
+        )
         if save_fig is True:
             fig.savefig(fname=fig_name, dpi=300)
         else:
