@@ -1,4 +1,4 @@
-class MicrosctucturaGenerator2D:
+class MicrosctucturaGenerator:
 
     # def __init__(self, ) -> None:
     #     pass

@@ -111,3 +111,109 @@ class DrawRVE2D:
         else:
             plt.savefig(fig_name, dpi=300, bbox_inches="tight")
             plt.close()
+
+    @staticmethod
+    def heter_cricle_inclusion_plot(circle_position: np.ndarray,
+                                    radius_mu:float,
+                                    len_start: float,
+                                    len_end: float,
+                                    wid_start: float,
+                                    wid_end: float,
+                                    vol_frac: float,
+                                    save_figure: bool = False,
+                                    fig_name: str = "RVE.png") -> None:
+        """_summary_
+
+        Parameters
+        ----------
+        circle_position : np.ndarray
+            _description_
+        len_start : float
+            _description_
+        len_end : float
+            _description_
+        wid_start : float
+            _description_
+        wid_end : float
+            _description_
+        vol_frac : float
+            _description_
+        save_figure : bool, optional
+            _description_, by default False
+        fig_name : str, optional
+            _description_, by default "RVE.png"
+        """
+        num_circles = circle_position.shape[0]
+        figure, axes = plt.subplots()
+        for ii in range(num_circles):
+            if circle_position[ii, 3] == 1:
+                cc = plt.Circle(
+                    (circle_position[ii, 0], circle_position[ii, 1]),
+                    circle_position[ii, 2],
+                    color="lightseagreen",
+                )
+            elif circle_position[ii, 3] == 2:
+                cc = plt.Circle(
+                    (circle_position[ii, 0], circle_position[ii, 1]),
+                    circle_position[ii, 2],
+                    color="orange",
+                )
+            elif circle_position[ii, 3] == 4:
+                cc = plt.Circle(
+                    (circle_position[ii, 0], circle_position[ii, 1]),
+                    circle_position[ii, 2],
+                    color="firebrick",
+                )
+            else:
+                raise ValueError("Spltting number is wrong!  \n")
+            axes.add_artist(cc)
+        axes.set_aspect(1)
+        plt.vlines(
+            x=len_start + radius_mu,
+            ymin=wid_start + radius_mu,
+            ymax=wid_end - radius_mu,
+            colors="red",
+            ls="--",
+        )
+        plt.vlines(
+            x=len_end - radius_mu,
+            ymin=wid_start + radius_mu,
+            ymax=wid_end - radius_mu,
+            colors="red",
+            ls="--",
+        )
+        plt.hlines(
+            xmin=len_start + radius_mu,
+            xmax=len_end - radius_mu,
+            y=wid_end - radius_mu,
+            colors="red",
+            ls="--",
+        )
+        plt.hlines(
+            xmin=len_start + radius_mu,
+            xmax=len_end - radius_mu,
+            y=wid_start + radius_mu,
+            colors="red",
+            ls="--",
+        )
+        plt.vlines(
+            x=len_start, ymin=wid_start, ymax=wid_end, colors="green", ls=":"
+        )
+        plt.vlines(
+            x=len_end, ymin=wid_start, ymax=wid_end, colors="green", ls=":"
+        )
+        plt.hlines(
+            xmin=len_start, xmax=len_end, y=wid_end, colors="green", ls=":"
+        )
+        plt.hlines(
+            xmin=len_start, xmax=len_end, y=wid_start, colors="green", ls=":"
+        )
+        plt.xlim((len_start - radius_mu, len_end + radius_mu))
+        plt.ylim((wid_start - radius_mu, wid_end + radius_mu))
+        plt.title(f"$V_f$ = {vol_frac*100:.2f}")
+        if not save_figure:
+            plt.show()
+            plt.close()
+        else:
+            plt.savefig(fig_name, dpi=300, bbox_inches="tight")
+            plt.close()

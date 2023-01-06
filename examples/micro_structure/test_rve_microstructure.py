@@ -8,7 +8,7 @@ folder_path = "/home/yaga/Documents/GitHub/rvesimulator"
 sys.path.insert(0, folder_path)
 # local packages
 
-from rvesimulator.microstructures.disks import CircleInclusion
+from rvesimulator.microstructures.homo_radius_disks import CircleInclusion
 
 # define the geometry information of the RVE
 length = 1.0
@@ -31,4 +31,3 @@ for ii in range(2):
     CircleInclusionGenerator.save_results(
         file_name="test_" + str(ii) + ".json"
     )
-

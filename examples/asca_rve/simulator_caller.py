@@ -5,7 +5,7 @@ import pickle
 
 # local functions
 import rvesimulator
-from rvesimulator.microstructures.disks import CircleInclusion
+from rvesimulator.microstructures.homo_radius_disks import CircleInclusion
 from rvesimulator.simulators.abaqus_simulator import AbaqusSimulator
 from rvesimulator.simulators.utils import create_dir
 
