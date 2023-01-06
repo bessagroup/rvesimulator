@@ -1,3 +1,5 @@
+from turtle import color
+
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -214,6 +216,90 @@ class DrawRVE2D:
         if not save_figure:
             plt.show()
             plt.close()
+        else:
+            plt.savefig(fig_name, dpi=300, bbox_inches="tight")
+            plt.close()
+
+class DrawRVE3D: 
+
+    @staticmethod
+    def sphere_coordinate(location_information: np.ndarray) -> tuple:
+        """generate coordinate of sphere 
+
+        Parameters
+        ----------
+        location_information : np.ndarray
+           a numpy array contains center and radius info of 
+           a sphere [x, y, z, r] 
+
+        Returns
+        -------
+        tuple
+            coordinate of x, y, z 
+        """
+
+        loc_info = np.reshape(location_information, (1, -1))
+        u = np.linspace(0, 2 * np.pi, 100)
+        v = np.linspace(0, np.pi, 100) 
+        x = loc_info[0, 3] * np.outer(np.cos(u), np.sin(v)) + loc_info[0, 0]
+        y = loc_info[0, 3] * np.outer(np.sin(u), np.sin(v)) + loc_info[0, 1]
+        z = loc_info[0, 3] * np.outer(np.ones(np.size(u)), np.cos(v)) + loc_info[0, 2] 
+        
+        return x, y, z
+
+    def heter_radius_sphere_plot(self,
+                                 location_information: np.ndarray,
+                                 length: float,
+                                 width: float,
+                                 height: float,
+                                 vol_frac: float,
+                                 save_figure: bool = False,
+                                 fig_name: str = "cubic.png") -> None:
+        """plot 3d rve with sphere inclusion
+
+        Parameters
+        ----------
+        location_information : np.ndarray
+            location information    
+        length : float
+            length of cubic
+        width : float
+            width of cubic
+        height : float
+            height of cubic
+        vol_frac : float
+            volume fraction
+        save_figure : bool, optional
+            a flag to indicate if we want save the figure or not, by default False
+        fig_name : str, optional
+            fig name, by default "cubic_rve.png"
+        """
+        fig = plt.figure()
+        ax = fig.add_subplot(projection='3d')
+        # Plot the surface
+        for ii in range(location_information.shape[0]): 
+            x, y, z = self.sphere_coordinate(location_information=location_information[ii,:]) 
+            if location_information[ii, 4] == 1:
+                ax.plot_surface(x, y, z, color='lightseagreen')
+            elif location_information[ii, 4] == 2:
+                ax.plot_surface(x, y, z, color='orange')
+            elif location_information[ii, 4] == 4:
+                ax.plot_surface(x, y, z, color='firebrick')
+            else:
+                raise ValueError("Spltting number is wrong!\n") 
+        axes = [length, width, height]
+        data = np.ones(axes, dtype=np.bool)
+        alpha = 0.4
+        colors = np.empty(axes + [4], dtype=np.float32)
+        colors[:] = [1, 1, 1, alpha]
+        ax.voxels(data, facecolors=colors)
+        plt.title(f"$V_f$ = {vol_frac*100:.2f}")
+
+        # Set an equal aspect ratio
+        ax.set_aspect('auto')
+        if not save_figure:
+            plt.show()
+
         else:
             plt.savefig(fig_name, dpi=300, bbox_inches="tight")
             plt.close()
