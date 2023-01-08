@@ -1,6 +1,7 @@
 # system packages
 import json
 import math
+from operator import length_hint
 import time
 from math import fmod
 
@@ -21,8 +22,8 @@ class HeterRadiusSphere(MicrosctucturaGenerator, DrawRVE3D):
     ----------
     MicrosctucturaGenerator : class
         parent class of microstructure generater
-    DrawRVE2D : class
-        vislization of 2D RVE
+    DrawRVE3D : class
+        vislization of three RVE
     """
 
     def __init__(
@@ -46,8 +47,8 @@ class HeterRadiusSphere(MicrosctucturaGenerator, DrawRVE3D):
             length of RVE
         width : float
             width of RVE
-        height : float 
-            height of RVE 
+        height : float
+            height of RVE
         radius_mu : float
             mean of circle's radius
         radius_std : float
@@ -97,7 +98,7 @@ class HeterRadiusSphere(MicrosctucturaGenerator, DrawRVE3D):
         # some import variables
         # fiber location is a nx5 numpy array
         # x, y,z, r, p (partition)
-        self.fiber_positions = None 
+        self.fiber_positions = None
 
     def __generate_rve(self) -> None:
         """core procedure of generating RVE"""
@@ -113,7 +114,7 @@ class HeterRadiusSphere(MicrosctucturaGenerator, DrawRVE3D):
         -------
         float
             Actual volume fracture
-        """    
+        """
         start_time = time.time()
         self.__generate_rve()
         end_time = time.time()
@@ -138,7 +139,7 @@ class HeterRadiusSphere(MicrosctucturaGenerator, DrawRVE3D):
             "hei_start": self.hei_start,
             "len_end": self.len_end,
             "wid_end": self.wid_end,
-            "hei_end": self.hei_end
+            "hei_end": self.hei_end,
         }
         with open(file_name, "w") as fp:
             json.dump(geometry_info, fp)
@@ -150,7 +151,8 @@ class HeterRadiusSphere(MicrosctucturaGenerator, DrawRVE3D):
         This function is used to visualize the 2D RVE
         """
         self.heter_radius_sphere_plot(
-            circle_position=self.fiber_positions,
+            location_information=self.fiber_positions,
+            radius_mu=self.radius_mu,
             length=self.length,
             width=self.width,
             height=self.height,
@@ -170,14 +172,16 @@ class HeterRadiusSphere(MicrosctucturaGenerator, DrawRVE3D):
         )
         self.num_fibers = 1
         # generate the location of the first fiber
-        # the first fiber is generated with one partition 
+        # the first fiber is generated with one partition
         fiber_temp = self.generate_random_fibers(
             len_start=self.radius_mu,
             len_end=self.length - self.radius_mu,
             wid_start=self.radius_mu,
             wid_end=self.width - self.radius_mu,
+            hei_start=self.radius_mu,
+            hei_end=self.height - self.radius_mu,
             radius_mu=self.radius_mu,
-            radius_std=0.0
+            radius_std=0.0,
         )
         # update the volume fraction information
         self.vol_frac = self.fiber_volume(self.radius_mu) / self.vol_total
@@ -209,16 +213,20 @@ class HeterRadiusSphere(MicrosctucturaGenerator, DrawRVE3D):
                     len_end=self.len_end,
                     wid_start=self.wid_start,
                     wid_end=self.wid_end,
+                    hei_start=self.hei_start,
+                    hei_end=self.hei_end,
                     radius_mu=self.radius_mu,
-                    radius_std=self.radius_std
+                    radius_std=self.radius_std,
                 )
                 # check the location of the fiber and
                 new_fiber = self.new_positions(
                     x_center=fiber_temp[0, 0],
                     y_center=fiber_temp[1, 0],
-                    radius=fiber_temp[2, 0],
+                    z_center=fiber_temp[2, 0],
+                    radius=fiber_temp[3, 0],
                     length=self.length,
                     width=self.width,
+                    height=self.height,
                 )
                 # check the overlap of new fiber
                 overlap_status = self.overlap_check(
@@ -231,7 +239,8 @@ class HeterRadiusSphere(MicrosctucturaGenerator, DrawRVE3D):
                         (self.fiber_positions, new_fiber)
                     )
                     self.vol_frac = (
-                        self.vol_frac + self.fiber_volume(new_fiber[0, 2]) / self.vol_total
+                        self.vol_frac
+                        + self.fiber_volume(new_fiber[0, 3]) / self.vol_total
                     )
                     self.num_fibers = self.num_fibers + new_fiber.shape[0]
                 del new_fiber
@@ -249,23 +258,25 @@ class HeterRadiusSphere(MicrosctucturaGenerator, DrawRVE3D):
                         min_index,
                         min_dis,
                     ) = self.min_dis_index(
-                        self.fiber_positions[ii, 0:2],
+                        self.fiber_positions[ii, 0:3],
                         self.fiber_positions,
                         self.fiber_min_dis_vector,
                         ii,
                         self.num_cycle,
                     )
                     new_fiber_temp = self.generate_first_heuristic_fibers(
-                        ref_point=self.fiber_positions[min_index, 0:3],
-                        fiber_temp=self.fiber_positions[ii, 0:3],
+                        ref_point=self.fiber_positions[min_index, 0:4],
+                        fiber_temp=self.fiber_positions[ii, 0:4],
                         dist_factor=self.dist_min_factor,
                     )
                     new_fiber = self.new_positions(
                         x_center=new_fiber_temp[0, 0],
                         y_center=new_fiber_temp[0, 1],
-                        radius=new_fiber_temp[0, 2],
+                        z_center=new_fiber_temp[0, 2],
+                        radius=new_fiber_temp[0, 3],
                         length=self.length,
                         width=self.width,
+                        height=self.height,
                     )
                     overlap_status = self.overlap_check(
                         new_fiber=new_fiber,
@@ -282,11 +293,10 @@ class HeterRadiusSphere(MicrosctucturaGenerator, DrawRVE3D):
                             new_fiber=new_fiber, iter=ii
                         )
                     else:
-                        ii = ii + int(self.fiber_positions[ii, 3])
+                        ii = ii + int(self.fiber_positions[ii, 4])
                     del new_fiber, new_fiber_temp
             # end of one cycle
             self.num_cycle = self.num_cycle + 1
-
 
     def _update_fiber_position(self, new_fiber: np.ndarray, iter: int) -> int:
         """update the fiber position
@@ -304,16 +314,16 @@ class HeterRadiusSphere(MicrosctucturaGenerator, DrawRVE3D):
             he updated number of index
         """
         # check the location compatibility
-        if new_fiber[0, 3] != new_fiber.shape[0]:
+        if new_fiber[0, 4] != new_fiber.shape[0]:
             raise Exception("fiber number is wrong \n")
 
-        if self.fiber_positions[iter, 3] == 1:
-            # the original fiber is a full circle
-            if new_fiber[0, 3] == 1:
+        if self.fiber_positions[iter, 4] == 1:
+            # the original fiber is a full shpere
+            if new_fiber[0, 4] == 1:
                 # keep one point after stirring
                 self.fiber_positions[iter, :] = new_fiber
                 iter = iter + 1
-            elif new_fiber[0, 3] == 2:
+            elif new_fiber[0, 4] == 2:
                 # split into two hal after stirring
                 self.fiber_positions = np.delete(
                     self.fiber_positions, (iter), axis=0
@@ -324,7 +334,7 @@ class HeterRadiusSphere(MicrosctucturaGenerator, DrawRVE3D):
                 )
                 # add two point at iith location
                 iter = iter + 2
-            elif new_fiber[0, 3] == 4:
+            elif new_fiber[0, 4] == 4:
                 # split into foul one-fouth circles after stirring
                 self.fiber_positions = np.delete(
                     self.fiber_positions, (iter), axis=0
@@ -338,15 +348,38 @@ class HeterRadiusSphere(MicrosctucturaGenerator, DrawRVE3D):
                 )
                 # add four point at iith location
                 iter = iter + 4
+            elif new_fiber[0, 4] == 8:
+                # split into foul one-eighth circles after stirring
+                self.fiber_positions = np.delete(
+                    self.fiber_positions, (iter), axis=0
+                )
+                # delete the original ii point first
+                self.fiber_positions = np.insert(
+                    self.fiber_positions,
+                    (
+                        iter,
+                        iter + 1,
+                        iter + 2,
+                        iter + 3,
+                        iter + 4,
+                        iter + 5,
+                        iter + 6,
+                        iter + 7,
+                    ),
+                    [new_fiber],
+                    axis=0,
+                )
+                # add eight point at iith location
+                iter = iter + 8
             else:
                 raise KeyError("The new splits of fiber is wrong!!! \n")
 
-        elif self.fiber_positions[iter, 3] == 2:
-            if new_fiber[0, 3] == 2:
+        elif self.fiber_positions[iter, 4] == 2:
+            if new_fiber[0, 4] == 2:
                 # keep two half points after stirring
                 self.fiber_positions[iter : iter + 2, :] = new_fiber
                 iter = iter + 2
-            elif new_fiber[0, 3] == 1:
+            elif new_fiber[0, 4] == 1:
                 # reduce to one circle after stirring
                 self.fiber_positions = np.delete(
                     self.fiber_positions, (iter, iter + 1), axis=0
@@ -357,7 +390,7 @@ class HeterRadiusSphere(MicrosctucturaGenerator, DrawRVE3D):
                 )
                 # add four point at iith location
                 iter = iter + 1
-            elif new_fiber[0, 3] == 4:
+            elif new_fiber[0, 4] == 4:
                 # reduce to one circle after stirring
                 self.fiber_positions = np.delete(
                     self.fiber_positions, (iter, iter + 1), axis=0
@@ -371,15 +404,38 @@ class HeterRadiusSphere(MicrosctucturaGenerator, DrawRVE3D):
                 )
                 # add four point at iith location
                 iter = iter + 4
+            elif new_fiber[0, 4] == 8:
+                # split into foul one-eighth circles after stirring
+                self.fiber_positions = np.delete(
+                    self.fiber_positions, (iter, iter + 1), axis=0
+                )
+                # delete the original ii point first
+                self.fiber_positions = np.insert(
+                    self.fiber_positions,
+                    (
+                        iter,
+                        iter + 1,
+                        iter + 2,
+                        iter + 3,
+                        iter + 4,
+                        iter + 5,
+                        iter + 6,
+                        iter + 7,
+                    ),
+                    [new_fiber],
+                    axis=0,
+                )
+                # add eight point at iith location
+                iter = iter + 8
             else:
-                print("The new splits of fiber is wrong!!! \n")
+                raise Exception("The new splits of fiber is wrong!!! \n")
 
-        elif self.fiber_positions[iter, 3] == 4:
-            if new_fiber[0, 3] == 4:
+        elif self.fiber_positions[iter, 4] == 4:
+            if new_fiber[0, 4] == 4:
                 # reduce to one circle after stirring
                 self.fiber_positions[iter : iter + 4, :] = new_fiber
                 iter = iter + 4
-            elif new_fiber[0, 3] == 2:
+            elif new_fiber[0, 4] == 2:
                 # reduce to one circle after stirring
                 self.fiber_positions = np.delete(
                     self.fiber_positions,
@@ -392,7 +448,7 @@ class HeterRadiusSphere(MicrosctucturaGenerator, DrawRVE3D):
                 )
                 # add two point at iith location
                 iter = iter + 2
-            elif new_fiber[0, 3] == 1:
+            elif new_fiber[0, 4] == 1:
                 # reduce to one circle after stirring
                 self.fiber_positions = np.delete(
                     self.fiber_positions,
@@ -405,14 +461,111 @@ class HeterRadiusSphere(MicrosctucturaGenerator, DrawRVE3D):
                 )
                 # add two point at iith location
                 iter = iter + 1
+            elif new_fiber[0, 4] == 8:
+                # split into foul one-eighth circles after stirring
+                self.fiber_positions = np.delete(
+                    self.fiber_positions,
+                    (iter, iter + 1, iter + 2, iter + 3),
+                    axis=0,
+                )
+                # delete the original ii point first
+                self.fiber_positions = np.insert(
+                    self.fiber_positions,
+                    (
+                        iter,
+                        iter + 1,
+                        iter + 2,
+                        iter + 3,
+                        iter + 4,
+                        iter + 5,
+                        iter + 6,
+                        iter + 7,
+                    ),
+                    [new_fiber],
+                    axis=0,
+                )
+                # add eight point at iith location
+                iter = iter + 8
+
             else:
                 raise KeyError("The new splits of fiber is wrong!!! \n")
 
+        elif self.fiber_positions[iter, 4] == 8:
+            if new_fiber[0, 4] == 8:
+                # reduce to one circle after stirring
+                self.fiber_positions[iter : iter + 8, :] = new_fiber
+                iter = iter + 8
+            elif new_fiber[0, 4] == 1:
+                # reduce to one sphere after stirring
+                self.fiber_positions = np.delete(
+                    self.fiber_positions,
+                    (
+                        iter,
+                        iter + 1,
+                        iter + 2,
+                        iter + 3,
+                        iter + 4,
+                        iter + 5,
+                        iter + 6,
+                        iter + 7,
+                    ),
+                    axis=0,
+                )
+                #
+                self.fiber_positions = np.insert(
+                    self.fiber_positions, (iter), [new_fiber], axis=0
+                )
+                iter = iter + 1
+            elif new_fiber[0, 4] == 2:
+                self.fiber_positions = np.delete(
+                    self.fiber_positions,
+                    (
+                        iter,
+                        iter + 1,
+                        iter + 2,
+                        iter + 3,
+                        iter + 4,
+                        iter + 5,
+                        iter + 6,
+                        iter + 7,
+                    ),
+                    axis=0,
+                )
+                #
+                self.fiber_positions = np.insert(
+                    self.fiber_positions, (iter, iter + 1), [new_fiber], axis=0
+                )
+                iter = iter + 2
+
+            elif new_fiber[0, 4] == 4:
+                self.fiber_positions = np.delete(
+                    self.fiber_positions,
+                    (
+                        iter,
+                        iter + 1,
+                        iter + 2,
+                        iter + 3,
+                        iter + 4,
+                        iter + 5,
+                        iter + 6,
+                        iter + 7,
+                    ),
+                    axis=0,
+                )
+                #
+                self.fiber_positions = np.insert(
+                    self.fiber_positions,
+                    (iter, iter + 1, iter + 2, iter + 3),
+                    [new_fiber],
+                    axis=0,
+                )
+                iter = iter + 4
+            else:
+                raise KeyError("The new splits of fiber is wrong!!! \n")
         else:
             raise KeyError("Can not match the overlap condition  !!! \n")
 
         return iter
-
 
     @staticmethod
     def fiber_volume(radius: float) -> float:
@@ -431,14 +584,16 @@ class HeterRadiusSphere(MicrosctucturaGenerator, DrawRVE3D):
         return (4 / 3) * np.pi * radius**3
 
     @staticmethod
-    def generate_random_fibers(len_start: float,
-                               len_end: float,
-                               wid_start: float,
-                               wid_end: float,
-                               hei_start: float,
-                               hei_end: float,
-                               radius_mu: float,
-                               radius_std: float) -> np.ndarray:
+    def generate_random_fibers(
+        len_start: float,
+        len_end: float,
+        wid_start: float,
+        wid_end: float,
+        hei_start: float,
+        hei_end: float,
+        radius_mu: float,
+        radius_std: float,
+    ) -> np.ndarray:
         """generate random fibers with different radiis
 
         Parameters
@@ -451,9 +606,9 @@ class HeterRadiusSphere(MicrosctucturaGenerator, DrawRVE3D):
             the start location of width
         wid_end : float
             the end location of width
-        hei_start: float 
-            the start height of length 
-        hei_end : float 
+        hei_start: float
+            the start height of length
+        hei_end : float
             the end height of height
         radius_mu : float
             mean of radius
@@ -481,6 +636,7 @@ class HeterRadiusSphere(MicrosctucturaGenerator, DrawRVE3D):
         radius: float,
         width: float,
         length: float,
+        height: float,
     ) -> np.ndarray:
         """This is the function used to determine the locations of disks
         considering the boundary of RVE. To be specific, the disk should
@@ -493,206 +649,1408 @@ class HeterRadiusSphere(MicrosctucturaGenerator, DrawRVE3D):
             new center of X axis
         y_center : float
             new center of Y axis
+        z_center : float
+            new center of Z axis
         radius : float
             radius of the disk
         width : float
             width of RVE
         length : float
             length of RVE
+        height : float
+            height of RVE
 
         Returns
         -------
         np.ndarray
-            XC, YC, split  which is the new locations of this fiber
+            XC, YC, ZC, radius, and split  which are the new locations of this fiber
             (because in some locations, the circles need to be split)
-        ####################################
-        #     #          2_2       #       #
-        # 4_1 #                    #4_2    #
-        ####################################
-        #     #                    #       #
-        # 2_3 #          1         #   2_4 #
-        #     #                    #       #
-        #     #                    #       #
-        ####################################
-        # 4_3 #         2_1        # 4_4   #
-        #     #                    #       #
-        ####################################
 
         """
 
-        new_fiber = np.zeros((1, 4))
+        new_fiber = np.zeros((1, 5))
         if (
             radius <= x_center <= length - radius
             and radius <= y_center <= width - radius
+            and radius <= z_center <= height - radius
         ):
             # locate in center region and split = 1
             new_fiber[0, 0] = x_center
             new_fiber[0, 1] = y_center
-            new_fiber[0, 2] = radius
-            new_fiber[0, 3] = 1
+            new_fiber[0, 2] = z_center
+            new_fiber[0, 3] = radius
+            new_fiber[0, 4] = 1
 
-        elif length - radius >= x_center >= radius > y_center:
-            # location 2_1
+        elif (
+            x_center < radius
+            and radius < y_center < width - radius
+            and radius < z_center < height - radius
+        ):
+
+            # locate in center region and split = 2, there should have one
+            # fiber in the countpart side
             new_fiber[0, 0] = x_center
             new_fiber[0, 1] = y_center
-            new_fiber[0, 2] = radius
-            new_fiber[0, 3] = 2
+            new_fiber[0, 2] = z_center
+            new_fiber[0, 3] = radius
+            new_fiber[0, 4] = 2
+
             new_fiber = np.vstack(
                 (
                     new_fiber,
-                    np.array([x_center, y_center + width, radius, 2]).reshape((1, 4)),
-                )
+                    np.array(
+                        [x_center + length, y_center, z_center, radius, 2]
+                    ).reshape((1, 5)),
+                ),
             )
 
         elif (
-            radius <= x_center <= length - radius and y_center > width - radius
+            x_center > length - radius
+            and radius < y_center < width - radius
+            and radius < z_center < height - radius
         ):
-            # location 2_2
             new_fiber[0, 0] = x_center
             new_fiber[0, 1] = y_center
-            new_fiber[0, 2] = radius
-            new_fiber[0, 3] = 2
+            new_fiber[0, 2] = z_center
+            new_fiber[0, 3] = radius
+            new_fiber[0, 4] = 2
             new_fiber = np.vstack(
                 (
                     new_fiber,
-                    np.array([x_center, y_center - width, radius, 2]).reshape((1, 4)),
-                )
+                    np.array(
+                        [x_center - length, y_center, z_center, radius, 2]
+                    ).reshape((1, 5)),
+                ),
             )
-
-        elif width - radius >= y_center >= radius > x_center:
-            # location 2_3
+        elif (
+            radius < x_center < length - radius
+            and y_center < radius
+            and radius < z_center < height - radius
+        ):
             new_fiber[0, 0] = x_center
             new_fiber[0, 1] = y_center
-            new_fiber[0, 2] = radius
-            new_fiber[0, 3] = 2
+            new_fiber[0, 2] = z_center
+            new_fiber[0, 3] = radius
+            new_fiber[0, 4] = 2
+            # add one more point on the counter side
             new_fiber = np.vstack(
                 (
                     new_fiber,
-                    np.array([x_center + length, y_center, radius, 2]).reshape((1, 4)),
-                )
+                    np.array(
+                        [x_center, y_center + width, z_center, radius, 2]
+                    ).reshape((1, 5)),
+                ),
+            )
+        elif (
+            radius < x_center < length - radius
+            and y_center > width - radius
+            and radius < z_center < height - radius
+        ):
+
+            new_fiber[0, 0] = x_center
+            new_fiber[0, 1] = y_center
+            new_fiber[0, 2] = z_center
+            new_fiber[0, 3] = radius
+            new_fiber[0, 4] = 2
+            # add one more point on the counter side
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [x_center, y_center - width, z_center, radius, 2]
+                    ).reshape((1, 5)),
+                ),
+            )
+        elif (
+            radius < x_center < length - radius
+            and radius < y_center < width - radius
+            and z_center > height - radius
+        ):
+
+            new_fiber[0, 0] = x_center
+            new_fiber[0, 1] = y_center
+            new_fiber[0, 2] = z_center
+            new_fiber[0, 3] = radius
+            new_fiber[0, 4] = 2
+            # add one more point on the counter side
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [x_center, y_center, z_center - height, radius, 2]
+                    ).reshape((1, 5)),
+                ),
             )
 
         elif (
-            radius <= y_center <= width - radius and x_center > length - radius
+            radius < x_center < length - radius
+            and radius < y_center < width - radius
+            and z_center < radius
         ):
-            # location 2_4
+
             new_fiber[0, 0] = x_center
             new_fiber[0, 1] = y_center
-            new_fiber[0, 2] = radius
-            new_fiber[0, 3] = 2
+            new_fiber[0, 2] = z_center
+            new_fiber[0, 3] = radius
+            new_fiber[0, 4] = 2
+            # add one more point on the counter side
             new_fiber = np.vstack(
                 (
                     new_fiber,
-                    np.array([x_center - length, y_center, radius, 2]).reshape((1, 4)),
-                )
+                    np.array(
+                        [x_center, y_center, z_center + height, radius, 2]
+                    ).reshape((1, 5)),
+                ),
             )
 
-        elif x_center < radius and y_center > width - radius:
-            # location 4_1
+        elif (
+            x_center < radius
+            and y_center < radius
+            and radius < z_center < height - radius
+        ):  # 4 split
             new_fiber[0, 0] = x_center
             new_fiber[0, 1] = y_center
-            new_fiber[0, 2] = radius
-            new_fiber[0, 3] = 4
+            new_fiber[0, 2] = z_center
+            new_fiber[0, 3] = radius
+            new_fiber[0, 4] = 4
+
+            # still has three points at counter edges
             new_fiber = np.vstack(
                 (
                     new_fiber,
-                    np.array([x_center + length, y_center,radius,  4]).reshape((1, 4)),
-                )
+                    np.array(
+                        [x_center + length, y_center, z_center, radius, 4]
+                    ).reshape((1, 5)),
+                ),
             )
             new_fiber = np.vstack(
                 (
                     new_fiber,
-                    np.array([x_center + length, y_center - width, radius, 4]).reshape(
-                        (1, 4)
-                    ),
-                )
+                    np.array(
+                        [x_center, y_center + width, z_center, radius, 4]
+                    ).reshape((1, 5)),
+                ),
             )
             new_fiber = np.vstack(
                 (
                     new_fiber,
-                    np.array([x_center, y_center - width, radius, 4]).reshape((1, 4)),
-                )
+                    np.array(
+                        [
+                            x_center + length,
+                            y_center + width,
+                            z_center,
+                            radius,
+                            4,
+                        ]
+                    ).reshape((1, 5)),
+                ),
+            )
+        elif (
+            x_center > length - radius
+            and y_center < radius
+            and radius < z_center < height - radius
+        ):  # 4 split
+            new_fiber[0, 0] = x_center
+            new_fiber[0, 1] = y_center
+            new_fiber[0, 2] = z_center
+            new_fiber[0, 3] = radius
+            new_fiber[0, 4] = 4
+
+            # still has three points at counter edges
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [x_center - length, y_center, z_center, radius, 4]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [x_center, y_center + width, z_center, radius, 4]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [
+                            x_center - length,
+                            y_center + width,
+                            z_center,
+                            radius,
+                            4,
+                        ]
+                    ).reshape((1, 5)),
+                ),
             )
 
-        elif x_center > length - radius and y_center > width - radius:
-            # location 4_2
+        elif (
+            x_center < radius
+            and y_center > width - radius
+            and radius < z_center < height - radius
+        ):  # 4 split
             new_fiber[0, 0] = x_center
             new_fiber[0, 1] = y_center
-            new_fiber[0, 2] = radius
-            new_fiber[0, 3] = 4
+            new_fiber[0, 2] = z_center
+            new_fiber[0, 3] = radius
+            new_fiber[0, 4] = 4
+
+            # still has three points at counter edges
             new_fiber = np.vstack(
                 (
                     new_fiber,
-                    np.array([x_center - length, y_center, radius, 4]).reshape((1, 4)),
-                )
+                    np.array(
+                        [x_center + length, y_center, z_center, radius, 4]
+                    ).reshape((1, 5)),
+                ),
             )
             new_fiber = np.vstack(
                 (
                     new_fiber,
-                    np.array([x_center - length, y_center - width, radius, 4]).reshape(
-                        (1,4)
-                    ),
-                )
+                    np.array(
+                        [x_center, y_center - width, z_center, radius, 4]
+                    ).reshape((1, 5)),
+                ),
             )
             new_fiber = np.vstack(
                 (
                     new_fiber,
-                    np.array([x_center, y_center - width, radius, 4]).reshape((1, 4)),
-                )
+                    np.array(
+                        [
+                            x_center + length,
+                            y_center - width,
+                            z_center,
+                            radius,
+                            4,
+                        ]
+                    ).reshape((1, 5)),
+                ),
             )
 
-        elif x_center < radius and y_center < radius:
-            # location 4_3
+        elif (
+            x_center > length - radius
+            and y_center > width - radius
+            and radius < z_center < height - radius
+        ):  # split
             new_fiber[0, 0] = x_center
             new_fiber[0, 1] = y_center
-            new_fiber[0, 2] = radius
-            new_fiber[0, 3] = 4
+            new_fiber[0, 2] = z_center
+            new_fiber[0, 3] = radius
+            new_fiber[0, 4] = 4
+
+            # still has three points at counter edges
             new_fiber = np.vstack(
                 (
                     new_fiber,
-                    np.array([x_center + length, y_center, radius, 4]).reshape((1, 4)),
-                )
+                    np.array(
+                        [x_center - length, y_center, z_center, radius, 4]
+                    ).reshape((1, 5)),
+                ),
             )
             new_fiber = np.vstack(
                 (
                     new_fiber,
-                    np.array([x_center + length, y_center + width, radius, 4]).reshape(
-                        (1, 4)
-                    ),
-                )
+                    np.array(
+                        [x_center, y_center - width, z_center, radius, 4]
+                    ).reshape((1, 5)),
+                ),
             )
             new_fiber = np.vstack(
                 (
                     new_fiber,
-                    np.array([x_center, y_center + width, radius, 4]).reshape((1, 4)),
-                )
+                    np.array(
+                        [
+                            x_center - length,
+                            y_center - width,
+                            z_center,
+                            radius,
+                            4,
+                        ]
+                    ).reshape((1, 5)),
+                ),
             )
 
-        elif x_center > length - radius and y_center < radius:
-            # location 4_4
+        elif (
+            x_center < radius
+            and radius < y_center < width - radius
+            and z_center < radius
+        ):  # 4 split
             new_fiber[0, 0] = x_center
             new_fiber[0, 1] = y_center
-            new_fiber[0, 2] = radius
-            new_fiber[0, 3] = 4
+            new_fiber[0, 2] = z_center
+            new_fiber[0, 3] = radius
+            new_fiber[0, 4] = 4
+
+            # still has three points at counter edges
             new_fiber = np.vstack(
                 (
                     new_fiber,
-                    np.array([x_center - length, y_center, radius, 4]).reshape((1, 4)),
-                )
+                    np.array(
+                        [x_center + length, y_center, z_center, radius, 4]
+                    ).reshape((1, 5)),
+                ),
             )
             new_fiber = np.vstack(
                 (
                     new_fiber,
-                    np.array([x_center - length, y_center + width, radius, 4]).reshape(
-                        (1, 4)
-                    ),
-                )
+                    np.array(
+                        [x_center, y_center, z_center + height, radius, 4]
+                    ).reshape((1, 5)),
+                ),
             )
             new_fiber = np.vstack(
                 (
                     new_fiber,
-                    np.array([x_center, y_center + width, radius, 4]).reshape((1, 4)),
-                )
+                    np.array(
+                        [
+                            x_center + length,
+                            y_center,
+                            z_center + height,
+                            radius,
+                            4,
+                        ]
+                    ).reshape((1, 5)),
+                ),
+            )
+
+        elif (
+            x_center < radius
+            and radius < y_center < width - radius
+            and z_center > height - radius
+        ):  # 4 split
+            new_fiber[0, 0] = x_center
+            new_fiber[0, 1] = y_center
+            new_fiber[0, 2] = z_center
+            new_fiber[0, 3] = radius
+            new_fiber[0, 4] = 4
+
+            # still has three points at counter edges
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [x_center + length, y_center, z_center, radius, 4]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [x_center, y_center, z_center - height, radius, 4]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [
+                            x_center + length,
+                            y_center,
+                            z_center - height,
+                            radius,
+                            4,
+                        ]
+                    ).reshape((1, 5)),
+                ),
+            )
+
+        elif (
+            x_center > length - radius
+            and radius < y_center < width - radius
+            and z_center < radius
+        ):  # 4 split
+            new_fiber[0, 0] = x_center
+            new_fiber[0, 1] = y_center
+            new_fiber[0, 2] = z_center
+            new_fiber[0, 3] = radius
+            new_fiber[0, 4] = 4
+
+            # still has three points at counter edges
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [x_center - length, y_center, z_center, radius, 4]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [x_center, y_center, z_center + height, radius, 4]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [
+                            x_center - length,
+                            y_center,
+                            z_center + height,
+                            radius,
+                            4,
+                        ]
+                    ).reshape((1, 5)),
+                ),
+            )
+
+        elif (
+            x_center > length - radius
+            and radius < y_center < width - radius
+            and z_center > height - radius
+        ):  # 4 split
+            new_fiber[0, 0] = x_center
+            new_fiber[0, 1] = y_center
+            new_fiber[0, 2] = z_center
+            new_fiber[0, 3] = radius
+            new_fiber[0, 4] = 4
+
+            # still has three points at counter edges
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [x_center - length, y_center, z_center, radius, 4]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [x_center, y_center, z_center - height, radius, 4]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [
+                            x_center - length,
+                            y_center,
+                            z_center - height,
+                            radius,
+                            4,
+                        ]
+                    ).reshape((1, 5)),
+                ),
+            )
+
+        elif (
+            radius < x_center < length - radius
+            and y_center < radius
+            and z_center < radius
+        ):  # 4 split
+            new_fiber[0, 0] = x_center
+            new_fiber[0, 1] = y_center
+            new_fiber[0, 2] = z_center
+            new_fiber[0, 3] = radius
+            new_fiber[0, 4] = 4
+
+            # still has three points at counter edges
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [x_center, y_center + width, z_center, radius, 4]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [x_center, y_center, z_center + height, radius, 4]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [
+                            x_center,
+                            y_center + width,
+                            z_center + height,
+                            radius,
+                            4,
+                        ]
+                    ).reshape((1, 5)),
+                ),
+            )
+
+        elif (
+            radius < x_center < length - radius
+            and y_center > width - radius
+            and z_center < radius
+        ):  # 4 split
+            new_fiber[0, 0] = x_center
+            new_fiber[0, 1] = y_center
+            new_fiber[0, 2] = z_center
+            new_fiber[0, 3] = radius
+            new_fiber[0, 4] = 4
+
+            # still has three points at counter edges
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [x_center, y_center - width, z_center, radius, 4]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [x_center, y_center, z_center + height, radius, 4]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [
+                            x_center,
+                            y_center - width,
+                            z_center + height,
+                            radius,
+                            4,
+                        ]
+                    ).reshape((1, 5)),
+                ),
+            )
+
+        elif (
+            radius < x_center < length - radius
+            and y_center < radius
+            and z_center > height - radius
+        ):  # 4 split
+            new_fiber[0, 0] = x_center
+            new_fiber[0, 1] = y_center
+            new_fiber[0, 2] = z_center
+            new_fiber[0, 3] = radius
+            new_fiber[0, 4] = 4
+
+            # still has three points at counter edges
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [x_center, y_center + width, z_center, radius, 4]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [x_center, y_center, z_center - height, radius, 4]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [
+                            x_center,
+                            y_center + width,
+                            z_center - height,
+                            radius,
+                            4,
+                        ]
+                    ).reshape((1, 5)),
+                ),
+            )
+
+        elif (
+            radius < x_center < length - radius
+            and y_center > width - radius
+            and z_center > height - radius
+        ):  # 4 split
+            new_fiber[0, 0] = x_center
+            new_fiber[0, 1] = y_center
+            new_fiber[0, 2] = z_center
+            new_fiber[0, 3] = radius
+            new_fiber[0, 4] = 4
+
+            # still has three points at counter edges
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [x_center, y_center - width, z_center, radius, 4]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [x_center, y_center, z_center - height, radius, 4]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [
+                            x_center,
+                            y_center - width,
+                            z_center - height,
+                            radius,
+                            4,
+                        ]
+                    ).reshape((1, 5)),
+                ),
+            )
+
+        elif (
+            x_center < radius and y_center < radius and z_center < radius
+        ):  # 8 split
+            new_fiber[0, 0] = x_center
+            new_fiber[0, 1] = y_center
+            new_fiber[0, 2] = z_center
+            new_fiber[0, 3] = radius
+            new_fiber[0, 4] = 8
+            # still has three points at counter edges
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [x_center + length, y_center, z_center, radius, 8]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [
+                            x_center + length,
+                            y_center + width,
+                            z_center,
+                            radius,
+                            8,
+                        ]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [
+                            x_center + length,
+                            y_center,
+                            z_center + height,
+                            radius,
+                            8,
+                        ]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [
+                            x_center + length,
+                            y_center + width,
+                            z_center + height,
+                            radius,
+                            8,
+                        ]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [x_center, y_center + width, z_center, radius, 8]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [x_center, y_center, z_center + height, radius, 8]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [
+                            x_center,
+                            y_center + width,
+                            z_center + height,
+                            radius,
+                            8,
+                        ]
+                    ).reshape((1, 5)),
+                ),
+            )
+
+        elif (
+            x_center < radius
+            and y_center > width - radius
+            and z_center < radius
+        ):  # 8 split
+            new_fiber[0, 0] = x_center
+            new_fiber[0, 1] = y_center
+            new_fiber[0, 2] = z_center
+            new_fiber[0, 3] = radius
+            new_fiber[0, 4] = 8
+            # still has three points at counter edges
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [x_center + length, y_center, z_center, radius, 8]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [
+                            x_center + length,
+                            y_center - width,
+                            z_center,
+                            radius,
+                            8,
+                        ]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [
+                            x_center + length,
+                            y_center,
+                            z_center + height,
+                            radius,
+                            8,
+                        ]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [
+                            x_center + length,
+                            y_center - width,
+                            z_center + height,
+                            radius,
+                            8,
+                        ]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [x_center, y_center - width, z_center, radius, 8]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [x_center, y_center, z_center + height, radius, 8]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [
+                            x_center,
+                            y_center - width,
+                            z_center + height,
+                            radius,
+                            8,
+                        ]
+                    ).reshape((1, 5)),
+                ),
+            )
+
+        elif (
+            x_center < radius
+            and y_center < radius
+            and z_center > height - radius
+        ):  # 8 split
+
+            new_fiber[0, 0] = x_center
+            new_fiber[0, 1] = y_center
+            new_fiber[0, 2] = z_center
+            new_fiber[0, 3] = radius
+            new_fiber[0, 4] = 8
+            # still has three points at counter edges
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [x_center + length, y_center, z_center, radius, 8]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [
+                            x_center + length,
+                            y_center + width,
+                            z_center,
+                            radius,
+                            8,
+                        ]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [
+                            x_center + length,
+                            y_center,
+                            z_center - height,
+                            radius,
+                            8,
+                        ]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [
+                            x_center + length,
+                            y_center + width,
+                            z_center - height,
+                            radius,
+                            8,
+                        ]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [x_center, y_center + width, z_center, radius, 8]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [x_center, y_center, z_center - height, radius, 8]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [
+                            x_center,
+                            y_center + width,
+                            z_center - height,
+                            radius,
+                            8,
+                        ]
+                    ).reshape((1, 5)),
+                ),
+            )
+
+        elif (
+            x_center < radius
+            and y_center > width - radius
+            and z_center > height - radius
+        ):  # 8 split
+
+            new_fiber[0, 0] = x_center
+            new_fiber[0, 1] = y_center
+            new_fiber[0, 2] = z_center
+            new_fiber[0, 3] = radius
+            new_fiber[0, 4] = 8
+            # still has three points at counter edges
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [x_center + length, y_center, z_center, radius, 8]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [
+                            x_center + length,
+                            y_center - width,
+                            z_center,
+                            radius,
+                            8,
+                        ]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [
+                            x_center + length,
+                            y_center,
+                            z_center - height,
+                            radius,
+                            8,
+                        ]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [
+                            x_center + length,
+                            y_center - width,
+                            z_center - height,
+                            radius,
+                            8,
+                        ]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [x_center, y_center - width, z_center, radius, 8]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [x_center, y_center, z_center - height, radius, 8]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [
+                            x_center,
+                            y_center - width,
+                            z_center - height,
+                            radius,
+                            8,
+                        ]
+                    ).reshape((1, 5)),
+                ),
+            )
+
+        elif (
+            x_center > length - radius
+            and y_center < radius
+            and z_center < radius
+        ):  # 8 split
+            new_fiber[0, 0] = x_center
+            new_fiber[0, 1] = y_center
+            new_fiber[0, 2] = z_center
+            new_fiber[0, 3] = radius
+            new_fiber[0, 4] = 8
+            # still has three points at counter edges
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [x_center - length, y_center, z_center, radius, 8]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [
+                            x_center - length,
+                            y_center + width,
+                            z_center,
+                            radius,
+                            8,
+                        ]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [
+                            x_center - length,
+                            y_center,
+                            z_center + height,
+                            radius,
+                            8,
+                        ]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [
+                            x_center - length,
+                            y_center + width,
+                            z_center + height,
+                            radius,
+                            8,
+                        ]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [x_center, y_center + width, z_center, radius, 8]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [x_center, y_center, z_center + height, radius, 8]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [
+                            x_center,
+                            y_center + width,
+                            z_center + height,
+                            radius,
+                            8,
+                        ]
+                    ).reshape((1, 5)),
+                ),
+            )
+        elif (
+            x_center > length - radius
+            and y_center > width - radius
+            and z_center < radius
+        ):  # 8 split
+            new_fiber[0, 0] = x_center
+            new_fiber[0, 1] = y_center
+            new_fiber[0, 2] = z_center
+            new_fiber[0, 3] = radius
+            new_fiber[0, 4] = 8
+            # still has three points at counter edges
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [x_center - length, y_center, z_center, radius, 8]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [
+                            x_center - length,
+                            y_center - width,
+                            z_center,
+                            radius,
+                            8,
+                        ]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [
+                            x_center - length,
+                            y_center,
+                            z_center + height,
+                            radius,
+                            8,
+                        ]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [
+                            x_center - length,
+                            y_center - width,
+                            z_center + height,
+                            radius,
+                            8,
+                        ]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [x_center, y_center - width, z_center, radius, 8]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [x_center, y_center, z_center + height, radius, 8]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [
+                            x_center,
+                            y_center - width,
+                            z_center + height,
+                            radius,
+                            8,
+                        ]
+                    ).reshape((1, 5)),
+                ),
+            )
+        elif (
+            x_center > length - radius
+            and y_center < radius
+            and z_center > height - radius
+        ):  # 8 split
+            new_fiber[0, 0] = x_center
+            new_fiber[0, 1] = y_center
+            new_fiber[0, 2] = z_center
+            new_fiber[0, 3] = radius
+            new_fiber[0, 4] = 8
+            # still has three points at counter edges
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [x_center - length, y_center, z_center, radius, 8]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [
+                            x_center - length,
+                            y_center + width,
+                            z_center,
+                            radius,
+                            8,
+                        ]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [
+                            x_center - length,
+                            y_center,
+                            z_center - height,
+                            radius,
+                            8,
+                        ]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [
+                            x_center - length,
+                            y_center + width,
+                            z_center - height,
+                            radius,
+                            8,
+                        ]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [x_center, y_center + width, z_center, radius, 8]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [x_center, y_center, z_center - height, radius, 8]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [
+                            x_center,
+                            y_center + width,
+                            z_center - height,
+                            radius,
+                            8,
+                        ]
+                    ).reshape((1, 5)),
+                ),
+            )
+
+        elif (
+            x_center > length - radius
+            and y_center > width - radius
+            and z_center > height - radius
+        ):  # 8 split
+
+            new_fiber[0, 0] = x_center
+            new_fiber[0, 1] = y_center
+            new_fiber[0, 2] = z_center
+            new_fiber[0, 3] = radius
+            new_fiber[0, 4] = 8
+            # still has three points at counter edges
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [x_center - length, y_center, z_center, radius, 8]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [
+                            x_center - length,
+                            y_center - width,
+                            z_center,
+                            radius,
+                            8,
+                        ]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [
+                            x_center - radius,
+                            y_center,
+                            z_center - radius,
+                            radius,
+                            8,
+                        ]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [
+                            x_center - length,
+                            y_center - width,
+                            z_center - height,
+                            radius,
+                            8,
+                        ]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [x_center, y_center - width, z_center, radius, 8]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [x_center, y_center, z_center - height, radius, 8]
+                    ).reshape((1, 5)),
+                ),
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array(
+                        [
+                            x_center,
+                            y_center - width,
+                            z_center - height,
+                            radius,
+                            8,
+                        ]
+                    ).reshape((1, 5)),
+                ),
             )
 
         else:
@@ -740,16 +2098,26 @@ class HeterRadiusSphere(MicrosctucturaGenerator, DrawRVE3D):
         fiber_pos = fiber_pos.copy()
 
         if stage == "step_one":
-            min_dis_threhold = dist_factor * (new_fiber[0, 2] + fiber_pos[:, 2]).reshape((-1, 1))
-            points_dis_temp = distance_matrix(fiber_pos[:, 0:2], new_fiber[:, 0:2])
+            min_dis_threhold = dist_factor * (
+                new_fiber[0, 3] + fiber_pos[:, 3]
+            ).reshape((-1, 1))
+            points_dis_temp = distance_matrix(
+                fiber_pos[:, 0:3], new_fiber[:, 0:3]
+            )
             points_dis = np.min(points_dis_temp, 1, keepdims=True)
             min_dis = points_dis - min_dis_threhold
-            
+
         elif stage == "step_two":
             # calculate the minmum distance threshold
-            min_dis_threhold = dist_factor * (new_fiber[0, 2] + fiber_pos[:,2]).reshape((-1, 1))
-            points_dis_temp = distance_matrix(fiber_pos[:, 0:2], new_fiber[:, 0:2])
-            points_dis_temp[fiber_index : fiber_index + int(fiber_pos[fiber_index, 3]), :] = math.inf 
+            min_dis_threhold = dist_factor * (
+                new_fiber[0, 3] + fiber_pos[:, 3]
+            ).reshape((-1, 1))
+            points_dis_temp = distance_matrix(
+                fiber_pos[:, 0:3], new_fiber[:, 0:3]
+            )
+            points_dis_temp[
+                fiber_index : fiber_index + int(fiber_pos[fiber_index, 4]), :
+            ] = math.inf
             points_dis = np.min(points_dis_temp, 1, keepdims=True)
             min_dis = points_dis - min_dis_threhold
 
@@ -804,14 +2172,15 @@ class HeterRadiusSphere(MicrosctucturaGenerator, DrawRVE3D):
         fiber_pos = fiber_pos.copy()
 
         # pre-process the data : find out the same row data and delete it
-        temp_fiber = temp_fiber.reshape((1, 2))
-        points_dis = distance_matrix(fiber_pos[:, 0:2], temp_fiber)
+        temp_fiber = temp_fiber.reshape((1, 3))
+        points_dis = distance_matrix(fiber_pos[:, 0:3], temp_fiber)
         points_dis[points_dis == 0] = math.inf
         if cycle == 0:
             min_dis = points_dis.min()
             min_index = np.where(points_dis == min_dis)[0]
             fiber_min_dis_vector[ii, cycle, 0] = min_index
             fiber_min_dis_vector[ii, cycle, 1] = min_dis
+            
         elif cycle == 1:
             index_pre = int(fiber_min_dis_vector[ii, cycle - 1, 0])
             if index_pre < points_dis.shape[0]:
@@ -835,10 +2204,10 @@ class HeterRadiusSphere(MicrosctucturaGenerator, DrawRVE3D):
             min_dis = points_dis.min()
             min_index = np.where(points_dis == min_dis)[0]
             fiber_min_dis_vector[ii, cycle, 0] = min_index
-            fiber_min_dis_vector[ii, cycle, 1] = min_dis
+            fiber_min_dis_vector[ii, cycle, 1] = min_dis 
+
 
         return fiber_min_dis_vector, min_index, min_dis
-
 
     @staticmethod
     def generate_first_heuristic_fibers(
@@ -861,16 +2230,15 @@ class HeterRadiusSphere(MicrosctucturaGenerator, DrawRVE3D):
             The updated location of the considering fiber
         """
 
-        fiber_temp = fiber_temp.reshape((1, 3)) 
-        ref_point = ref_point.reshape((1,3))
+        fiber_temp = fiber_temp.reshape((1, 4))
+        ref_point = ref_point.reshape((1, 4))
         # generate the random factor for fiber stirring
         delta = np.random.uniform(0, 1, 1)
-        dist_min = dist_factor*(fiber_temp[0, 2] + ref_point[0, 2])
-        fiber_loc = fiber_temp[0, 0:2].reshape((1, 2)).copy()
-        ref_loc = ref_point[0, 0:2].reshape((1, 2)).copy()
+        dist_min = dist_factor * (fiber_temp[0, 3] + ref_point[0, 3])
+        fiber_loc = fiber_temp[0, 0:3].reshape((1, 3)).copy()
+        ref_loc = ref_point[0, 0:3].reshape((1, 3)).copy()
         # maximum length of movement
         k = 1 - dist_min / distance_matrix(ref_loc, fiber_loc)
-        fiber_temp[0, 0:2] = fiber_loc + delta * k * (ref_loc - fiber_loc)
+        fiber_temp[0, 0:3] = fiber_loc + delta * k * (ref_loc - fiber_loc)
 
-        return fiber_temp 
-    
+        return fiber_temp

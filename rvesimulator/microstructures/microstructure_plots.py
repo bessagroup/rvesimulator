@@ -115,15 +115,17 @@ class DrawRVE2D:
             plt.close()
 
     @staticmethod
-    def heter_cricle_inclusion_plot(circle_position: np.ndarray,
-                                    radius_mu:float,
-                                    len_start: float,
-                                    len_end: float,
-                                    wid_start: float,
-                                    wid_end: float,
-                                    vol_frac: float,
-                                    save_figure: bool = False,
-                                    fig_name: str = "RVE.png") -> None:
+    def heter_cricle_inclusion_plot(
+        circle_position: np.ndarray,
+        radius_mu: float,
+        len_start: float,
+        len_end: float,
+        wid_start: float,
+        wid_end: float,
+        vol_frac: float,
+        save_figure: bool = False,
+        fig_name: str = "RVE.png",
+    ) -> None:
         """_summary_
 
         Parameters
@@ -220,47 +222,53 @@ class DrawRVE2D:
             plt.savefig(fig_name, dpi=300, bbox_inches="tight")
             plt.close()
 
-class DrawRVE3D: 
 
+class DrawRVE3D:
     @staticmethod
     def sphere_coordinate(location_information: np.ndarray) -> tuple:
-        """generate coordinate of sphere 
+        """generate coordinate of sphere
 
         Parameters
         ----------
         location_information : np.ndarray
-           a numpy array contains center and radius info of 
-           a sphere [x, y, z, r] 
+           a numpy array contains center and radius info of
+           a sphere [x, y, z, r]
 
         Returns
         -------
         tuple
-            coordinate of x, y, z 
+            coordinate of x, y, z
         """
 
         loc_info = np.reshape(location_information, (1, -1))
-        u = np.linspace(0, 2 * np.pi, 100)
-        v = np.linspace(0, np.pi, 100) 
+        u = np.linspace(0, 2 * np.pi, 20)
+        v = np.linspace(0, np.pi, 20)
         x = loc_info[0, 3] * np.outer(np.cos(u), np.sin(v)) + loc_info[0, 0]
         y = loc_info[0, 3] * np.outer(np.sin(u), np.sin(v)) + loc_info[0, 1]
-        z = loc_info[0, 3] * np.outer(np.ones(np.size(u)), np.cos(v)) + loc_info[0, 2] 
-        
+        z = (
+            loc_info[0, 3] * np.outer(np.ones(np.size(u)), np.cos(v))
+            + loc_info[0, 2]
+        )
+
         return x, y, z
 
-    def heter_radius_sphere_plot(self,
-                                 location_information: np.ndarray,
-                                 length: float,
-                                 width: float,
-                                 height: float,
-                                 vol_frac: float,
-                                 save_figure: bool = False,
-                                 fig_name: str = "cubic.png") -> None:
+    def heter_radius_sphere_plot(
+        self,
+        location_information: np.ndarray,
+        radius_mu: float,
+        length: float,
+        width: float,
+        height: float,
+        vol_frac: float,
+        save_figure: bool = False,
+        fig_name: str = "cubic.png",
+    ) -> None:
         """plot 3d rve with sphere inclusion
 
         Parameters
         ----------
         location_information : np.ndarray
-            location information    
+            location information
         length : float
             length of cubic
         width : float
@@ -275,28 +283,35 @@ class DrawRVE3D:
             fig name, by default "cubic_rve.png"
         """
         fig = plt.figure()
-        ax = fig.add_subplot(projection='3d')
+        ax = fig.add_subplot(projection="3d")
         # Plot the surface
-        for ii in range(location_information.shape[0]): 
-            x, y, z = self.sphere_coordinate(location_information=location_information[ii,:]) 
+        for ii in range(location_information.shape[0]):
+            x, y, z = self.sphere_coordinate(
+                location_information=location_information[ii, :]
+            )
             if location_information[ii, 4] == 1:
-                ax.plot_surface(x, y, z, color='lightseagreen')
+                ax.plot_surface(x, y, z, color="lightseagreen")
             elif location_information[ii, 4] == 2:
-                ax.plot_surface(x, y, z, color='orange')
+                ax.plot_surface(x, y, z, color="orange")
             elif location_information[ii, 4] == 4:
-                ax.plot_surface(x, y, z, color='firebrick')
+                ax.plot_surface(x, y, z, color="blue")
+            elif location_information[ii, 4] == 8:
+                ax.plot_surface(x, y, z, color="firebrick")
             else:
-                raise ValueError("Spltting number is wrong!\n") 
-        axes = [length, width, height]
+                raise ValueError("Spltting number is wrong!\n")
+        axes = [int(length), int(width), int(height)]
         data = np.ones(axes, dtype=np.bool)
-        alpha = 0.4
+        alpha = 0.6
         colors = np.empty(axes + [4], dtype=np.float32)
         colors[:] = [1, 1, 1, alpha]
         ax.voxels(data, facecolors=colors)
+        ax.set_xlim3d(-2 * radius_mu, length + 2 * radius_mu)
+        ax.set_ylim3d(-2 * radius_mu, width + 2 * radius_mu)
+        ax.set_zlim3d(-2 * radius_mu, height + 2 * radius_mu)
         plt.title(f"$V_f$ = {vol_frac*100:.2f}")
 
         # Set an equal aspect ratio
-        ax.set_aspect('auto')
+        ax.set_aspect("auto")
         if not save_figure:
             plt.show()
 

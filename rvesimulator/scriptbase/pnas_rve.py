@@ -34,8 +34,8 @@ class PnasHollowPlate(RVE2DBase):
             "poission_ratio": 0.3,
             "yield_table": None,
             "mesh_partition": 30,
-            "loads": [0.1, 0.0, 0.0],
-            "loads_path": None,
+            "strain": [0.1, 0.0, 0.0],
+            "strain_path": None,
             "time_period": 1,
         },
     ):
