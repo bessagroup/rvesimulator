@@ -1,9 +1,7 @@
 # system packages
 import json
 import math
-from operator import length_hint
 import time
-from math import fmod
 
 # third-party packages
 import numpy as np
@@ -112,7 +110,7 @@ class HeterRadiusSphere(MicrosctucturaGenerator, DrawRVE3D):
 
         Returns
         -------
-        float
+        vol_frac: float
             Actual volume fracture
         """
         start_time = time.time()
@@ -166,7 +164,7 @@ class HeterRadiusSphere(MicrosctucturaGenerator, DrawRVE3D):
         assign the initial values of the algorithm
         """
 
-        # initialization(generate the first fiber randomly)
+        # initialization (generate the first fiber randomly)
         self.fiber_min_dis_vector = np.zeros(
             (self.num_fibers_max, self.num_cycles_max + 1, 2)
         )
@@ -330,7 +328,7 @@ class HeterRadiusSphere(MicrosctucturaGenerator, DrawRVE3D):
                 )
                 # delete the original ii point first
                 self.fiber_positions = np.insert(
-                    self.fiber_positions, (iter, iter + 1), [new_fiber], axis=0
+                    self.fiber_positions, (iter), new_fiber, axis=0
                 )
                 # add two point at iith location
                 iter = iter + 2
@@ -342,8 +340,8 @@ class HeterRadiusSphere(MicrosctucturaGenerator, DrawRVE3D):
                 # delete the original ii point first
                 self.fiber_positions = np.insert(
                     self.fiber_positions,
-                    (iter, iter + 1, iter + 2, iter + 3),
-                    [new_fiber],
+                    (iter),
+                    new_fiber,
                     axis=0,
                 )
                 # add four point at iith location
@@ -356,17 +354,8 @@ class HeterRadiusSphere(MicrosctucturaGenerator, DrawRVE3D):
                 # delete the original ii point first
                 self.fiber_positions = np.insert(
                     self.fiber_positions,
-                    (
-                        iter,
-                        iter + 1,
-                        iter + 2,
-                        iter + 3,
-                        iter + 4,
-                        iter + 5,
-                        iter + 6,
-                        iter + 7,
-                    ),
-                    [new_fiber],
+                    (iter),
+                    new_fiber,
                     axis=0,
                 )
                 # add eight point at iith location
@@ -398,8 +387,8 @@ class HeterRadiusSphere(MicrosctucturaGenerator, DrawRVE3D):
                 # delete the ii+1 half fiber
                 self.fiber_positions = np.insert(
                     self.fiber_positions,
-                    (iter, iter + 1, iter + 2, iter + 3),
-                    [new_fiber],
+                    (iter),
+                    new_fiber,
                     axis=0,
                 )
                 # add four point at iith location
@@ -412,17 +401,8 @@ class HeterRadiusSphere(MicrosctucturaGenerator, DrawRVE3D):
                 # delete the original ii point first
                 self.fiber_positions = np.insert(
                     self.fiber_positions,
-                    (
-                        iter,
-                        iter + 1,
-                        iter + 2,
-                        iter + 3,
-                        iter + 4,
-                        iter + 5,
-                        iter + 6,
-                        iter + 7,
-                    ),
-                    [new_fiber],
+                    (iter),
+                    new_fiber,
                     axis=0,
                 )
                 # add eight point at iith location
@@ -444,7 +424,7 @@ class HeterRadiusSphere(MicrosctucturaGenerator, DrawRVE3D):
                 )
                 # delete the original ii point first
                 self.fiber_positions = np.insert(
-                    self.fiber_positions, (iter, iter + 1), [new_fiber], axis=0
+                    self.fiber_positions, (iter), new_fiber, axis=0
                 )
                 # add two point at iith location
                 iter = iter + 2
@@ -457,7 +437,7 @@ class HeterRadiusSphere(MicrosctucturaGenerator, DrawRVE3D):
                 )
                 # delete the original ii point first
                 self.fiber_positions = np.insert(
-                    self.fiber_positions, (iter), [new_fiber], axis=0
+                    self.fiber_positions, (iter), new_fiber, axis=0
                 )
                 # add two point at iith location
                 iter = iter + 1
@@ -471,17 +451,8 @@ class HeterRadiusSphere(MicrosctucturaGenerator, DrawRVE3D):
                 # delete the original ii point first
                 self.fiber_positions = np.insert(
                     self.fiber_positions,
-                    (
-                        iter,
-                        iter + 1,
-                        iter + 2,
-                        iter + 3,
-                        iter + 4,
-                        iter + 5,
-                        iter + 6,
-                        iter + 7,
-                    ),
-                    [new_fiber],
+                    (iter),
+                    new_fiber,
                     axis=0,
                 )
                 # add eight point at iith location
@@ -513,7 +484,7 @@ class HeterRadiusSphere(MicrosctucturaGenerator, DrawRVE3D):
                 )
                 #
                 self.fiber_positions = np.insert(
-                    self.fiber_positions, (iter), [new_fiber], axis=0
+                    self.fiber_positions, (iter), new_fiber, axis=0
                 )
                 iter = iter + 1
             elif new_fiber[0, 4] == 2:
@@ -533,7 +504,7 @@ class HeterRadiusSphere(MicrosctucturaGenerator, DrawRVE3D):
                 )
                 #
                 self.fiber_positions = np.insert(
-                    self.fiber_positions, (iter, iter + 1), [new_fiber], axis=0
+                    self.fiber_positions, (iter), new_fiber, axis=0
                 )
                 iter = iter + 2
 
@@ -555,8 +526,8 @@ class HeterRadiusSphere(MicrosctucturaGenerator, DrawRVE3D):
                 #
                 self.fiber_positions = np.insert(
                     self.fiber_positions,
-                    (iter, iter + 1, iter + 2, iter + 3),
-                    [new_fiber],
+                    (iter),
+                    new_fiber,
                     axis=0,
                 )
                 iter = iter + 4
@@ -1999,9 +1970,9 @@ class HeterRadiusSphere(MicrosctucturaGenerator, DrawRVE3D):
                     new_fiber,
                     np.array(
                         [
-                            x_center - radius,
+                            x_center - length,
                             y_center,
-                            z_center - radius,
+                            z_center - height,
                             radius,
                             8,
                         ]
@@ -2180,7 +2151,7 @@ class HeterRadiusSphere(MicrosctucturaGenerator, DrawRVE3D):
             min_index = np.where(points_dis == min_dis)[0]
             fiber_min_dis_vector[ii, cycle, 0] = min_index
             fiber_min_dis_vector[ii, cycle, 1] = min_dis
-            
+
         elif cycle == 1:
             index_pre = int(fiber_min_dis_vector[ii, cycle - 1, 0])
             if index_pre < points_dis.shape[0]:
@@ -2204,8 +2175,7 @@ class HeterRadiusSphere(MicrosctucturaGenerator, DrawRVE3D):
             min_dis = points_dis.min()
             min_index = np.where(points_dis == min_dis)[0]
             fiber_min_dis_vector[ii, cycle, 0] = min_index
-            fiber_min_dis_vector[ii, cycle, 1] = min_dis 
-
+            fiber_min_dis_vector[ii, cycle, 1] = min_dis
 
         return fiber_min_dis_vector, min_index, min_dis
 

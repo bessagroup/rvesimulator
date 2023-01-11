@@ -4,7 +4,7 @@ import sys
 # from collections import OrderedDict
 
 # path of local project
-folder_path = "/home/yaga/Documents/GitHub/rvesimulator"
+folder_path = "/home/jiaxiangyi/Documents/rvesimulator"
 sys.path.insert(0, folder_path)
 # local packages
 
@@ -30,4 +30,5 @@ CircleInclusionGenerator = HeterRadiusSphere(
 
 CircleInclusionGenerator.generate_rve()
 CircleInclusionGenerator.plot_rve()
+print(CircleInclusionGenerator.fiber_positions[:, 4])
 # CircleInclusionGenerator.save_results(file_name="3d_rve.json")

@@ -42,6 +42,8 @@ class RVEPostProcess(object):
             entireRVE_elSet = RVEodb.rootAssembly.elementSets[" ALL ELEMENTS"]
         elif self.job_name == "pnas_hollow_plate":
             entireRVE_elSet = RVEodb.rootAssembly.elementSets[" ALL ELEMENTS"]
+        elif self.job_name == "pnas_sve":
+            entireRVE_elSet = RVEodb.rootAssembly.elementSets[" ALL ELEMENTS"]
         else:
             raise Exception("The job name is not defined \n")
 

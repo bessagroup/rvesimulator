@@ -26,7 +26,10 @@ CircleInclusionGenerator = HeterCircleInclusion(
     vol_req=vol_req,
 )
 
-# 
-for ii in range(10):
-    CircleInclusionGenerator.generate_rve() 
-    CircleInclusionGenerator.plot_rve(save_figure=True, fig_name='rve_'+ str(ii)+'.png')
+#
+for ii in range(1):
+    CircleInclusionGenerator.generate_rve()
+    CircleInclusionGenerator.plot_rve(
+        save_figure=True, fig_name="rve_" + str(ii) + ".png"
+    )
+print(CircleInclusionGenerator.fiber_positions[:, 3])

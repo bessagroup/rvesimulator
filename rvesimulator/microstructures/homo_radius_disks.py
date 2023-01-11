@@ -368,7 +368,7 @@ class CircleInclusion(MicrosctucturaGenerator, DrawRVE2D):
                 )
                 # delete the original ii point first
                 self.fiber_positions = np.insert(
-                    self.fiber_positions, (iter, iter + 1), [new_fiber], axis=0
+                    self.fiber_positions, (iter), new_fiber, axis=0
                 )
                 # add two point at iith location
                 iter = iter + 2
@@ -380,8 +380,8 @@ class CircleInclusion(MicrosctucturaGenerator, DrawRVE2D):
                 # delete the original ii point first
                 self.fiber_positions = np.insert(
                     self.fiber_positions,
-                    (iter, iter + 1, iter + 2, iter + 3),
-                    [new_fiber],
+                    (iter),
+                    new_fiber,
                     axis=0,
                 )
                 # add four point at iith location
@@ -401,7 +401,7 @@ class CircleInclusion(MicrosctucturaGenerator, DrawRVE2D):
                 )
                 # delete the ii+1 half fiber
                 self.fiber_positions = np.insert(
-                    self.fiber_positions, (iter), [new_fiber], axis=0
+                    self.fiber_positions, (iter), new_fiber, axis=0
                 )
                 # add four point at iith location
                 iter = iter + 1
@@ -413,8 +413,8 @@ class CircleInclusion(MicrosctucturaGenerator, DrawRVE2D):
                 # delete the ii+1 half fiber
                 self.fiber_positions = np.insert(
                     self.fiber_positions,
-                    (iter, iter + 1, iter + 2, iter + 3),
-                    [new_fiber],
+                    (iter),
+                    new_fiber,
                     axis=0,
                 )
                 # add four point at iith location
@@ -436,7 +436,7 @@ class CircleInclusion(MicrosctucturaGenerator, DrawRVE2D):
                 )
                 # delete the original ii point first
                 self.fiber_positions = np.insert(
-                    self.fiber_positions, (iter, iter + 1), [new_fiber], axis=0
+                    self.fiber_positions, (iter), new_fiber, axis=0
                 )
                 # add two point at iith location
                 iter = iter + 2
@@ -449,7 +449,7 @@ class CircleInclusion(MicrosctucturaGenerator, DrawRVE2D):
                 )
                 # delete the original ii point first
                 self.fiber_positions = np.insert(
-                    self.fiber_positions, (iter), [new_fiber], axis=0
+                    self.fiber_positions, (iter), new_fiber, axis=0
                 )
                 # add two point at iith location
                 iter = iter + 1

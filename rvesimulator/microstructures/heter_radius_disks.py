@@ -107,7 +107,7 @@ class HeterCircleInclusion(MicrosctucturaGenerator, DrawRVE2D):
         -------
         float
             Actual volume fracture
-        """    
+        """
         start_time = time.time()
         self.__generate_rve()
         end_time = time.time()
@@ -164,14 +164,14 @@ class HeterCircleInclusion(MicrosctucturaGenerator, DrawRVE2D):
         )
         self.num_fibers = 1
         # generate the location of the first fiber
-        # the first fiber is generated with one partition 
+        # the first fiber is generated with one partition
         fiber_temp = self.generate_random_fibers(
             len_start=self.radius_mu,
             len_end=self.length - self.radius_mu,
             wid_start=self.radius_mu,
             wid_end=self.width - self.radius_mu,
             radius_mu=self.radius_mu,
-            radius_std=0.0
+            radius_std=0.0,
         )
         # update the volume fraction information
         self.vol_frac = self.fiber_volume(self.radius_mu) / self.vol_total
@@ -204,7 +204,7 @@ class HeterCircleInclusion(MicrosctucturaGenerator, DrawRVE2D):
                     wid_start=self.wid_start,
                     wid_end=self.wid_end,
                     radius_mu=self.radius_mu,
-                    radius_std=self.radius_std
+                    radius_std=self.radius_std,
                 )
                 # check the location of the fiber and
                 new_fiber = self.new_positions(
@@ -225,7 +225,8 @@ class HeterCircleInclusion(MicrosctucturaGenerator, DrawRVE2D):
                         (self.fiber_positions, new_fiber)
                     )
                     self.vol_frac = (
-                        self.vol_frac + self.fiber_volume(new_fiber[0, 2]) / self.vol_total
+                        self.vol_frac
+                        + self.fiber_volume(new_fiber[0, 2]) / self.vol_total
                     )
                     self.num_fibers = self.num_fibers + new_fiber.shape[0]
                 del new_fiber
@@ -281,7 +282,6 @@ class HeterCircleInclusion(MicrosctucturaGenerator, DrawRVE2D):
             # end of one cycle
             self.num_cycle = self.num_cycle + 1
 
-
     def _update_fiber_position(self, new_fiber: np.ndarray, iter: int) -> int:
         """update the fiber position
 
@@ -314,7 +314,7 @@ class HeterCircleInclusion(MicrosctucturaGenerator, DrawRVE2D):
                 )
                 # delete the original ii point first
                 self.fiber_positions = np.insert(
-                    self.fiber_positions, (iter, iter + 1), [new_fiber], axis=0
+                    self.fiber_positions, (iter), new_fiber, axis=0
                 )
                 # add two point at iith location
                 iter = iter + 2
@@ -326,8 +326,8 @@ class HeterCircleInclusion(MicrosctucturaGenerator, DrawRVE2D):
                 # delete the original ii point first
                 self.fiber_positions = np.insert(
                     self.fiber_positions,
-                    (iter, iter + 1, iter + 2, iter + 3),
-                    [new_fiber],
+                    (iter),
+                    new_fiber,
                     axis=0,
                 )
                 # add four point at iith location
@@ -347,7 +347,7 @@ class HeterCircleInclusion(MicrosctucturaGenerator, DrawRVE2D):
                 )
                 # delete the ii+1 half fiber
                 self.fiber_positions = np.insert(
-                    self.fiber_positions, (iter), [new_fiber], axis=0
+                    self.fiber_positions, (iter), new_fiber, axis=0
                 )
                 # add four point at iith location
                 iter = iter + 1
@@ -359,8 +359,8 @@ class HeterCircleInclusion(MicrosctucturaGenerator, DrawRVE2D):
                 # delete the ii+1 half fiber
                 self.fiber_positions = np.insert(
                     self.fiber_positions,
-                    (iter, iter + 1, iter + 2, iter + 3),
-                    [new_fiber],
+                    (iter),
+                    new_fiber,
                     axis=0,
                 )
                 # add four point at iith location
@@ -382,7 +382,7 @@ class HeterCircleInclusion(MicrosctucturaGenerator, DrawRVE2D):
                 )
                 # delete the original ii point first
                 self.fiber_positions = np.insert(
-                    self.fiber_positions, (iter, iter + 1), [new_fiber], axis=0
+                    self.fiber_positions, (iter), new_fiber, axis=0
                 )
                 # add two point at iith location
                 iter = iter + 2
@@ -395,7 +395,7 @@ class HeterCircleInclusion(MicrosctucturaGenerator, DrawRVE2D):
                 )
                 # delete the original ii point first
                 self.fiber_positions = np.insert(
-                    self.fiber_positions, (iter), [new_fiber], axis=0
+                    self.fiber_positions, (iter), new_fiber, axis=0
                 )
                 # add two point at iith location
                 iter = iter + 1
@@ -406,7 +406,6 @@ class HeterCircleInclusion(MicrosctucturaGenerator, DrawRVE2D):
             raise KeyError("Can not match the overlap condition  !!! \n")
 
         return iter
-
 
     @staticmethod
     def fiber_volume(radius: float) -> float:
@@ -425,12 +424,14 @@ class HeterCircleInclusion(MicrosctucturaGenerator, DrawRVE2D):
         return np.pi * radius**2
 
     @staticmethod
-    def generate_random_fibers(len_start: float,
-                               len_end: float,
-                               wid_start: float,
-                               wid_end: float,
-                               radius_mu: float,
-                               radius_std: float) -> np.ndarray:
+    def generate_random_fibers(
+        len_start: float,
+        len_end: float,
+        wid_start: float,
+        wid_end: float,
+        radius_mu: float,
+        radius_std: float,
+    ) -> np.ndarray:
         """generate random fibers with different radiis
 
         Parameters
@@ -526,7 +527,9 @@ class HeterCircleInclusion(MicrosctucturaGenerator, DrawRVE2D):
             new_fiber = np.vstack(
                 (
                     new_fiber,
-                    np.array([x_center, y_center + width, radius, 2]).reshape((1, 4)),
+                    np.array([x_center, y_center + width, radius, 2]).reshape(
+                        (1, 4)
+                    ),
                 )
             )
 
@@ -541,7 +544,9 @@ class HeterCircleInclusion(MicrosctucturaGenerator, DrawRVE2D):
             new_fiber = np.vstack(
                 (
                     new_fiber,
-                    np.array([x_center, y_center - width, radius, 2]).reshape((1, 4)),
+                    np.array([x_center, y_center - width, radius, 2]).reshape(
+                        (1, 4)
+                    ),
                 )
             )
 
@@ -554,7 +559,9 @@ class HeterCircleInclusion(MicrosctucturaGenerator, DrawRVE2D):
             new_fiber = np.vstack(
                 (
                     new_fiber,
-                    np.array([x_center + length, y_center, radius, 2]).reshape((1, 4)),
+                    np.array([x_center + length, y_center, radius, 2]).reshape(
+                        (1, 4)
+                    ),
                 )
             )
 
@@ -569,7 +576,9 @@ class HeterCircleInclusion(MicrosctucturaGenerator, DrawRVE2D):
             new_fiber = np.vstack(
                 (
                     new_fiber,
-                    np.array([x_center - length, y_center, radius, 2]).reshape((1, 4)),
+                    np.array([x_center - length, y_center, radius, 2]).reshape(
+                        (1, 4)
+                    ),
                 )
             )
 
@@ -582,13 +591,7 @@ class HeterCircleInclusion(MicrosctucturaGenerator, DrawRVE2D):
             new_fiber = np.vstack(
                 (
                     new_fiber,
-                    np.array([x_center + length, y_center,radius,  4]).reshape((1, 4)),
-                )
-            )
-            new_fiber = np.vstack(
-                (
-                    new_fiber,
-                    np.array([x_center + length, y_center - width, radius, 4]).reshape(
+                    np.array([x_center + length, y_center, radius, 4]).reshape(
                         (1, 4)
                     ),
                 )
@@ -596,7 +599,17 @@ class HeterCircleInclusion(MicrosctucturaGenerator, DrawRVE2D):
             new_fiber = np.vstack(
                 (
                     new_fiber,
-                    np.array([x_center, y_center - width, radius, 4]).reshape((1, 4)),
+                    np.array(
+                        [x_center + length, y_center - width, radius, 4]
+                    ).reshape((1, 4)),
+                )
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array([x_center, y_center - width, radius, 4]).reshape(
+                        (1, 4)
+                    ),
                 )
             )
 
@@ -609,21 +622,25 @@ class HeterCircleInclusion(MicrosctucturaGenerator, DrawRVE2D):
             new_fiber = np.vstack(
                 (
                     new_fiber,
-                    np.array([x_center - length, y_center, radius, 4]).reshape((1, 4)),
-                )
-            )
-            new_fiber = np.vstack(
-                (
-                    new_fiber,
-                    np.array([x_center - length, y_center - width, radius, 4]).reshape(
-                        (1,4)
+                    np.array([x_center - length, y_center, radius, 4]).reshape(
+                        (1, 4)
                     ),
                 )
             )
             new_fiber = np.vstack(
                 (
                     new_fiber,
-                    np.array([x_center, y_center - width, radius, 4]).reshape((1, 4)),
+                    np.array(
+                        [x_center - length, y_center - width, radius, 4]
+                    ).reshape((1, 4)),
+                )
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array([x_center, y_center - width, radius, 4]).reshape(
+                        (1, 4)
+                    ),
                 )
             )
 
@@ -636,13 +653,7 @@ class HeterCircleInclusion(MicrosctucturaGenerator, DrawRVE2D):
             new_fiber = np.vstack(
                 (
                     new_fiber,
-                    np.array([x_center + length, y_center, radius, 4]).reshape((1, 4)),
-                )
-            )
-            new_fiber = np.vstack(
-                (
-                    new_fiber,
-                    np.array([x_center + length, y_center + width, radius, 4]).reshape(
+                    np.array([x_center + length, y_center, radius, 4]).reshape(
                         (1, 4)
                     ),
                 )
@@ -650,7 +661,17 @@ class HeterCircleInclusion(MicrosctucturaGenerator, DrawRVE2D):
             new_fiber = np.vstack(
                 (
                     new_fiber,
-                    np.array([x_center, y_center + width, radius, 4]).reshape((1, 4)),
+                    np.array(
+                        [x_center + length, y_center + width, radius, 4]
+                    ).reshape((1, 4)),
+                )
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array([x_center, y_center + width, radius, 4]).reshape(
+                        (1, 4)
+                    ),
                 )
             )
 
@@ -663,13 +684,7 @@ class HeterCircleInclusion(MicrosctucturaGenerator, DrawRVE2D):
             new_fiber = np.vstack(
                 (
                     new_fiber,
-                    np.array([x_center - length, y_center, radius, 4]).reshape((1, 4)),
-                )
-            )
-            new_fiber = np.vstack(
-                (
-                    new_fiber,
-                    np.array([x_center - length, y_center + width, radius, 4]).reshape(
+                    np.array([x_center - length, y_center, radius, 4]).reshape(
                         (1, 4)
                     ),
                 )
@@ -677,7 +692,17 @@ class HeterCircleInclusion(MicrosctucturaGenerator, DrawRVE2D):
             new_fiber = np.vstack(
                 (
                     new_fiber,
-                    np.array([x_center, y_center + width, radius, 4]).reshape((1, 4)),
+                    np.array(
+                        [x_center - length, y_center + width, radius, 4]
+                    ).reshape((1, 4)),
+                )
+            )
+            new_fiber = np.vstack(
+                (
+                    new_fiber,
+                    np.array([x_center, y_center + width, radius, 4]).reshape(
+                        (1, 4)
+                    ),
                 )
             )
 
@@ -726,16 +751,26 @@ class HeterCircleInclusion(MicrosctucturaGenerator, DrawRVE2D):
         fiber_pos = fiber_pos.copy()
 
         if stage == "step_one":
-            min_dis_threhold = dist_factor * (new_fiber[0, 2] + fiber_pos[:, 2]).reshape((-1, 1))
-            points_dis_temp = distance_matrix(fiber_pos[:, 0:2], new_fiber[:, 0:2])
+            min_dis_threhold = dist_factor * (
+                new_fiber[0, 2] + fiber_pos[:, 2]
+            ).reshape((-1, 1))
+            points_dis_temp = distance_matrix(
+                fiber_pos[:, 0:2], new_fiber[:, 0:2]
+            )
             points_dis = np.min(points_dis_temp, 1, keepdims=True)
             min_dis = points_dis - min_dis_threhold
-            
+
         elif stage == "step_two":
             # calculate the minmum distance threshold
-            min_dis_threhold = dist_factor * (new_fiber[0, 2] + fiber_pos[:,2]).reshape((-1, 1))
-            points_dis_temp = distance_matrix(fiber_pos[:, 0:2], new_fiber[:, 0:2])
-            points_dis_temp[fiber_index : fiber_index + int(fiber_pos[fiber_index, 3]), :] = math.inf 
+            min_dis_threhold = dist_factor * (
+                new_fiber[0, 2] + fiber_pos[:, 2]
+            ).reshape((-1, 1))
+            points_dis_temp = distance_matrix(
+                fiber_pos[:, 0:2], new_fiber[:, 0:2]
+            )
+            points_dis_temp[
+                fiber_index : fiber_index + int(fiber_pos[fiber_index, 3]), :
+            ] = math.inf
             points_dis = np.min(points_dis_temp, 1, keepdims=True)
             min_dis = points_dis - min_dis_threhold
 
@@ -825,7 +860,6 @@ class HeterCircleInclusion(MicrosctucturaGenerator, DrawRVE2D):
 
         return fiber_min_dis_vector, min_index, min_dis
 
-
     @staticmethod
     def generate_first_heuristic_fibers(
         ref_point: np.ndarray, fiber_temp: np.ndarray, dist_factor: float
@@ -847,15 +881,15 @@ class HeterCircleInclusion(MicrosctucturaGenerator, DrawRVE2D):
             The updated location of the considering fiber
         """
 
-        fiber_temp = fiber_temp.reshape((1, 3)) 
-        ref_point = ref_point.reshape((1,3))
+        fiber_temp = fiber_temp.reshape((1, 3))
+        ref_point = ref_point.reshape((1, 3))
         # generate the random factor for fiber stirring
         delta = np.random.uniform(0, 1, 1)
-        dist_min = dist_factor*(fiber_temp[0, 2] + ref_point[0, 2])
+        dist_min = dist_factor * (fiber_temp[0, 2] + ref_point[0, 2])
         fiber_loc = fiber_temp[0, 0:2].reshape((1, 2)).copy()
         ref_loc = ref_point[0, 0:2].reshape((1, 2)).copy()
         # maximum length of movement
         k = 1 - dist_min / distance_matrix(ref_loc, fiber_loc)
         fiber_temp[0, 0:2] = fiber_loc + delta * k * (ref_loc - fiber_loc)
 
-        return fiber_temp 
+        return fiber_temp
