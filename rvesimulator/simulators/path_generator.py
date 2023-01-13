@@ -1,6 +1,18 @@
+#                                                                       Modules
+# =============================================================================
+# Third party
 import numpy as np
 from matplotlib import pyplot as plt
 from scipy.interpolate import interp1d
+
+#                                                          Authorship & Credits
+# =============================================================================
+__author__ = "Jiaxiang Yi (J.Yi@tudelft.nl)"
+__credits__ = ["Jiaxiang Yi"]
+__status__ = "Stable"
+# =============================================================================
+#
+# =============================================================================
 
 
 class PathGenerator:
@@ -13,6 +25,8 @@ class PathGenerator:
         ----------
         num_control_points : int, optional
             number of control point, by default 6
+        num_increment: int, optional
+            number of increment of simulation, by default 100
         """
         self.num_control_point = np.int64(num_control_points)
         self.num_increment = np.int64(num_increment)
@@ -39,15 +53,15 @@ class PathGenerator:
         fit2 = interp1d(self.x_control, self.y_control[:, 1], kind="linear")
         fit3 = interp1d(self.x_control, self.y_control[:, 2], kind="linear")
 
-        # test points
-        self.x_test = np.linspace(
+        # x_increment points
+        self.x_increment = np.linspace(
             0, self.num_increment, self.num_increment + 1, endpoint=True
         )
-        self.y1 = fit1(self.x_test)
-        self.y2 = fit2(self.x_test)
-        self.y3 = fit3(self.x_test)
+        self.path1 = fit1(self.x_increment)
+        self.path2 = fit2(self.x_increment)
+        self.path3 = fit3(self.x_increment)
 
-        self.path = np.array([self.y1, self.y2, self.y3]).tolist()
+        self.path = np.array([self.path1, self.path2, self.path3]).tolist()
 
         return self.path
 
@@ -57,23 +71,30 @@ class PathGenerator:
         fit2 = interp1d(self.x_control, self.y_control[:, 1], kind="quadratic")
         fit3 = interp1d(self.x_control, self.y_control[:, 2], kind="quadratic")
 
-        # test points
-        self.x_test = np.linspace(
+        # x_increment points
+        self.x_increment = np.linspace(
             0, self.num_increment, self.num_increment + 1, endpoint=True
         )
+        self.path1 = fit1(self.x_increment)
+        self.path2 = fit2(self.x_increment)
+        self.path3 = fit3(self.x_increment)
 
-        self.y1 = fit1(self.x_test)
-        self.y2 = fit2(self.x_test)
-        self.y3 = fit3(self.x_test)
-
-        self.path = np.array([self.y1, self.y2, self.y3]).tolist()
+        self.path = np.array([self.path1, self.path2, self.path3]).tolist()
 
         return self.path
 
     def plot_path(
         self, fig_name: str = "loads_path.png", save_fig: bool = False
     ) -> None:
-        """plot the loads path"""
+        """plot path
+
+        Parameters
+        ----------
+        fig_name : str, optional
+            name of the figure, by default "loads_path.png"
+        save_fig : bool, optional
+            save figure or not, by default False
+        """
 
         fig, ax = plt.subplots(figsize=(4, 3))
         ax.plot(
@@ -94,9 +115,9 @@ class PathGenerator:
             "o",
             label="path xy control points",
         )
-        ax.plot(self.x_test, self.y1, label="path xx")
-        ax.plot(self.x_test, self.y2, label="path yy")
-        ax.plot(self.x_test, self.y3, label="path xy")
+        ax.plot(self.x_increment, self.path1, label="path xx")
+        ax.plot(self.x_increment, self.path2, label="path yy")
+        ax.plot(self.x_increment, self.path3, label="path xy")
         plt.legend(
             bbox_to_anchor=(0.0, 1.02, 1.0, 0.102),
             loc="lower left",

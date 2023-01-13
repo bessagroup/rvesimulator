@@ -1,25 +1,33 @@
-# extend the system path
+#                                                                       Modules
+# =============================================================================
+# standard
 import sys
 
-# import python libraries
+# thrid party
 import numpy
-# abaqus
-from abaqus import *
-from abaqusConstants import *
-from caeModules import *
-# import packages for abaqus post-processing
-from odbAccess import *
 
 try:
     import cPickle as pickle  # Improve speed
 except ValueError:
     import pickle
+# abaqus
+from abaqus import *
+from abaqusConstants import *
 
+# local
 from base import RVE2DBase
+from caeModules import *
 from geometry import CircleInclusion
 from material import AbaqusMaterialLib
+from odbAccess import *
 
-
+#                                                          Authorship & Credits
+# =============================================================================
+__author__ = "Jiaxiang Yi (J.Yi@tudelft.nl)"
+__credits__ = ["Jiaxiang Yi"]
+__status__ = "Stable"
+# =============================================================================
+#
 class ASCARVE(RVE2DBase):
     def __init__(self, sim_info=None):
         # names of model, part, instance
@@ -27,6 +35,8 @@ class ASCARVE(RVE2DBase):
         self.part_name = "Final_Stuff"
         self.instance_name = "Final_Stuff"
         self.job_name = str(sim_info["job_name"])
+        self.num_cpu = sim_info["num_cpu"]
+        self.platform = sim_info["platform"]
         # define the import elements of RVE
         self.model = None
         self.sketch = None

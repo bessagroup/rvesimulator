@@ -14,9 +14,9 @@ from rvesimulator.microstructures.heter_radius_sphere import HeterRadiusSphere
 length = 1.0
 width = 1.0
 height = 1.0
-radius = 0.2
-radius_std = 0.05
-vol_req = 0.30
+radius = 0.1
+radius_std = 0.02
+vol_req = 0.15
 
 CircleInclusionGenerator = HeterRadiusSphere(
     length=length,

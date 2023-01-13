@@ -1,18 +1,29 @@
-# abaqus
-# import python libraries
+#                                                                       Modules
+# =============================================================================
+
+# third party
 import numpy
-from abaqus import *
-from abaqusConstants import *
-from caeModules import *
-from odbAccess import *
 
 try:
     import cPickle as pickle  # Improve speed
 except ValueError:
     import pickle
 
+# abaqus
+from abaqus import *
+from abaqusConstants import *
+from caeModules import *
+from odbAccess import *
 
-class RVEPostProcess(object):
+#                                                          Authorship & Credits
+# =============================================================================
+__author__ = "Jiaxiang Yi (J.Yi@tudelft.nl)"
+__credits__ = ["Jiaxiang Yi"]
+__status__ = "Stable"
+# =============================================================================
+#
+# =============================================================================
+class RVEPostProcess2D(object):
     def __init__(self, job_name):
         self.job_name = job_name
         self._rve_results()
@@ -50,8 +61,9 @@ class RVEPostProcess(object):
         return entireRVE_elSet
 
     def _rve_results(self):
+        """get the rve results"""
 
-        ## basic information of the odb file
+        # basic information of the odb file
         # Define the name of the Phase_1 part
         odbfile = self.job_name + ".odb"  # Define name of this .odb file
         RVEodb = openOdb(path=odbfile)
@@ -237,18 +249,17 @@ class RVEPostProcess(object):
                     nomP[iFrame, :, :],
                     numpy.linalg.inv(numpy.transpose(defGrad[iFrame, :, :])),
                 )
-        # return Green_strain, PK2, tot_vol
         # Save all variables to a single structured variable with all the data
-        RVE_variables = {
-            "step_total_time": stepTotalTime,
-            "P": nomP,
-            "F": defGrad,
-            "J": jacobian,
+        results = {
+            "total_time": stepTotalTime,
+            "norm_stress": nomP,
+            "gradient": defGrad,
+            "jacobian": jacobian,
             "total_vol": tot_vol,
-            "Green_strain": Green_strain,
-            "PK2": PK2,
-            "ALLPD": ALLPD,
+            "strain": Green_strain,
+            "stress": PK2,
+            "plastic energy": ALLPD,
         }
         # Save post-processing information to pkl file:
         with open("results.p", "w") as fp:
-            pickle.dump(RVE_variables, fp)
+            pickle.dump(results, fp)

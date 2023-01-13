@@ -1,11 +1,39 @@
+#                                                                       Modules
+# =============================================================================
 # abaqus
 from abaqus import *
 from abaqusConstants import *
 from caeModules import *
 
+#                                                          Authorship & Credits
+# =============================================================================
+__author__ = "Jiaxiang Yi (J.Yi@tudelft.nl)"
+__credits__ = ["Jiaxiang Yi"]
+__status__ = "Alpha"
+# =============================================================================
+#
+# =============================================================================
+
 
 class HollowPlate:
     def __init__(self, point1, point2, center, radius, name_part, model):
+        """initialization of the hollow plate simulation
+
+        Parameters
+        ----------
+        point1 : float
+            first point of the square
+        point2 : float
+            second point of the square
+        center : float
+            center of the circle
+        radius : float
+            radius of the circle
+        name_part : str
+            name of the part
+        model : abaqus model
+            abaqus model
+        """
         self.part = None
         self.assembly = None
         self.model = model
@@ -29,10 +57,11 @@ class HollowPlate:
             type=DEFORMABLE_BODY,
         )
         self.part.BaseShell(sketch=sketch)
-        # self.assembly = self.model.rootAssembly
-        # self.assembly.Instance(name=self.instance_name, part=self.part, dependent=ON)
 
         return self.part
+
+
+# =============================================================================
 
 
 class CircleInclusion:
@@ -44,6 +73,21 @@ class CircleInclusion:
         part_name,
         instance_name,
     ):
+        """initilaization of circle inclusion rve
+
+        Parameters
+        ----------
+        model : abaqus model
+            abaqus model
+        loc_info : list
+            location of circles
+        model_name : str
+            model name
+        part_name : str
+            abaqus part name
+        instance_name : str
+            abaqus instance name
+        """
         self.model = model
         # define the reinforcement information
         self.loc = loc_info["location_information"]
@@ -63,6 +107,13 @@ class CircleInclusion:
         self.assembly = None
 
     def create_part(self):
+        """create part
+
+        Returns
+        -------
+        abaqus part
+            abaqus part
+        """
 
         # Create the  fibers
         sketch = self.model.ConstrainedSketch(
@@ -80,7 +131,7 @@ class CircleInclusion:
             fromName="__profile__", toName="Fibre_Sketch_Prov"
         )
 
-        # create a frame to cut the fibers so that they can stay inside the square
+        # create a frame to cut the fibers so they can stay inside the square
         sketch = self.model.ConstrainedSketch(
             name="__profile__", sheetSize=self.af
         )
@@ -224,6 +275,7 @@ class CircleInclusion:
         return self.part
 
 
+# =============================================================================
 class FullCircleInclusion:
     def __init__(
         self,
@@ -233,6 +285,21 @@ class FullCircleInclusion:
         part_name,
         instance_name,
     ):
+        """initilaization of circle inclusion rve
+
+        Parameters
+        ----------
+        model : abaqus model
+            abaqus model
+        loc_info : list
+            location of circles
+        model_name : str
+            model name
+        part_name : str
+            abaqus part name
+        instance_name : str
+            abaqus instance name
+        """
         self.model = model
         # define the reinforcement information
         self.loc = loc_info["location_information"]

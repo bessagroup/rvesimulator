@@ -1,15 +1,15 @@
-# extend the system path
+#                                                                       Modules
+# =============================================================================
+# standard
 import sys
 
-# import python libraries
+# third party
 import numpy
 
 # abaqus
 from abaqus import *
 from abaqusConstants import *
 from caeModules import *
-
-## import packages for abaqus post-processing
 from odbAccess import *
 
 try:
@@ -17,16 +17,30 @@ try:
 except ValueError:
     import pickle
 
+# local
 from base import RVE2DBase
 from geometry import HollowPlate
 from material import AbaqusMaterialLib
+from postprocess import RVEPostProcess2D
+
+#                                                          Authorship & Credits
+# =============================================================================
+__author__ = "Jiaxiang Yi (J.Yi@tudelft.nl)"
+__credits__ = ["Jiaxiang Yi"]
+__status__ = "Stable"
+# =============================================================================
+#
+# =============================================================================
 
 
 class HollowPlateRVE(RVE2DBase):
     def __init__(self, sim_info=None):
-        """
-        Initializaton function of Hollow Plate RVE case
+        """Initialization of the hollow plate rve simulation
 
+        Parameters
+        ----------
+        sim_info : dict, optional
+            simulation information, by default None
         """
 
         # define the names of RVE simulation and set them as private variables
@@ -34,12 +48,16 @@ class HollowPlateRVE(RVE2DBase):
         self.part_name = "Final_Stuff"
         self.instance_name = "Final_Stuff"
         self.job_name = str(sim_info["job_name"])
+        self.platform = sim_info["platform"]
+        self.num_cpu = sim_info["num_cpu"]
+
         # define the import elements of RVE
         self.model = None
         self.sketch = None
         self.part = None
         self.assembly = None
         self.material = None
+
         #  define the geometry information
         self.length = sim_info["size"]
         self.width = sim_info["size"]
@@ -58,6 +76,7 @@ class HollowPlateRVE(RVE2DBase):
         self.ScriptGenerator()
 
     def ScriptGenerator(self):
+        """assemble the simulation"""
 
         self.create_new_model()
         self.delete_existed_models()
@@ -70,8 +89,11 @@ class HollowPlateRVE(RVE2DBase):
         self._create_step()
         self.create_loads(loads=self.loads)
         self.create_sequential_jobs(subroutine_path="")
+        if self.platform == "cluster":
+            RVEPostProcess2D(self.job_name)
 
     def _create_part(self):
+        """create part"""
         PartGenerator = HollowPlate(
             point1=(-self.length / 2, -self.width / 2),
             point2=(self.length / 2, self.width / 2),
@@ -83,6 +105,13 @@ class HollowPlateRVE(RVE2DBase):
         self.part = PartGenerator.create_part()
 
     def _create_material(self, name_faces):
+        """create material
+
+        Parameters
+        ----------
+        name_faces : str
+            face name for that material
+        """
         MaterialGenerator = AbaqusMaterialLib(
             name_mat="Matrix",
             model=self.model,
@@ -94,6 +123,13 @@ class HollowPlateRVE(RVE2DBase):
         )
 
     def _create_geometry_set(self):
+        """create geometry set in abaqus
+
+        Returns
+        -------
+        [list, list, list]
+            sets of different geometry part
+        """
 
         # create part for faces
         p = self.model.parts[self.part_name]
@@ -109,11 +145,26 @@ class HollowPlateRVE(RVE2DBase):
     def _create_step(
         self,
         initialInc=0.1,
-        maxInc=1,
+        maxInc=1.0,
         maxNumInc=1000000,
         minInc=1e-20,
-        timePeriod=1,
+        timePeriod=1.0,
     ):
+        """create step for the simulation
+
+        Parameters
+        ----------
+        initialInc : float, optional
+            initial increment, by default 0.1
+        maxInc : float, optional
+            maximum increment , by default 1.0
+        maxNumInc : int, optional
+            maximum number of incement, by default 1000000
+        minInc :float, optional
+             minimum incremnent step, by default 1e-20
+        timePeriod : float, optional
+            total simulation time , by default 1
+        """
 
         self.model.StaticStep(name="Step-1", previous="Initial")
         self.model.StaticStep(

@@ -1,10 +1,23 @@
+#                                                                       Modules
+# =============================================================================
+
+# Third party
 from turtle import color
 
 import matplotlib.pyplot as plt
 import numpy as np
 
+#                                                          Authorship & Credits
+# =============================================================================
+__author__ = "Jiaxiang Yi (J.Yi@tudelft.nl)"
+__credits__ = ["Jiaxiang Yi"]
+__status__ = "Alpha"
+# =============================================================================
+#
+# =============================================================================
 
-class DrawRVE2D:
+
+class PlotRVE2D:
     @staticmethod
     def cricle_inclusion_plot(
         circle_position: np.ndarray,
@@ -223,7 +236,7 @@ class DrawRVE2D:
             plt.close()
 
 
-class DrawRVE3D:
+class PlotRVE3D:
     @staticmethod
     def sphere_coordinate(location_information: np.ndarray) -> tuple:
         """generate coordinate of sphere

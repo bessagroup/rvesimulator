@@ -1,1 +1,0 @@
-fiber_positions

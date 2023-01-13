@@ -1,19 +1,29 @@
-# system packages
+#                                                                       Modules
+# =============================================================================
+# standard
 import json
 import math
 import time
-from math import fmod
 
-# third-party packages
+# Third party
 import numpy as np
 from scipy.spatial import distance_matrix
 
 # import local functions
 from rvesimulator.microstructures.microstrcuture import MicrosctucturaGenerator
-from rvesimulator.microstructures.microstructure_plots import DrawRVE2D
+from rvesimulator.microstructures.microstructure_plots import PlotRVE2D
+
+#                                                          Authorship & Credits
+# =============================================================================
+__author__ = "Jiaxiang Yi (J.Yi@tudelft.nl)"
+__credits__ = ["Jiaxiang Yi"]
+__status__ = "Stable"
+# =============================================================================
+#
+# =============================================================================
 
 
-class HeterCircleInclusion(MicrosctucturaGenerator, DrawRVE2D):
+class HeterCircleInclusion(MicrosctucturaGenerator, PlotRVE2D):
     """This class is used to generate the 2DRVe with different size of
         disks
 
@@ -21,7 +31,7 @@ class HeterCircleInclusion(MicrosctucturaGenerator, DrawRVE2D):
     ----------
     MicrosctucturaGenerator : class
         parent class of microstructure generater
-    DrawRVE2D : class
+    PlotRVE2D : class
         vislization of 2D RVE
     """
 
@@ -187,9 +197,9 @@ class HeterCircleInclusion(MicrosctucturaGenerator, DrawRVE2D):
             self.vol_frac < self.vol_req
             and self.num_cycle < self.num_cycles_max
         ):
-            ############################################################
-            ########        generate the inclusions randomly   #########
-            ############################################################
+            # ================================================================#
+            #                   generate the fibers randomly                  #
+            # ================================================================#
             self.num_trial = 1
             while (
                 self.num_trial < self.num_guess_max
@@ -231,13 +241,12 @@ class HeterCircleInclusion(MicrosctucturaGenerator, DrawRVE2D):
                     self.num_fibers = self.num_fibers + new_fiber.shape[0]
                 del new_fiber
 
-            ############################################################
-            ##### First Heuristic -Move Fibers to gain more areas ######
-            ############################################################
+            # ================================================================#
+            #                   striring the fibers (Firts stage)             #
+            # ================================================================#
             ii = 0
             if self.fiber_positions.shape[0] < self.num_fibers_max:
-                # for every point, stirring is needed!!!
-                # print('Begin first heuristic stirring \n')
+                # for every point, stirring is needed!
                 while ii < self.fiber_positions.shape[0]:
                     (
                         self.fiber_min_dis_vector,

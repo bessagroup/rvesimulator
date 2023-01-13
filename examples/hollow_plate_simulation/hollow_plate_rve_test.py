@@ -7,9 +7,9 @@ from matplotlib import pyplot as plt
 folder_path = "/home/jiaxiangyi/Documents/rvesimulator"
 sys.path.insert(0, folder_path)
 
-from simulator_caller import SimulatorCaller
-
 from rvesimulator.design_of_experiment.samplers import RandomSampler
+# from simulator_caller import SimulatorCaller
+from rvesimulator.simulators.hollow_plate_rve import HollowPlateRVE
 
 # create the doe
 # define the design space
@@ -28,8 +28,8 @@ doe_sampler.sampling(
 
 print(doe_sampler.data)
 #
-simulation_wrapper = SimulatorCaller()
-simulation_wrapper.update_sim_info(loads=[0.2, 0.05, 0.05])
+simulation_wrapper = HollowPlateRVE()
+simulation_wrapper.update_sim_info(loads=[0.05, 0.05, 0.05])
 
 data = simulation_wrapper.run_simulation(data=doe_sampler.data)
 

@@ -1,8 +1,17 @@
+#                                                                       Modules
+# =============================================================================
+
+#                                                          Authorship & Credits
+# =============================================================================
+__author__ = "Jiaxiang Yi (J.Yi@tudelft.nl)"
+__credits__ = ["Jiaxiang Yi"]
+__status__ = "Stable"
+# =============================================================================
+#
+# =============================================================================
+
+
 class MicrosctucturaGenerator:
-
-    # def __init__(self, ) -> None:
-    #     pass
-
     def generate_rve(self) -> float:
         """function that used to generate the geometry information for
         Abaqus"""

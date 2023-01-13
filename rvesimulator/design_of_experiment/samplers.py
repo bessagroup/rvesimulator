@@ -1,9 +1,20 @@
+#                                                                       Modules
+# =============================================================================
 # third-party
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 from SALib.sample import sobol_sequence
 from scipy.stats import qmc
+
+#                                                          Authorship & Credits
+# =============================================================================
+__author__ = "Jiaxiang Yi (J.Yi@tudelft.nl)"
+__credits__ = ["Jiaxiang Yi"]
+__status__ = "Stable"
+# =============================================================================
+#
+# =============================================================================
 
 
 class Sampler:
