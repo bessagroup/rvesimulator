@@ -38,6 +38,8 @@ class PnasHollowPlate(RVE2DBase):
             "strain": [0.1, 0.0, 0.0],
             "strain_path": None,
             "time_period": 1,
+            "platform": "ubuntu",
+            "num_cpu": 1,
         },
     ):
         """
@@ -50,6 +52,8 @@ class PnasHollowPlate(RVE2DBase):
         self.part_name = "Final_Stuff"
         self.instance_name = "Final_Stuff"
         self.job_name = "pnas_hollow_plate"
+        self.platform = sim_info["platform"]
+        self.num_cpu = sim_info["num_cpu"]
 
         # define the import elements of RVE
         self.model = None
@@ -100,6 +104,8 @@ class PnasHollowPlate(RVE2DBase):
         self._create_step(timePeriod=self.time_period)
         self._create_path_load()
         self.create_sequential_jobs(subroutine_path="")
+        if self.platform == "cluster":
+            RVEPostProcess2D(self.job_name)
 
     def _create_part(self):
         PartGenerator = HollowPlate(
@@ -218,6 +224,8 @@ class PnasCompositeRVE(RVE2DBase):
             "Pr_fiber": None,
             "mesh_partition": None,
             "time_period": 1.0,
+            "platform": "ubuntu",
+            "num_cpu": 1,
         },
     ):
         # names of model, part, instance
@@ -225,6 +233,8 @@ class PnasCompositeRVE(RVE2DBase):
         self.part_name = "Final_Stuff"
         self.instance_name = "Final_Stuff"
         self.job_name = str(sim_info["job_name"])
+        self.platform = sim_info["platform"]
+        self.num_cpu = sim_info["num_cpu"]
         # define the import elements of RVE
         self.model = None
         self.sketch = None
