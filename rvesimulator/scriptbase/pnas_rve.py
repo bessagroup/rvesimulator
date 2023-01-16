@@ -21,6 +21,7 @@ from base import RVE2DBase
 from geometry import CircleInclusion, FullCircleInclusion, HollowPlate
 from loadings import Loading2D
 from material import AbaqusMaterialLib
+from postprocess import RVEPostProcess2D
 
 
 class PnasHollowPlate(RVE2DBase):
@@ -474,6 +475,8 @@ class StatisticRepresentVolume(RVE2DBase):
             "Pr_fiber": None,
             "mesh_partition": 50,
             "time_period": 1.0,
+            "platform": "ubuntu",
+            "num_cpu": 1,
         },
     ):
 
@@ -482,6 +485,8 @@ class StatisticRepresentVolume(RVE2DBase):
         self.part_name = "Final_Stuff"
         self.instance_name = "Final_Stuff"
         self.job_name = str(sim_info["job_name"])
+        self.num_cpu = sim_info["num_cpu"]
+        self.platform = sim_info["platform"]
         # define the import elements of RVE
         self.model = None
         self.sketch = None
@@ -546,6 +551,8 @@ class StatisticRepresentVolume(RVE2DBase):
         self._create_step(timePeriod=self.time_period)
         self._create_path_load()
         self.create_sequential_jobs(subroutine_path="")
+        if self.platform == "cluster":
+            RVEPostProcess2D(self.job_name)
 
     def _create_part(self):
         PartGenerator = FullCircleInclusion(

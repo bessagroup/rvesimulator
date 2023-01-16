@@ -53,6 +53,7 @@ class AbaqusJobs(object):
             resultsFormat=ODB,
             multiprocessingMode=DEFAULT,
             numCpus=self.num_cpu,
+            numDomains=self.num_cpu,
             numGPUs=0,
         )
         mdb.jobs[self.job_name].submit(consistencyChecking=OFF)

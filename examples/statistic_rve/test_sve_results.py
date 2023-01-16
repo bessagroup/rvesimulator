@@ -15,7 +15,7 @@ from simulator_caller import SimulatorCaller
 # import local packages and functions
 import rvesimulator
 from rvesimulator.design_of_experiment.samplers import FixNumberSampler
-from rvesimulator.microstructures.microstructure_plots import DrawRVE2D
+from rvesimulator.microstructures.microstructure_plots import PlotRVE2D
 from rvesimulator.simulators.path_generator import PathGenerator
 
 # create the doe
@@ -25,7 +25,7 @@ doe_variables = OrderedDict({"control_points": 7})
 # define number of samples
 num_points = 1
 # define the information of outputs
-name_outputs = ["vol_frac", "PK2", "Green_strain", "ALLPD"]
+name_outputs = ["strain", "stress", "plastic_energy"]
 doe_sampler = FixNumberSampler()
 doe_sampler.sampling(
     num_samples=num_points,

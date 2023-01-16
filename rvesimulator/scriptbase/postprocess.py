@@ -258,7 +258,7 @@ class RVEPostProcess2D(object):
             "total_vol": tot_vol,
             "strain": Green_strain,
             "stress": PK2,
-            "plastic energy": ALLPD,
+            "plastic_energy": ALLPD,
         }
         # Save post-processing information to pkl file:
         with open("results.p", "w") as fp:

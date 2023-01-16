@@ -161,7 +161,7 @@ class AbaqusSimulator(Simulator):
         my_cmd_job = command
         proc = subprocess.Popen(my_cmd_job, shell=True)
         start_time = time.time()
-        time.sleep(40.0)
+        time.sleep(30.0)
         while True:
             # in this part: check the job is finish or not !
             time.sleep(20.0 - ((time.time() - start_time) % 20.0))

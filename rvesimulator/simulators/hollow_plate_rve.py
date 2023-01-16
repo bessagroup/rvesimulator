@@ -33,12 +33,14 @@ class HollowPlateRVE:
             "sim_path": "scriptbase.hollow_plate_rve",
             "sim_script": "HollowPlateRVE",
             "post_path": "scriptbase.postprocess",
-            "post_script": "RVEPostProcess",
+            "post_script": "RVEPostProcess2D",
         }
 
         self.update_sim_info(print_info=True)
 
-    def run_simulation(self, data: dict) -> dict:
+    def run_simulation(
+        self, data: dict, save_source_files: bool = True
+    ) -> dict:
         """run simulation sequentially
 
         Parameters
@@ -58,12 +60,22 @@ class HollowPlateRVE:
         num_samples = len(samples)
         for ii in range(num_samples):
             # update the simulation information
-            self.folder_info["current_work_directory"] = "point_" + str(ii)
-            new_path = create_dir(
-                current_folder=self.folder_info["main_work_directory"],
-                dirname=self.folder_info["current_work_directory"],
-            )
-            os.chdir(new_path)
+            if save_source_files is True:
+                self.folder_info["current_work_directory"] = "point_" + str(ii)
+                new_path = create_dir(
+                    current_folder=self.folder_info["main_work_directory"],
+                    dirname=self.folder_info["current_work_directory"],
+                )
+                os.chdir(new_path)
+            else:
+                self.folder_info["current_work_directory"] = "data"
+                new_path = create_dir(
+                    current_folder=self.folder_info["main_work_directory"],
+                    dirname=self.folder_info["current_work_directory"],
+                )
+                os.chdir(new_path)
+
+            # update the design of experiment information
             self._update_sim_info(samples[ii])
             os.chdir(self.main_folder)
             abaqus_wrapper = AbaqusSimulator(

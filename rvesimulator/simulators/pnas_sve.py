@@ -12,7 +12,7 @@ from rvesimulator.simulators.abaqus_simulator import AbaqusSimulator
 from rvesimulator.simulators.utils import create_dir
 
 
-class SimulatorCaller:
+class PnasSVE:
     def __init__(self) -> None:
 
         """Interface between python and abaqus of the asca rve case"""
@@ -28,7 +28,7 @@ class SimulatorCaller:
             "sim_path": "scriptbase.pnas_rve",
             "sim_script": "StatisticRepresentVolume",
             "post_path": "scriptbase.postprocess",
-            "post_script": "RVEPostProcess",
+            "post_script": "RVEPostProcess2D",
         }
         self.vol_req = None
         self.update_sim_info(print_info=False)
@@ -68,6 +68,10 @@ class SimulatorCaller:
                     dirname=self.folder_info["current_work_directory"],
                 )
                 os.chdir(new_path)
+                log_file = "results.p"
+                if os.path.exists(log_file):
+                    print("remove results succesfully \n")
+                    os.remove(log_file)
             else:
                 self.folder_info["current_work_directory"] = "data"
                 new_path = create_dir(
@@ -75,6 +79,10 @@ class SimulatorCaller:
                     dirname=self.folder_info["current_work_directory"],
                 )
                 os.chdir(new_path)
+                log_file = "results.p"
+                if os.path.exists(log_file):
+                    print("remove results succesfully \n")
+                    os.remove(log_file)
 
             # update the geometry info for microstructure
             self._update_sample_info(sample=samples[ii])
@@ -85,6 +93,7 @@ class SimulatorCaller:
             )
             abaqus_wrapper.run()
             results = abaqus_wrapper.read_back_results()
+
             # update DoE information
             for jj in range(len(list(responses.keys()))):
                 responses.at[ii, list(responses.keys())[jj]] = results[
@@ -165,6 +174,8 @@ class SimulatorCaller:
             "loads_path": loads_path,
             "time_period": time_period,
             "job_name": "pnas_sve",
+            "num_cpu": 1,
+            "platform": "ubuntu",
         }
         if print_info is True:
             print(f"The simulation information is : {self.sim_info}")
@@ -178,6 +189,12 @@ class SimulatorCaller:
         self.data["responses"] = responses
         working_folder = os.getcwd()
         with open("data.pickle", "wb") as file:
+            pickle.dump(self.data, file)
+        os.chdir(working_folder)
+
+    def save_data(self, name: str = "data.pickle") -> None:
+        working_folder = os.getcwd()
+        with open(name, "wb") as file:
             pickle.dump(self.data, file)
         os.chdir(working_folder)
 
@@ -252,11 +269,16 @@ class SimulatorCaller:
                 [size / 4, size / 2, 1],
                 [3 * size / 4, size / 2, 1],
             ]
-        elif benchmark == "benchmark_3":
+        elif benchmark == "benchmark_4":
             location_information = [
                 [size / 4, size / 4, 1],
                 [size / 2, 3 * size / 4, 1],
                 [3 * size / 4, size / 4, 1],
+            ]
+        elif benchmark == "benchmark_3":
+            location_information = [
+                [size / 2, size / 4, 1],
+                [size / 2, 3 * size / 4, 1],
             ]
 
         return location_information
