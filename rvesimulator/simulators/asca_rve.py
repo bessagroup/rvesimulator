@@ -1,16 +1,29 @@
-# import system packages
+#                                                                       Modules
+# =============================================================================
+# Standard
 import json
 import os
 import pickle
 
-# local functions
+# local
 import rvesimulator
-from rvesimulator.microstructures.homo_radius_disks import CircleInclusion
+from rvesimulator.microstructures.heter_radius_circles import (
+    HeterCircleInclusion,
+)
 from rvesimulator.simulators.abaqus_simulator import AbaqusSimulator
 from rvesimulator.simulators.utils import create_dir
 
+#                                                          Authorship & Credits
+# =============================================================================
+__author__ = "Jiaxiang Yi (J.Yi@tudelft.nl)"
+__credits__ = ["Jiaxiang Yi"]
+__status__ = "Stable"
+# =============================================================================
+#
+# =============================================================================
 
-class SimulatorCaller:
+
+class AscaRVE:
     def __init__(self) -> None:
         """Interface between python and abaqus of the asca rve case"""
         self.main_folder = os.getcwd()
@@ -25,18 +38,28 @@ class SimulatorCaller:
             "sim_path": "scriptbase.asca_rve",
             "sim_script": "ASCARVE",
             "post_path": "scriptbase.postprocess",
-            "post_script": "RVEPostProcess",
+            "post_script": "RVEPostProcess2D",
         }
         self.vol_req = None
         self.update_sim_info()
 
-    def run_simulation(self, data: dict = None) -> dict:
+    def run_simulation(
+        self,
+        data: dict = None,
+        save_source_files: bool = True,
+    ) -> dict:
         """run simulation sequentially
 
         Parameters
         ----------
         data : dict, optional
             design of experiments without responses
+        save_source_files: bool, optional
+            if True, it will create a new folder for every sample and
+            more memory is needed for the simulation task
+            other wise the simulation will be excuted in the Data/data
+            folder and the simulation result will be save as Data/data.pickle
+            file.
 
         Returns
         -------
@@ -50,25 +73,47 @@ class SimulatorCaller:
         num_samples = len(samples)
         for ii in range(num_samples):
             # update the simulation information
-            self.folder_info["current_work_directory"] = "point_" + str(ii)
-            new_path = create_dir(
-                current_folder=self.folder_info["main_work_directory"],
-                dirname=self.folder_info["current_work_directory"],
-            )
-            os.chdir(new_path)
+            if save_source_files is True:
+                self.folder_info["current_work_directory"] = "point_" + str(ii)
+                new_path = create_dir(
+                    current_folder=self.folder_info["main_work_directory"],
+                    dirname=self.folder_info["current_work_directory"],
+                )
+                os.chdir(new_path)
+                log_file = "results.p"
+                if os.path.exists(log_file):
+                    print("remove results succesfully \n")
+                    os.remove(log_file)
+            else:
+                self.folder_info["current_work_directory"] = "data"
+                new_path = create_dir(
+                    current_folder=self.folder_info["main_work_directory"],
+                    dirname=self.folder_info["current_work_directory"],
+                )
+                os.chdir(new_path)
+                log_file = "results.p"
+                if os.path.exists(log_file):
+                    print("remove results succesfully \n")
+                    os.remove(log_file)
             # update the geometry info for microstructure
             self._update_sample_info(sample=samples[ii])
 
             # generating the micro-structure
-            vol_frac = self.micro_structure_generation(
-                length=self.rve_geometry["length"],
-                width=self.rve_geometry["width"],
-                radius=self.rve_geometry["radius"],
-                vol_req=self.vol_req,
-            )
+            if os.path.isfile("micro_structure_info.json"):
+                print("micro-structure file already exist\n")
+            else:
+                self.vol_frac = self.micro_structure_generation(
+                    length=self.rve_geometry["length"],
+                    width=self.rve_geometry["width"],
+                    radius_mu=self.rve_geometry["radius_mu"],
+                    radius_std=self.rve_geometry["radius_std"],
+                    vol_req=self.vol_req,
+                )
+                print("micro-structure be generated successfully\n")
+
             list_iter = list(responses.keys())
             if "vol_frac" in list_iter:
-                responses.at[ii, "vol_frac"] = vol_frac
+                responses.at[ii, "vol_frac"] = self.vol_frac
                 list_iter.remove("vol_frac")
 
             # complete simulation info for Abaqus
@@ -91,12 +136,15 @@ class SimulatorCaller:
     def update_sim_info(
         self,
         size: float = 0.048,
-        radius: float = 0.003,
+        radius_mu: float = 0.003,
+        radius_std: float = 0.0001,
         vol_req: float = 0.30,
         mesh_partition: int = 30,
         loads: list = [0.05, 0.0, 0.0],
-        simulation_time: float = 10.0,
+        simulation_time: float = 1.0,
         print_info: bool = False,
+        num_cpu: int = 1,
+        platform: str = "ubuntu",
     ) -> None:
         """update parameters of asca rve simulation
 
@@ -119,11 +167,18 @@ class SimulatorCaller:
         """
 
         self.vol_req = vol_req
-        self.rve_geometry = {"length": size, "width": size, "radius": radius}
+        self.rve_geometry = {
+            "length": size,
+            "width": size,
+            "radius_mu": radius_mu,
+            "radius_std": radius_std,
+        }
         self.abaqus_paras = {
             "mesh_partition": mesh_partition,
             "loads": loads,
             "simulation_time": simulation_time,
+            "num_cpu": num_cpu,
+            "platform": platform,
         }
         if print_info:
             print(f"geometry information of RVE: {self.rve_geometry}")
@@ -148,6 +203,12 @@ class SimulatorCaller:
         if "mesh_partition" in sample.keys():
             self.abaqus_paras["mesh_partition"] = sample["mesh_partition"]
 
+        if "num_cpu" in sample.keys():
+            self.abaqus_paras["num_cpu"] = sample["num_cpu"]
+
+        if "platform" in sample.keys():
+            self.abaqus_paras["platform"] = sample["platform"]
+
     def _complete_information(self) -> None:
         """
         This function is used to complete information for abaqus simulation
@@ -164,7 +225,8 @@ class SimulatorCaller:
         self.sim_info = {
             "job_name": "asca_rve",
             "location_information": location_info["location_information"],
-            "radius": location_info["radius"],
+            "radius_mu": location_info["radius_mu"],
+            "radius_std": location_info["radius_std"],
             "len_start": location_info["len_start"],
             "len_end": location_info["len_end"],
             "wid_start": location_info["wid_start"],
@@ -172,11 +234,17 @@ class SimulatorCaller:
             "mesh_partition": self.abaqus_paras["mesh_partition"],
             "loads": self.abaqus_paras["loads"],
             "simulation_time": self.abaqus_paras["simulation_time"],
+            "num_cpu": self.abaqus_paras["num_cpu"],
+            "platform": self.abaqus_paras["platform"],
         }
 
     @staticmethod
     def micro_structure_generation(
-        length: float, width: float, radius: float, vol_req: float
+        length: float,
+        width: float,
+        radius_mu: float,
+        radius_std: float,
+        vol_req: float,
     ) -> float:
         """Generate the micro-structure
 
@@ -186,8 +254,10 @@ class SimulatorCaller:
             length of the RVE
         width : float
             width of the RVE
-        radius : float
-            radius of the RVE
+        radius_mu : float
+            mean radius of the fibers
+        radius_std: float
+            standard deviation of the fibers
         vol_req: float
             volume requirement of fiber material
 
@@ -197,12 +267,12 @@ class SimulatorCaller:
             the actual volume fraction of the micro-structure.
         """
 
-        microstructure_generator = CircleInclusion(
+        microstructure_generator = HeterCircleInclusion(
             length=length,
             width=width,
-            radius=radius,
+            radius_mu=radius_mu,
+            radius_std=radius_std,
             vol_req=vol_req,
-            second_heuristic=False,
         )
         volume_frac = microstructure_generator.generate_rve()
         microstructure_generator.save_results()
@@ -215,5 +285,11 @@ class SimulatorCaller:
         self.data["responses"] = responses
         working_folder = os.getcwd()
         with open("data.pickle", "wb") as file:
+            pickle.dump(self.data, file)
+        os.chdir(working_folder)
+
+    def save_data(self, name: str = "data.pickle") -> None:
+        working_folder = os.getcwd()
+        with open(name, "wb") as file:
             pickle.dump(self.data, file)
         os.chdir(working_folder)

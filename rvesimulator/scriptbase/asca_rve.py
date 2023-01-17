@@ -49,15 +49,16 @@ class ASCARVE(RVE2DBase):
         self.loc = sim_info["location_information"]
         self.length = (
             sim_info["len_end"] - sim_info["len_start"]
-        ) - 2 * sim_info["radius"]
+        ) - 2 * sim_info["radius_mu"]
         self.width = (
             sim_info["wid_end"] - sim_info["wid_start"]
-        ) - 2 * sim_info["radius"]
+        ) - 2 * sim_info["radius_mu"]
         self.center = [
             (sim_info["len_end"] + sim_info["len_start"]) / 2.0,
             (sim_info["wid_end"] + sim_info["wid_start"]) / 2.0,
         ]
-        self.radius = sim_info["radius"]
+        self.radius_mu = sim_info["radius_mu"]
+        self.radius_std = sim_info["radius_std"]
         # information of RVE modeling
         self.loads = sim_info["loads"]
         self.mesh_size = (
@@ -100,14 +101,14 @@ class ASCARVE(RVE2DBase):
         fiberface = p.faces.getByBoundingCylinder(
             (self.loc[0][0], self.loc[0][1], 0.0),
             (self.loc[0][0], self.loc[0][1], 1.0),
-            self.radius + 0.001 * self.radius,
+            self.loc[0][2] + 0.001 * self.loc[0][2],
         )
         p.Set(faces=fiberface, name="fiberface")
         for ii in range(1, len(self.loc)):
             fiberface_1 = p.faces.getByBoundingCylinder(
                 (self.loc[ii][0], self.loc[ii][1], 0.0),
                 (self.loc[ii][0], self.loc[ii][1], 1.0),
-                self.radius + 0.001 * self.radius,
+                self.loc[ii][2] + 0.001 * self.loc[ii][2],
             )
             p.Set(faces=fiberface_1, name="fiberface_1")
             p.SetByBoolean(
@@ -190,13 +191,13 @@ class ASCARVE(RVE2DBase):
                 "EVOL",
                 "IVOL",
             ),
-            timeInterval=0.1,
+            timeInterval=0.01,
         )
         self.model.FieldOutputRequest(
             name="F-Output-2",
             createStepName="Step-1",
             variables=("U", "RF"),
-            timeInterval=0.1,
+            timeInterval=0.01,
         )
         self.model.historyOutputRequests["H-Output-1"].setValues(
             variables=(
@@ -209,5 +210,5 @@ class ASCARVE(RVE2DBase):
                 "ALLWK",
                 "ETOTAL",
             ),
-            timeInterval=0.1,
+            timeInterval=0.01,
         )
