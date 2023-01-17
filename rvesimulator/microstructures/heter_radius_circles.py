@@ -137,6 +137,8 @@ class HeterCircleInclusion(MicrosctucturaGenerator, PlotRVE2D):
         """
         geometry_info = {
             "location_information": self.fiber_positions.tolist(),
+            "radius_mu": self.radius_mu,
+            "radius_std": self.radius_std,
             "len_start": self.len_start,
             "wid_start": self.wid_start,
             "len_end": self.len_end,

@@ -4,16 +4,17 @@ import os
 import pickle
 
 import numpy as np
-import pandas as pd
 
 # local functions
 import rvesimulator
-from rvesimulator.microstructures.homo_radius_disks import CircleInclusion
+from rvesimulator.microstructures.heter_radius_circles import (
+    HeterCircleInclusion,
+)
 from rvesimulator.simulators.abaqus_simulator import AbaqusSimulator
 from rvesimulator.simulators.utils import create_dir
 
 
-class SimulatorCaller:
+class PnasRVE:
     def __init__(self) -> None:
 
         """Interface between python and abaqus of the asca rve case"""
@@ -29,13 +30,15 @@ class SimulatorCaller:
             "sim_path": "scriptbase.pnas_rve",
             "sim_script": "PnasCompositeRVE",
             "post_path": "scriptbase.postprocess",
-            "post_script": "RVEPostProcess",
+            "post_script": "RVEPostProcess2D",
         }
         self.vol_req = None
         self.update_sim_info()
 
     def run_simulation(
-        self, data: dict = None, save_source_files: bool = True
+        self,
+        data: dict = None,
+        save_source_files: bool = True,
     ) -> dict:
         """run simulation sequentially
 
@@ -69,6 +72,10 @@ class SimulatorCaller:
                     dirname=self.folder_info["current_work_directory"],
                 )
                 os.chdir(new_path)
+                log_file = "results.p"
+                if os.path.exists(log_file):
+                    print("remove results succesfully \n")
+                    os.remove(log_file)
             else:
                 self.folder_info["current_work_directory"] = "data"
                 new_path = create_dir(
@@ -76,25 +83,32 @@ class SimulatorCaller:
                     dirname=self.folder_info["current_work_directory"],
                 )
                 os.chdir(new_path)
+                log_file = "results.p"
+                if os.path.exists(log_file):
+                    print("remove results succesfully \n")
+                    os.remove(log_file)
             # update the geometry info for microstructure
             self._update_sample_info(sample=samples[ii])
+            if os.path.isfile("micro_structure_info.json"):
+                print("micro-structure file already exist\n")
+            else:
+                self.vol_frac = self.micro_structure_generation(
+                    length=self.rve_geometry["length"],
+                    width=self.rve_geometry["width"],
+                    radius_mu=self.rve_geometry["radius_mu"],
+                    radius_std=self.rve_geometry["radius_std"],
+                    vol_req=self.vol_req,
+                )
+                print("micro-structure be generated successfully\n")
 
-            # generating the micro-structure
-            vol_frac = self.micro_structure_generation(
-                length=self.rve_geometry["length"],
-                width=self.rve_geometry["width"],
-                radius=self.rve_geometry["radius"],
-                vol_req=self.vol_req,
-            )
             list_iter = list(responses.keys())
             if "vol_frac" in list_iter:
-                responses.at[ii, "vol_frac"] = vol_frac
+                responses.at[ii, "vol_frac"] = self.vol_frac
                 list_iter.remove("vol_frac")
 
             # complete simulation info for Abaqus
             self._complete_information()
             os.chdir(self.main_folder)
-
             # initilize the abaqus simulator
             abaqus_wrapper = AbaqusSimulator(
                 sim_info=self.sim_info, folder_info=self.folder_info
@@ -111,17 +125,22 @@ class SimulatorCaller:
     def update_sim_info(
         self,
         size: float = 0.048,
-        radius: float = 0.003,
+        radius_mu: float = 0.003,
+        radius_std: float = 0,
         vol_req: float = 0.30,
-        mesh_partition: int = 30,
-        loads: list = [0.05, 0.0, 0.0],
+        mesh_partition: int = 100,
+        loads: list = [0.02, 0.02, 0.02],
         loads_path: list = None,
         E_matrix: float = 100.0,
         Pr_matrix: float = 0.30,
-        matrix_yield_law: str = "Von_mises",
+        yield_factor_1: float = 0.5,
+        yield_factor_2: float = 0.2,
+        yield_factor_3: float = 0.4,
         E_fiber: float = 1.0,
         Pr_fiber: float = 0.19,
         time_period: float = 1.0,
+        num_cpu: int = 1,
+        platform: str = "ubuntu",
         print_info: bool = False,
     ) -> None:
         """update some default information
@@ -161,20 +180,20 @@ class SimulatorCaller:
         KeyError
             key error for matrix material plasticity law definition string
         """
-        if matrix_yield_law == "Von_mises":
-            yield_criterion = np.zeros((101, 2))
-            yield_criterion[:, 1] = np.linspace(0, 1, 101)
-            yield_criterion[:, 0] = 0.5 + 0.2 * (yield_criterion[:, 1]) ** 0.4
-            yield_criterion[-1, 1] = 10.0
-            yield_criterion[-1, 0] = (
-                0.5 + 0.2 * (yield_criterion[-1, 1]) ** 0.4
-            )
-            yield_criterion = yield_criterion.T
-        else:
-            raise KeyError("The material's yield criterion is not defined! \n")
-
+        # generate the yield function table for matrix material
+        yield_table_matrix = self.yield_criterion(
+            factor_1=yield_factor_1,
+            factor_2=yield_factor_2,
+            factor_3=yield_factor_3,
+        )
+        # define the parameters for micro-structure
         self.vol_req = vol_req
-        self.rve_geometry = {"length": size, "width": size, "radius": radius}
+        self.rve_geometry = {
+            "length": size,
+            "width": size,
+            "radius_mu": radius_mu,
+            "radius_std": radius_std,
+        }
         self.abaqus_paras = {
             "mesh_partition": mesh_partition,
             "loads": loads,
@@ -182,9 +201,11 @@ class SimulatorCaller:
             "loads_path": loads_path,
             "E_matrix": E_matrix,
             "Pr_matrix": Pr_matrix,
-            "yield_table_matrix": yield_criterion.tolist(),
+            "yield_table_matrix": yield_table_matrix,
             "E_fiber": E_fiber,
             "Pr_fiber": Pr_fiber,
+            "num_cpu": num_cpu,
+            "platform": platform,
         }
         if print_info:
             print(f"geometry information of RVE: {self.rve_geometry}")
@@ -210,8 +231,12 @@ class SimulatorCaller:
             self.rve_geometry["width"] = sample["size"]
 
         # update 'radius'
-        if "radius" in sample.keys():
-            self.rve_geometry["radius"] = sample["radius"]
+        if "radius_mu" in sample.keys():
+            self.rve_geometry["radius_mu"] = sample["radius_mu"]
+
+        if "radius_std" in sample.keys():
+            self.rve_geometry["radius_std"] = sample["radius_std"]
+
         # update 'mesh'
         if "mesh_partition" in sample.keys():
             self.abaqus_paras["mesh_partition"] = sample["mesh_partition"]
@@ -231,6 +256,12 @@ class SimulatorCaller:
         if "Pr_fiber" in sample.keys():
             self.abaqus_paras["Pr_fiber"] = sample["Pr_fiber"]
 
+        if "num_cpu" in sample.keys():
+            self.abaqus_paras["num_cpu"] = sample["num_cpu"]
+
+        if "platform" in sample.keys():
+            self.abaqus_paras["platform"] = sample["platform"]
+
     def _complete_information(self) -> None:
         """
         This function is used to complete information for abaqus simulation
@@ -247,7 +278,8 @@ class SimulatorCaller:
         self.sim_info = {
             "job_name": "pnas_composite",
             "location_information": location_info["location_information"],
-            "radius": location_info["radius"],
+            "radius_mu": location_info["radius_mu"],
+            "radius_std": location_info["radius_std"],
             "len_start": location_info["len_start"],
             "len_end": location_info["len_end"],
             "wid_start": location_info["wid_start"],
@@ -261,11 +293,17 @@ class SimulatorCaller:
             "E_fiber": self.abaqus_paras["E_fiber"],
             "Pr_fiber": self.abaqus_paras["Pr_fiber"],
             "time_period": self.abaqus_paras["time_period"],
+            "num_cpu": self.abaqus_paras["num_cpu"],
+            "platform": self.abaqus_paras["platform"],
         }
 
     @staticmethod
     def micro_structure_generation(
-        length: float, width: float, radius: float, vol_req: float
+        length: float,
+        width: float,
+        radius_mu: float,
+        radius_std: float,
+        vol_req: float,
     ) -> float:
         """Generate the micro-structure
 
@@ -275,8 +313,10 @@ class SimulatorCaller:
             length of the RVE
         width : float
             width of the RVE
-        radius : float
-            radius of the RVE
+        radius_mu : float
+            mean radius of the fibers
+        radius_std: float
+            standard deviation of the fibers
         vol_req: float
             volume requirement of fiber material
 
@@ -286,12 +326,12 @@ class SimulatorCaller:
             the actual volume fraction of the micro-structure.
         """
 
-        microstructure_generator = CircleInclusion(
+        microstructure_generator = HeterCircleInclusion(
             length=length,
             width=width,
-            radius=radius,
+            radius_mu=radius_mu,
+            radius_std=radius_std,
             vol_req=vol_req,
-            second_heuristic=False,
         )
         volume_frac = microstructure_generator.generate_rve()
         microstructure_generator.save_results()
@@ -306,3 +346,43 @@ class SimulatorCaller:
         with open("data.pickle", "wb") as file:
             pickle.dump(self.data, file)
         os.chdir(working_folder)
+
+    def save_data(self, name: str = "data.pickle") -> None:
+        working_folder = os.getcwd()
+        with open(name, "wb") as file:
+            pickle.dump(self.data, file)
+        os.chdir(working_folder)
+
+    @staticmethod
+    def yield_criterion(
+        factor_1: float = 0.5, factor_2: float = 0.2, factor_3: float = 0.4
+    ) -> list:
+        """yield crterion $\sigma_y = factor_1 + factor_2 \times exp(\epsilon)^factor_3$
+
+        Parameters
+        ----------
+        factor_1 : float, optional
+            factor 1 for yield criterion, by default 0.5
+        factor_2 : float, optional
+            factor 2 for yield criterion, by default 0.2
+        factor_3 : float, optional
+            factor 3 for yield criterion, by default 0.4
+
+        Returns
+        -------
+        yield_table : list
+            a list contains the yield table
+        """
+
+        yield_table = np.zeros((101, 2))
+        yield_table[:, 1] = np.linspace(0, 1, 101)
+        yield_table[:, 0] = (
+            factor_1 + factor_2 * (yield_table[:, 1]) ** factor_3
+        )
+        yield_table[-1, 1] = 10.0
+        yield_table[-1, 0] = (
+            factor_1 + factor_2 * (yield_table[-1, 1]) ** factor_3
+        )
+        yield_table = yield_table.T
+
+        return yield_table.tolist()

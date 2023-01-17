@@ -213,7 +213,8 @@ class PnasCompositeRVE(RVE2DBase):
             "len_end": None,
             "wid_start": None,
             "wid_end": None,
-            "radius": None,
+            "radius_mu": None,
+            "radius_std": None,
             "job_name": "pnas_composite",
             "loads": [0.02, 0.02, 0.02],
             "loads_path": None,
@@ -247,15 +248,16 @@ class PnasCompositeRVE(RVE2DBase):
         self.loc = sim_info["location_information"]
         self.length = (
             sim_info["len_end"] - sim_info["len_start"]
-        ) - 2 * sim_info["radius"]
+        ) - 2 * sim_info["radius_mu"]
         self.width = (
             sim_info["wid_end"] - sim_info["wid_start"]
-        ) - 2 * sim_info["radius"]
+        ) - 2 * sim_info["radius_mu"]
         self.center = [
             (sim_info["len_end"] + sim_info["len_start"]) / 2.0,
             (sim_info["wid_end"] + sim_info["wid_start"]) / 2.0,
         ]
-        self.radius = sim_info["radius"]
+        self.radius_mu = sim_info["radius_mu"]
+        self.radius_std = sim_info["radius_std"]
 
         # information of RVE modeling
         self.loads = sim_info["loads"]
@@ -324,14 +326,14 @@ class PnasCompositeRVE(RVE2DBase):
         fiberface = p.faces.getByBoundingCylinder(
             (self.loc[0][0], self.loc[0][1], 0.0),
             (self.loc[0][0], self.loc[0][1], 1.0),
-            self.radius + 0.001 * self.radius,
+            self.radius_mu + 0.001 * self.radius_mu,
         )
         p.Set(faces=fiberface, name="fiberface")
         for ii in range(1, len(self.loc)):
             fiberface_1 = p.faces.getByBoundingCylinder(
                 (self.loc[ii][0], self.loc[ii][1], 0.0),
                 (self.loc[ii][0], self.loc[ii][1], 1.0),
-                self.radius + 0.001 * self.radius,
+                self.radius_mu + 0.001 * self.radius_mu,
             )
             p.Set(faces=fiberface_1, name="fiberface_1")
             p.SetByBoolean(

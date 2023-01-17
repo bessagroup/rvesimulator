@@ -120,15 +120,18 @@ class PnasSVE:
         loads: list = [0.02, 0.02, 0.02],
         loads_path: list = None,
         time_period: float = 1.0,
+        num_cpu: int = 1,
+        platform: str = "ubuntu",
         print_info: bool = False,
     ) -> None:
+
         """update the simulation information, if the input is None then
         use the default value.
 
         Parameters
         ----------
         size : float, optional
-            size of RVE, by default 1.0
+            size of RVE, by defaulWt 1.0
         radius : float, optional
             radius of hollow plate , by default 0.2
         youngs_modulus : float, optional
@@ -174,8 +177,8 @@ class PnasSVE:
             "loads_path": loads_path,
             "time_period": time_period,
             "job_name": "pnas_sve",
-            "num_cpu": 1,
-            "platform": "ubuntu",
+            "num_cpu": num_cpu,
+            "platform": platform,
         }
         if print_info is True:
             print(f"The simulation information is : {self.sim_info}")

@@ -92,13 +92,15 @@ class CircleInclusion:
         # define the reinforcement information
         self.loc = loc_info["location_information"]
         # define the boundaries of the square
+        self.radius_mu = loc_info["radius_mu"]
+        self.radius_std = loc_info["radius_std"]
         self.a0 = loc_info["len_start"]
         self.af = loc_info["len_end"]
         self.b0 = loc_info["wid_start"]
         self.bf = loc_info["wid_end"]
 
         # define the radius info
-        self.radius = loc_info["radius"]
+        # self.radius = loc_info["radius"]
         # specify the names of simulation
         self.model_name = model_name
         self.part_name = part_name
@@ -122,7 +124,7 @@ class CircleInclusion:
         for ii in range(len(self.loc)):
             sketch.CircleByCenterPerimeter(
                 center=(self.loc[ii][0], self.loc[ii][1]),
-                point1=(self.loc[ii][0] + self.radius, self.loc[ii][1]),
+                point1=(self.loc[ii][0] + self.loc[ii][2], self.loc[ii][1]),
             )
         self.model.ConstrainedSketch(
             name="Fibre_Sketch_Prov", objectToCopy=sketch
@@ -136,12 +138,12 @@ class CircleInclusion:
             name="__profile__", sheetSize=self.af
         )
         sketch.rectangle(
-            point1=(self.a0 + self.radius, self.b0 + self.radius),
-            point2=(self.af - self.radius, self.bf - self.radius),
+            point1=(self.a0 + self.radius_mu, self.b0 + self.radius_mu),
+            point2=(self.af - self.radius_mu, self.bf - self.radius_mu),
         )
         sketch.rectangle(
-            point1=(self.a0 - self.radius, self.b0 - self.radius),
-            point2=(self.af + self.radius, self.bf + self.radius),
+            point1=(self.a0 - self.radius_mu, self.b0 - self.radius_mu),
+            point2=(self.af + self.radius_mu, self.bf + self.radius_mu),
         )
         self.model.sketches.changeKey(
             fromName="__profile__", toName="Fibre_Sketch_Trim"
@@ -152,8 +154,8 @@ class CircleInclusion:
             name="__profile__", sheetSize=self.af
         )
         sketch.rectangle(
-            point1=(self.a0 + self.radius, self.b0 + self.radius),
-            point2=(self.af - self.radius, self.bf - self.radius),
+            point1=(self.a0 + self.radius_mu, self.b0 + self.radius_mu),
+            point2=(self.af - self.radius_mu, self.bf - self.radius_mu),
         )
         self.model.sketches.changeKey(
             fromName="__profile__", toName="Matrix_Sketch"

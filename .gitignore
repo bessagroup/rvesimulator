@@ -134,5 +134,10 @@ examples/hollow_plate_simulation/Data/
 examples/asca_rve/Data/
 examples/pnas_hollow_plate/basic_illustration/Data/
 examples/pnas_hollow_plate/different_yield_criteria/Data/data/
-examples/pnas_composite/Data/
-examples/statistic_rve/Data/data/
+examples/pnas_composite/illustration/Data/
+examples/pnas_composite/different_yield_criteria(linear loads)/Data/data/
+examples/pnas_composite/different_yield_criteria(nonlinear loads)/Data/data/
+examples/pnas_composite/different_fiber_material/Data/data/
+examples/pnas_composite/illustration/Data/data/
+examples/statistic_rve/different_geometry/Data/data/
+examples/statistic_rve/different_radius/Data/data/
