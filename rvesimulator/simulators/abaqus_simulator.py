@@ -174,7 +174,7 @@ class AbaqusSimulator(Simulator):
                 self.kill_abaqus_process()
                 break
             end_time = time.time()
-            print(f"the simulation time is :{end_time - start_time} !")
+            print(f"simulation time :{(end_time - start_time):2f} s")
 
     def _remove_files(self) -> None:
         """remove files to save memory"""

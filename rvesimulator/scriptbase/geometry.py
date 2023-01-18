@@ -428,3 +428,56 @@ class FullCircleInclusion:
         del self.model.parts["Fibre_Final_Part"]
 
         return self.part
+
+
+# =============================================================================
+
+
+class HeterHollowPlate:
+    def __init__(self, length, width, location_info, name_part, model):
+        """initialization of the hollow plate simulation
+
+        Parameters
+        ----------
+        length: float
+            length of RVE
+        width: float
+            width of RVE
+        location_info: list
+            location information of circles
+        name_part : str
+            name of the part
+        model : abaqus model
+            abaqus model
+        """
+        self.part = None
+        self.model = model
+        self.part_name = name_part
+        self.length = length
+        self.width = width
+        self.loc_info = location_info
+
+    def create_part(self):
+        sketch = self.model.ConstrainedSketch(
+            name="sketch_profile", sheetSize=2.0
+        )
+        sketch.rectangle(
+            point1=(0, 0),
+            point2=(self.length, self.width),
+        )
+        for ii in range(len(self.loc_info)):
+            sketch.CircleByCenterPerimeter(
+                center=(self.loc_info[ii][0], self.loc_info[ii][1]),
+                point1=(
+                    self.loc_info[ii][0] + self.loc_info[ii][2],
+                    self.loc_info[ii][1],
+                ),
+            )
+        self.part = self.model.Part(
+            name=self.part_name,
+            dimensionality=TWO_D_PLANAR,
+            type=DEFORMABLE_BODY,
+        )
+        self.part.BaseShell(sketch=sketch)
+
+        return self.part

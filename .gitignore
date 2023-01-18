@@ -139,5 +139,7 @@ examples/pnas_composite/different_yield_criteria(linear loads)/Data/data/
 examples/pnas_composite/different_yield_criteria(nonlinear loads)/Data/data/
 examples/pnas_composite/different_fiber_material/Data/data/
 examples/pnas_composite/illustration/Data/data/
+examples/taylancase/Illustration/Data/
+examples/taylancase/different_geometry/Data/data/
 examples/statistic_rve/different_geometry/Data/data/
 examples/statistic_rve/different_radius/Data/data/
