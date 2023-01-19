@@ -26,9 +26,7 @@ class AbaqusSimulator(Simulator):
     running Abaqus simulation and getting responses
     """
 
-    def __init__(
-        self, sim_info: dict, folder_info: dict, plaform: str = "ubuntu"
-    ) -> None:
+    def __init__(self, sim_info: dict, folder_info: dict) -> None:
 
         """intialization of abaqus simulator
 
@@ -58,7 +56,7 @@ class AbaqusSimulator(Simulator):
         # only used on 'ubuntu' platform
         self.post_path = folder_info["post_path"]
         self.post_script = folder_info["post_script"]
-        self.plaform = plaform
+        self.plaform = sim_info["plat_form"]
 
         # define the name of json file
         self.sim_info_name = "sim_info.json"
