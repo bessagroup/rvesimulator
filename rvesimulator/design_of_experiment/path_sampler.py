@@ -21,7 +21,7 @@ class StrainPathSampler:
         """Initialization of strain path sampler"""
 
         self.data = None
-        self.path_info = None
+        self.path = None
         self.seed = seed
         self.num_dim = num_dim
 
@@ -53,15 +53,19 @@ class StrainPathSampler:
         self.num_points = len(data["samples"].axes[0])
         self.argument = arg_name
         # create an empty dataframe that contain the keys of loads_path
-        loads_path_temp = np.empty([self.num_points, 3])
-        loads_path_temp[:] = np.nan
-        loads_path = pd.DataFrame(
-            loads_path_temp, columns=["x_control", "y_control", arg_name]
+        path_temp = np.empty([self.num_points, 3])
+        path_temp[:] = np.nan
+        self.path = pd.DataFrame(
+            path_temp, columns=["x_control", "y_control", arg_name]
         )
-        loads_path[["x_control", "y_control", arg_name]] = loads_path[
+        self.path[["x_control", "y_control", arg_name]] = self.path[
             ["x_control", "y_control", arg_name]
         ].astype(object)
-
+        # create df dataframe for output
+        loads_path_temp = np.empty([self.num_points, 1])
+        loads_path_temp[:] = np.nan
+        loads_path = pd.DataFrame(loads_path_temp, columns=[arg_name])
+        loads_path[arg_name] = loads_path[arg_name].astype(object)
         # a loop to generate loads path
         for ii in range(self.num_points):
             # generate control points
@@ -71,16 +75,17 @@ class StrainPathSampler:
                 num_increment=data["samples"].at[ii, "num_increment"],
                 num_dim=self.num_dim,
             )
-            loads_path.at[ii, "x_control"] = x_control
-            loads_path.at[ii, "y_control"] = y_control
-            loads_path.at[ii, arg_name] = self.interpolation(
+            # save for plot figure
+            self.path.at[ii, "x_control"] = x_control
+            self.path.at[ii, "y_control"] = y_control
+            self.path.at[ii, arg_name] = self.interpolation(
                 x_control=x_control,
                 y_control=y_control,
                 num_increment=data["samples"].at[ii, "num_increment"],
                 interploation_method=interploation_method,
             )
-        self.path_info = loads_path
-
+            # save for abaqus simulation
+            loads_path.at[ii, arg_name] = self.path.at[ii, arg_name].tolist()
         self.data["samples"] = pd.concat(
             [data["samples"], loads_path], axis=1, join="inner"
         )
@@ -190,10 +195,10 @@ class StrainPathSampler:
         if internal is True:
             assert "iteration" in kwarg.keys(), " iteration should be provided"
             iteration = kwarg["iteration"]
-            x_control = self.data["samples"].at[iteration, "x_control"]
-            y_control = self.data["samples"].at[iteration, "y_control"]
+            x_control = self.path.at[iteration, "x_control"]
+            y_control = self.path.at[iteration, "y_control"]
             num_increment = self.data["samples"].at[iteration, "num_increment"]
-            path = self.data["samples"].at[iteration, self.argument]
+            path = self.path.at[iteration, self.argument]
         else:
             assert "x_control" in kwarg.keys(), " x_control should be provided"
             assert "y_control" in kwarg.keys(), " y_control should be provided"

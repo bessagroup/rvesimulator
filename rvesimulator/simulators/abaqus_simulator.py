@@ -56,7 +56,7 @@ class AbaqusSimulator(Simulator):
         # only used on 'ubuntu' platform
         self.post_path = folder_info["post_path"]
         self.post_script = folder_info["post_script"]
-        self.plaform = sim_info["plat_form"]
+        self.platform = sim_info["platform"]
 
         # define the name of json file
         self.sim_info_name = "sim_info.json"
@@ -87,12 +87,12 @@ class AbaqusSimulator(Simulator):
         self.print_banner("START ABAQUS ANALYSIS")
         start_time = time.time()
         command = "abaqus cae noGUI=" + str(new_python_filename) + " -mesa"
-        if self.plaform == "cluster":
+        if self.platform == "cluster":
             os.system(command)
-        elif self.plaform == "ubuntu":
+        elif self.platform == "ubuntu":
             self._run_abaqus_simulation(command)
             self._remove_files()
-        elif self.plaform == "windows":
+        elif self.platform == "windows":
             raise NotImplementedError("it is not implement yet \n")
         else:
             raise NotImplementedError("it is not implement yet \n")
@@ -107,7 +107,7 @@ class AbaqusSimulator(Simulator):
         delete_odb : bool, optional
             delete the odb file or not, by default True
         """
-        if self.plaform == "ubuntu":
+        if self.platform == "ubuntu":
             self.print_banner("START ABAQUS POST ANALYSIS")
             # path with the python-script
             new_python_filename = "get_results.py"
@@ -125,10 +125,10 @@ class AbaqusSimulator(Simulator):
                 odb_file = self.job_name + ".odb"
                 if os.path.exists(odb_file):
                     os.remove(odb_file)
-        elif self.plaform == "cluster":
+        elif self.platform == "cluster":
             pass
 
-        elif self.plaform == "windows":
+        elif self.platform == "windows":
             pass
 
     def read_back_results(self) -> dict:
