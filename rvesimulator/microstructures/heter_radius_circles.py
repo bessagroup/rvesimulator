@@ -45,7 +45,7 @@ class HeterCircleInclusion(MicrosctucturaGenerator, PlotRVE2D):
         num_guess_max: int = 50000,
         num_fiber_max: int = 750,
         num_cycle_max: int = 15,
-        dist_min_factor: float = 1.1,
+        dist_min_factor: float = 1.2,
     ) -> None:
         """Initialization
 
@@ -183,7 +183,7 @@ class HeterCircleInclusion(MicrosctucturaGenerator, PlotRVE2D):
             wid_start=self.radius_mu,
             wid_end=self.width - self.radius_mu,
             radius_mu=self.radius_mu,
-            radius_std=0.0,
+            radius_std=0,
         )
         # update the volume fraction information
         self.vol_frac = self.fiber_volume(self.radius_mu) / self.vol_total
@@ -211,10 +211,10 @@ class HeterCircleInclusion(MicrosctucturaGenerator, PlotRVE2D):
                 # update the info of number trial
                 self.num_trial = self.num_trial + 1
                 fiber_temp = self.generate_random_fibers(
-                    len_start=self.len_start,
-                    len_end=self.len_end,
-                    wid_start=self.wid_start,
-                    wid_end=self.wid_end,
+                    len_start=0.0,
+                    len_end=self.length,
+                    wid_start=0.0,
+                    wid_end=self.width,
                     radius_mu=self.radius_mu,
                     radius_std=self.radius_std,
                 )
@@ -469,6 +469,8 @@ class HeterCircleInclusion(MicrosctucturaGenerator, PlotRVE2D):
         x = np.random.uniform(len_start, len_end, 1)
         y = np.random.uniform(wid_start, wid_end, 1)
         r = np.random.normal(radius_mu, radius_std, 1)
+        while r <= 0:
+            r = np.random.normal(radius_mu, radius_std, 1)
         fiber = np.array([x, y, r])
         return fiber
 

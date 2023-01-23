@@ -7,9 +7,8 @@ import numpy as np
 
 # local functions
 import rvesimulator
-from rvesimulator.microstructures.heter_radius_circles import (
-    HeterCircleInclusion,
-)
+from rvesimulator.microstructures.heter_radius_circles import \
+    HeterCircleInclusion
 from rvesimulator.simulators.abaqus_simulator import AbaqusSimulator
 from rvesimulator.simulators.utils import create_dir
 
@@ -72,10 +71,11 @@ class PnasRVE:
                     dirname=self.folder_info["current_work_directory"],
                 )
                 os.chdir(new_path)
-                log_file = "results.p"
-                if os.path.exists(log_file):
-                    print("remove results succesfully \n")
-                    os.remove(log_file)
+                # remove the result
+                self.remove_file(file_name="results.p")
+                # remove the micro-structure file
+                if self.update_micro_structure is True:
+                    self.remove_file(file_name="micro_structure_info.json")
             else:
                 self.folder_info["current_work_directory"] = "data"
                 new_path = create_dir(
@@ -83,10 +83,12 @@ class PnasRVE:
                     dirname=self.folder_info["current_work_directory"],
                 )
                 os.chdir(new_path)
-                log_file = "results.p"
-                if os.path.exists(log_file):
-                    print("remove results succesfully \n")
-                    os.remove(log_file)
+                # remove the result
+                self.remove_file(file_name="results.p")
+                # remove the micro-structure file
+                if self.update_micro_structure is True:
+                    self.remove_file(file_name="micro_structure_info.json")
+
             # update the geometry info for microstructure
             self._update_sample_info(sample=samples[ii])
             if os.path.isfile("micro_structure_info.json"):
@@ -141,6 +143,7 @@ class PnasRVE:
         time_period: float = 1.0,
         num_cpu: int = 1,
         platform: str = "ubuntu",
+        update_micro_structure: bool = False,
         print_info: bool = False,
     ) -> None:
         """update some default information
@@ -180,6 +183,13 @@ class PnasRVE:
         KeyError
             key error for matrix material plasticity law definition string
         """
+        # to know if I want to updatet the micro-structure file or not
+        self.update_micro_structure = update_micro_structure
+        # print the info to screen
+        if update_micro_structure is True:
+            print("Micro-structure file will be updated \n")
+        else:
+            print("Micro-structure file will not be updated \n")
         # generate the yield function table for matrix material
         yield_table_matrix = self.yield_criterion(
             factor_1=yield_factor_1,
@@ -335,7 +345,7 @@ class PnasRVE:
         )
         volume_frac = microstructure_generator.generate_rve()
         microstructure_generator.save_results()
-        microstructure_generator.plot_rve(save_figure=True)
+        microstructure_generator.plot_rve(save_figure=False)
 
         return volume_frac
 
@@ -386,3 +396,19 @@ class PnasRVE:
         yield_table = yield_table.T
 
         return yield_table.tolist()
+
+    @staticmethod
+    def remove_file(file_name: str = "micro_structure_info.json") -> None:
+        """remove file
+
+        Parameters
+        ----------
+        file_name : str, optional
+            name of the file, by default "micro_structure_info.json"
+        """
+
+        if os.path.exists(file_name):
+            print(f"remove {file_name} successfully\n")
+            os.remove(file_name)
+        else:
+            print(f"{file_name} do not exist\n")

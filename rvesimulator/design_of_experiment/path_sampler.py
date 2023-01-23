@@ -85,7 +85,7 @@ class StrainPathSampler:
                 interploation_method=interploation_method,
             )
             # save for abaqus simulation
-            loads_path.at[ii, arg_name] = self.path.at[ii, arg_name].tolist()
+            loads_path.at[ii, arg_name] = self.path.at[ii, arg_name].T.tolist()
         self.data["samples"] = pd.concat(
             [data["samples"], loads_path], axis=1, join="inner"
         )
