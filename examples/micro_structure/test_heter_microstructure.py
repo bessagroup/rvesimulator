@@ -13,11 +13,11 @@ from rvesimulator.microstructures.heter_radius_circles import (
 )
 
 # define the geometry information of the RVE
-length = 0.048
-width = 0.048
-radius = 0.010
-radius_std = 0.005
-vol_req = 0.45
+length = 10.0
+width = 10.0
+radius = 2.0
+radius_std = 0.8
+vol_req = 0.60
 
 CircleInclusionGenerator = HeterCircleInclusion(
     length=length,
@@ -30,5 +30,5 @@ CircleInclusionGenerator = HeterCircleInclusion(
 
 CircleInclusionGenerator.generate_rve()
 CircleInclusionGenerator.plot_rve(save_figure=False, fig_name="rve.png")
-
+print(CircleInclusionGenerator.fiber_positions)
 CircleInclusionGenerator.save_results()

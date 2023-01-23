@@ -142,8 +142,14 @@ class CircleInclusion:
             point2=(self.af - self.radius_mu, self.bf - self.radius_mu),
         )
         sketch.rectangle(
-            point1=(self.a0 - self.radius_mu, self.b0 - self.radius_mu),
-            point2=(self.af + self.radius_mu, self.bf + self.radius_mu),
+            point1=(
+                self.a0 - 2 * self.radius_mu,
+                self.b0 - 2 * self.radius_mu,
+            ),
+            point2=(
+                self.af + 2 * self.radius_mu,
+                self.bf + 2 * self.radius_mu,
+            ),
         )
         self.model.sketches.changeKey(
             fromName="__profile__", toName="Fibre_Sketch_Trim"

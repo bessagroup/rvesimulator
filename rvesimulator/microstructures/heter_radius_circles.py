@@ -45,7 +45,7 @@ class HeterCircleInclusion(MicrosctucturaGenerator, PlotRVE2D):
         num_guess_max: int = 50000,
         num_fiber_max: int = 750,
         num_cycle_max: int = 15,
-        dist_min_factor: float = 1.2,
+        dist_min_factor: float = 1.1,
     ) -> None:
         """Initialization
 
@@ -102,6 +102,8 @@ class HeterCircleInclusion(MicrosctucturaGenerator, PlotRVE2D):
         # fiber location is a nx4 numpy array
         # x, y, r, p (partition)
         self.fiber_positions = None
+
+        np.random.seed(seed=None)
 
     def __generate_rve(self) -> None:
         """core procedure of generating RVE"""
@@ -211,9 +213,9 @@ class HeterCircleInclusion(MicrosctucturaGenerator, PlotRVE2D):
                 # update the info of number trial
                 self.num_trial = self.num_trial + 1
                 fiber_temp = self.generate_random_fibers(
-                    len_start=0.0,
+                    len_start=0,
                     len_end=self.length,
-                    wid_start=0.0,
+                    wid_start=0,
                     wid_end=self.width,
                     radius_mu=self.radius_mu,
                     radius_std=self.radius_std,
@@ -316,7 +318,12 @@ class HeterCircleInclusion(MicrosctucturaGenerator, PlotRVE2D):
             # the original fiber is a full circle
             if new_fiber[0, 3] == 1:
                 # keep one point after stirring
-                self.fiber_positions[iter, :] = new_fiber
+                self.fiber_positions = np.delete(
+                    self.fiber_positions, (iter), axis=0
+                )
+                self.fiber_positions = np.insert(
+                    self.fiber_positions, (iter), new_fiber, axis=0
+                )
                 iter = iter + 1
             elif new_fiber[0, 3] == 2:
                 # split into two hal after stirring
@@ -349,7 +356,12 @@ class HeterCircleInclusion(MicrosctucturaGenerator, PlotRVE2D):
         elif self.fiber_positions[iter, 3] == 2:
             if new_fiber[0, 3] == 2:
                 # keep two half points after stirring
-                self.fiber_positions[iter : iter + 2, :] = new_fiber
+                self.fiber_positions = np.delete(
+                    self.fiber_positions, (iter, iter + 1), axis=0
+                )
+                self.fiber_positions = np.insert(
+                    self.fiber_positions, (iter), new_fiber, axis=0
+                )
                 iter = iter + 2
             elif new_fiber[0, 3] == 1:
                 # reduce to one circle after stirring
@@ -382,7 +394,14 @@ class HeterCircleInclusion(MicrosctucturaGenerator, PlotRVE2D):
         elif self.fiber_positions[iter, 3] == 4:
             if new_fiber[0, 3] == 4:
                 # reduce to one circle after stirring
-                self.fiber_positions[iter : iter + 4, :] = new_fiber
+                self.fiber_positions = np.delete(
+                    self.fiber_positions,
+                    (iter, iter + 1, iter + 2, iter + 3),
+                    axis=0,
+                )
+                self.fiber_positions = np.insert(
+                    self.fiber_positions, (iter), new_fiber, axis=0
+                )
                 iter = iter + 4
             elif new_fiber[0, 3] == 2:
                 # reduce to one circle after stirring
@@ -531,7 +550,7 @@ class HeterCircleInclusion(MicrosctucturaGenerator, PlotRVE2D):
             new_fiber[0, 2] = radius
             new_fiber[0, 3] = 1
 
-        elif length - radius >= x_center >= radius > y_center:
+        elif length - radius > x_center > radius > y_center:
             # location 2_1
             new_fiber[0, 0] = x_center
             new_fiber[0, 1] = y_center
@@ -546,9 +565,7 @@ class HeterCircleInclusion(MicrosctucturaGenerator, PlotRVE2D):
                 )
             )
 
-        elif (
-            radius <= x_center <= length - radius and y_center > width - radius
-        ):
+        elif radius < x_center < length - radius and y_center > width - radius:
             # location 2_2
             new_fiber[0, 0] = x_center
             new_fiber[0, 1] = y_center
@@ -563,7 +580,7 @@ class HeterCircleInclusion(MicrosctucturaGenerator, PlotRVE2D):
                 )
             )
 
-        elif width - radius >= y_center >= radius > x_center:
+        elif width - radius > y_center > radius > x_center:
             # location 2_3
             new_fiber[0, 0] = x_center
             new_fiber[0, 1] = y_center
@@ -578,9 +595,7 @@ class HeterCircleInclusion(MicrosctucturaGenerator, PlotRVE2D):
                 )
             )
 
-        elif (
-            radius <= y_center <= width - radius and x_center > length - radius
-        ):
+        elif radius < y_center < width - radius and x_center > length - radius:
             # location 2_4
             new_fiber[0, 0] = x_center
             new_fiber[0, 1] = y_center

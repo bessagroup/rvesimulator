@@ -326,14 +326,14 @@ class PnasCompositeRVE(RVE2DBase):
         fiberface = p.faces.getByBoundingCylinder(
             (self.loc[0][0], self.loc[0][1], 0.0),
             (self.loc[0][0], self.loc[0][1], 1.0),
-            self.radius_mu + 0.001 * self.radius_mu,
+            self.loc[0][2] + 0.001 * self.loc[0][2],
         )
         p.Set(faces=fiberface, name="fiberface")
         for ii in range(1, len(self.loc)):
             fiberface_1 = p.faces.getByBoundingCylinder(
                 (self.loc[ii][0], self.loc[ii][1], 0.0),
                 (self.loc[ii][0], self.loc[ii][1], 1.0),
-                self.radius_mu + 0.001 * self.radius_mu,
+                self.loc[ii][2] + 0.001 * self.loc[ii][2],
             )
             p.Set(faces=fiberface_1, name="fiberface_1")
             p.SetByBoolean(
