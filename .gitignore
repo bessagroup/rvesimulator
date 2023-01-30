@@ -144,3 +144,5 @@ examples/taylancase/different_geometry/Data/data/
 examples/statistic_rve/different_geometry/Data/data/
 examples/statistic_rve/different_radius/Data/data/
 examples/tasks_test/with_asca_yield_criterion/Data/data/
+examples/tasks_test/modify_yield_criterion/Data_realization_1/data/
+examples/tasks_test/modify_yield_criterion/Data_realization_2/data/

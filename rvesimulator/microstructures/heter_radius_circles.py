@@ -46,6 +46,7 @@ class HeterCircleInclusion(MicrosctucturaGenerator, PlotRVE2D):
         num_fiber_max: int = 750,
         num_cycle_max: int = 15,
         dist_min_factor: float = 1.1,
+        seed: int = None,
     ) -> None:
         """Initialization
 
@@ -84,6 +85,9 @@ class HeterCircleInclusion(MicrosctucturaGenerator, PlotRVE2D):
         self.num_fibers_max = num_fiber_max
         self.num_cycles_max = num_cycle_max
 
+        # decide to use seed or not
+        np.random.seed(seed=seed)
+
     def __parameter_initialization(self) -> None:
         """Initialize the parameters"""
         self.num_change = 3
@@ -102,8 +106,6 @@ class HeterCircleInclusion(MicrosctucturaGenerator, PlotRVE2D):
         # fiber location is a nx4 numpy array
         # x, y, r, p (partition)
         self.fiber_positions = None
-
-        np.random.seed(seed=None)
 
     def __generate_rve(self) -> None:
         """core procedure of generating RVE"""
@@ -231,7 +233,7 @@ class HeterCircleInclusion(MicrosctucturaGenerator, PlotRVE2D):
                 # check the overlap of new fiber
                 overlap_status = self.overlap_check(
                     new_fiber=new_fiber,
-                    fiber_pos=self.fiber_positions,
+                    fiber_pos=self.fiber_positions.copy(),
                     dist_factor=self.dist_min_factor,
                 )
                 if overlap_status == 0:
@@ -258,14 +260,15 @@ class HeterCircleInclusion(MicrosctucturaGenerator, PlotRVE2D):
                         min_dis,
                     ) = self.min_dis_index(
                         self.fiber_positions[ii, 0:2],
-                        self.fiber_positions,
+                        self.fiber_positions.copy(),
                         self.fiber_min_dis_vector,
                         ii,
                         self.num_cycle,
                     )
+
                     new_fiber_temp = self.generate_first_heuristic_fibers(
-                        ref_point=self.fiber_positions[min_index, 0:3],
-                        fiber_temp=self.fiber_positions[ii, 0:3],
+                        ref_point=self.fiber_positions[min_index, 0:3].copy(),
+                        fiber_temp=self.fiber_positions[ii, 0:3].copy(),
                         dist_factor=self.dist_min_factor,
                     )
                     new_fiber = self.new_positions(
@@ -277,7 +280,7 @@ class HeterCircleInclusion(MicrosctucturaGenerator, PlotRVE2D):
                     )
                     overlap_status = self.overlap_check(
                         new_fiber=new_fiber,
-                        fiber_pos=self.fiber_positions,
+                        fiber_pos=self.fiber_positions.copy(),
                         dist_factor=self.dist_min_factor,
                         stage="step_two",
                         fiber_index=ii,
@@ -291,6 +294,7 @@ class HeterCircleInclusion(MicrosctucturaGenerator, PlotRVE2D):
                         )
                     else:
                         ii = ii + int(self.fiber_positions[ii, 3])
+
                     del new_fiber, new_fiber_temp
             # end of one cycle
             self.num_cycle = self.num_cycle + 1
