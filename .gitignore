@@ -147,5 +147,7 @@ examples/tasks_test/with_asca_yield_criterion/Data/data/
 examples/tasks_test/modify_yield_criterion/Data_realization_1/data/
 examples/tasks_test/modify_yield_criterion/Data_realization_2/data/
 examples/cooperative_learning/2_2_4experiments/Data/data/ 
-examples/cooperative_learning/3_3_3experiments/Data/data/ 
+examples/cooperative_learning/3_3_3experiments/path_1/Data/data/ 
+examples/cooperative_learning/3_3_3experiments/path_2/Data/data/ 
+examples/cooperative_learning/3_3_3experiments/path_3/Data/data/ 
 examples/cooperative_learning/different_hardening_law/Data/data/ 
