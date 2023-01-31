@@ -8,9 +8,8 @@ folder_path = "/home/jiaxiangyi/Documents/rvesimulator"
 sys.path.insert(0, folder_path)
 # local packages
 
-from rvesimulator.microstructures.heter_radius_circles import (
-    HeterCircleInclusion,
-)
+from rvesimulator.microstructures.heter_radius_circles import \
+    HeterCircleInclusion
 
 # define the geometry information of the RVE
 length = 0.048
@@ -25,6 +24,7 @@ CircleInclusionGenerator = HeterCircleInclusion(
     radius_mu=radius,
     radius_std=radius_std,
     vol_req=vol_req,
+    seed=8,
 )
 
 

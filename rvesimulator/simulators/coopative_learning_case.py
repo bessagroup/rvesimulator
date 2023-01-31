@@ -14,7 +14,7 @@ from rvesimulator.simulators.abaqus_simulator import AbaqusSimulator
 from rvesimulator.simulators.utils import create_dir
 
 
-class PnasRVE:
+class CooperativeRVE:
     def __init__(self) -> None:
 
         """Interface between python and abaqus of the asca rve case"""
@@ -33,7 +33,7 @@ class PnasRVE:
             "post_script": "RVEPostProcess2D",
         }
         self.vol_req = None
-        self.update_sim_info()
+        # self.update_sim_info(yield_stress=0.5, a=0.5)
 
     def run_simulation(
         self,
@@ -101,6 +101,7 @@ class PnasRVE:
                     radius_mu=self.rve_geometry["radius_mu"],
                     radius_std=self.rve_geometry["radius_std"],
                     vol_req=self.vol_req,
+                    seed=self.rve_geometry["seed"],
                 )
                 print("micro-structure be generated successfully\n")
 
@@ -136,9 +137,7 @@ class PnasRVE:
         loads_path: list = None,
         E_matrix: float = 100.0,
         Pr_matrix: float = 0.30,
-        yield_factor_1: float = 0.5,
-        yield_factor_2: float = 0.2,
-        yield_factor_3: float = 0.4,
+        hardening_law: str = "linear",
         E_fiber: float = 1.0,
         Pr_fiber: float = 0.19,
         time_period: float = 1.0,
@@ -146,6 +145,8 @@ class PnasRVE:
         platform: str = "ubuntu",
         update_micro_structure: bool = False,
         print_info: bool = False,
+        seed: int = None,
+        **kwarg,
     ) -> None:
         """update some default information
 
@@ -192,10 +193,8 @@ class PnasRVE:
         else:
             print("Micro-structure file will not be updated \n")
         # generate the yield function table for matrix material
-        yield_table_matrix = self.yield_criterion(
-            factor_1=yield_factor_1,
-            factor_2=yield_factor_2,
-            factor_3=yield_factor_3,
+        yield_table_matrix = self.hardening_law(
+            law_type=hardening_law, **kwarg
         )
         # define the parameters for micro-structure
         self.vol_req = vol_req
@@ -204,6 +203,7 @@ class PnasRVE:
             "width": size,
             "radius_mu": radius_mu,
             "radius_std": radius_std,
+            "seed": seed,
         }
         self.abaqus_paras = {
             "mesh_partition": mesh_partition,
@@ -315,6 +315,7 @@ class PnasRVE:
         radius_mu: float,
         radius_std: float,
         vol_req: float,
+        seed: int = None,
     ) -> float:
         """Generate the micro-structure
 
@@ -343,6 +344,7 @@ class PnasRVE:
             radius_mu=radius_mu,
             radius_std=radius_std,
             vol_req=vol_req,
+            seed=seed,
         )
         volume_frac = microstructure_generator.generate_rve()
         microstructure_generator.save_results()
@@ -365,37 +367,51 @@ class PnasRVE:
         os.chdir(working_folder)
 
     @staticmethod
-    def yield_criterion(
-        factor_1: float = 0.5, factor_2: float = 0.2, factor_3: float = 0.4
-    ) -> list:
+    def hardening_law(law_type: str = "linear", **kwarg) -> list:
         """yield crterion $\sigma_y = factor_1 + factor_2 \times exp(\epsilon)^factor_3$
 
         Parameters
         ----------
-        factor_1 : float, optional
-            factor 1 for yield criterion, by default 0.5
-        factor_2 : float, optional
-            factor 2 for yield criterion, by default 0.2
-        factor_3 : float, optional
-            factor 3 for yield criterion, by default 0.4
+        law_type: str
+            a str that indicates the hardening law
 
         Returns
         -------
         yield_table : list
             a list contains the yield table
         """
-
         yield_table = np.zeros((101, 2))
         yield_table[:, 1] = np.linspace(0, 1, 101)
-        yield_table[:, 0] = (
-            factor_1 + factor_2 * (yield_table[:, 1]) ** factor_3
-        )
-        yield_table[-1, 1] = 10.0
-        yield_table[-1, 0] = (
-            factor_1 + factor_2 * (yield_table[-1, 1]) ** factor_3
-        )
-        yield_table = yield_table.T
+        if law_type == "linear":
+            yield_stress = kwarg["yield_stress"]
+            a = kwarg["a"]
+            yield_table[:, 0] = yield_stress + a * yield_table[:, 1]
+            yield_table[-1, 1] = 10.0
+            yield_table[-1, 0] = yield_stress + a * yield_table[-1, 1]
 
+        elif law_type == "swift":
+            yield_stress = kwarg["yield_stress"]
+            a = kwarg["a"]
+            b = kwarg["b"]
+            yield_table[:, 0] = yield_stress + a * (yield_table[:, 1]) ** b
+            yield_table[-1, 1] = 10.0
+            yield_table[-1, 0] = yield_stress + a * (yield_table[-1, 1]) ** b
+
+        elif law_type == "ramberg":
+            yield_stress = kwarg["yield_stress"]
+            a = kwarg["a"]
+            b = kwarg["b"]
+            yield_table[:, 0] = yield_stress * (
+                1 + a * (yield_table[:, 1])
+            ) ** (1 / b)
+            yield_table[-1, 1] = 10.0
+            yield_table[-1, 0] = yield_stress * (
+                1 + a * (yield_table[-1, 1])
+            ) ** (1 / b)
+        else:
+            raise KeyError("This hardening law is not defined \n")
+
+        yield_table = yield_table.T
         return yield_table.tolist()
 
     @staticmethod
