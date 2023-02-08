@@ -30,5 +30,5 @@ CircleInclusionGenerator = HeterRadiusSphere(
 
 CircleInclusionGenerator.generate_rve()
 CircleInclusionGenerator.plot_rve()
-print(CircleInclusionGenerator.fiber_positions[:, 4])
+print(CircleInclusionGenerator.fiber_positions)
 # CircleInclusionGenerator.save_results(file_name="3d_rve.json")

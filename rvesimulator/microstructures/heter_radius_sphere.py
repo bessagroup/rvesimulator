@@ -218,12 +218,12 @@ class HeterRadiusSphere(MicrosctucturaGenerator, PlotRVE3D):
                 # update the info of number trial
                 self.num_trial = self.num_trial + 1
                 fiber_temp = self.generate_random_fibers(
-                    len_start=self.len_start,
-                    len_end=self.len_end,
-                    wid_start=self.wid_start,
-                    wid_end=self.wid_end,
-                    hei_start=self.hei_start,
-                    hei_end=self.hei_end,
+                    len_start=0.0,
+                    len_end=self.length,
+                    wid_start=0.0,
+                    wid_end=self.width,
+                    hei_start=0.0,
+                    hei_end=self.height,
                     radius_mu=self.radius_mu,
                     radius_std=self.radius_std,
                 )
@@ -240,7 +240,7 @@ class HeterRadiusSphere(MicrosctucturaGenerator, PlotRVE3D):
                 # check the overlap of new fiber
                 overlap_status = self.overlap_check(
                     new_fiber=new_fiber,
-                    fiber_pos=self.fiber_positions,
+                    fiber_pos=self.fiber_positions.copy(),
                     dist_factor=self.dist_min_factor,
                 )
                 if overlap_status == 0:
@@ -268,14 +268,14 @@ class HeterRadiusSphere(MicrosctucturaGenerator, PlotRVE3D):
                         min_dis,
                     ) = self.min_dis_index(
                         self.fiber_positions[ii, 0:3],
-                        self.fiber_positions,
+                        self.fiber_positions.copy(),
                         self.fiber_min_dis_vector,
                         ii,
                         self.num_cycle,
                     )
                     new_fiber_temp = self.generate_first_heuristic_fibers(
-                        ref_point=self.fiber_positions[min_index, 0:4],
-                        fiber_temp=self.fiber_positions[ii, 0:4],
+                        ref_point=self.fiber_positions[min_index, 0:4].copy(),
+                        fiber_temp=self.fiber_positions[ii, 0:4].copy(),
                         dist_factor=self.dist_min_factor,
                     )
                     new_fiber = self.new_positions(
@@ -289,7 +289,7 @@ class HeterRadiusSphere(MicrosctucturaGenerator, PlotRVE3D):
                     )
                     overlap_status = self.overlap_check(
                         new_fiber=new_fiber,
-                        fiber_pos=self.fiber_positions,
+                        fiber_pos=self.fiber_positions.copy(),
                         dist_factor=self.dist_min_factor,
                         stage="step_two",
                         fiber_index=ii,

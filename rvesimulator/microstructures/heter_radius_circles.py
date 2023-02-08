@@ -5,6 +5,8 @@ import json
 import math
 import time
 
+import matplotlib.pyplot as plt
+
 # Third party
 import numpy as np
 from scipy.spatial import distance_matrix
@@ -440,6 +442,59 @@ class HeterCircleInclusion(MicrosctucturaGenerator, PlotRVE2D):
             raise KeyError("Can not match the overlap condition  !!! \n")
 
         return iter
+
+    def crate_rgmsh(self, num_discrete: int = 10) -> np.ndarray:
+        """create rgmsh numpy array for crate
+
+        Parameters
+        ----------
+        num_discrete : int, optional
+            number of discrete partition, by default 10
+
+        Returns
+        -------
+        np.ndarray
+            a 2d numpy array that contains the micro-structure information
+        """
+
+        self.rgmsh = np.zeros((num_discrete, num_discrete))
+        grid_len = self.length / num_discrete
+        grid_wid = self.width / num_discrete
+        radius = self.fiber_positions[:, 2].reshape(-1, 1)
+        for ii in range(num_discrete):
+            for jj in range(num_discrete):
+                loc_temp = np.array(
+                    [
+                        [
+                            self.length / (2 * num_discrete) + ii * grid_len,
+                            self.width / (2 * num_discrete) + jj * grid_wid,
+                        ]
+                    ]
+                )
+                # distance measure
+                points_dis_temp = distance_matrix(
+                    self.fiber_positions[:, 0:2],
+                    loc_temp,
+                )
+
+                if (points_dis_temp - radius).min() < 0:
+                    self.rgmsh[ii, jj] = 1
+
+        return self.rgmsh.T
+
+    def rgmsh_plot(self) -> None:
+
+        fig = plt.figure(figsize=(5, 4))
+        ax = fig.add_subplot(111)
+        im = ax.imshow(
+            self.rgmsh.T,
+            origin="lower",
+            interpolation="None",
+            cmap="summer_r",
+        )
+        fig.colorbar(im)
+        plt.title(f"$V_f$ = {self.vol_frac*100:.2f}")
+        plt.show()
 
     @staticmethod
     def fiber_volume(radius: float) -> float:

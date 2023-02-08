@@ -3,10 +3,12 @@ import sys
 
 # import python libraries
 import numpy
+
 # abaqus
 from abaqus import *
 from abaqusConstants import *
 from caeModules import *
+
 # import packages for abaqus post-processing
 from odbAccess import *
 
@@ -297,6 +299,8 @@ class PnasCompositeRVE(RVE2DBase):
         self._create_step(timePeriod=self.time_period)
         self._create_path_load()
         self.create_sequential_jobs(subroutine_path="")
+        if self.platform == "cluster":
+            RVEPostProcess2D(self.job_name)
 
     def _create_part(self):
         PartGenerator = CircleInclusion(
@@ -827,6 +831,8 @@ class PnasCompositeRVESwap(RVE2DBase):
         self._create_step(timePeriod=self.time_period)
         self._create_path_load()
         self.create_sequential_jobs(subroutine_path="")
+        if self.platform == "cluster":
+            RVEPostProcess2D(self.job_name)
 
     def _create_part(self):
         PartGenerator = CircleInclusion(
