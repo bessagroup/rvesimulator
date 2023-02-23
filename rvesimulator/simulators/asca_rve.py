@@ -101,6 +101,7 @@ class AscaRVE:
             # generating the micro-structure
             if os.path.isfile("micro_structure_info.json"):
                 print("micro-structure file already exist\n")
+
             else:
                 self.vol_frac = self.micro_structure_generation(
                     length=self.rve_geometry["length"],
