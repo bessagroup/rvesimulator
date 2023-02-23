@@ -36,7 +36,7 @@ class HollowPlateRVE:
             "post_script": "RVEPostProcess2D",
         }
 
-        self.update_sim_info(print_info=True)
+        self.update_sim_info(print_info=False)
 
     def run_simulation(
         self, data: dict, save_source_files: bool = True

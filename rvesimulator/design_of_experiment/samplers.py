@@ -106,7 +106,7 @@ class Sampler:
         self.samples.to_json(name + ".json", index=True)
 
     def plot_samples(
-        self, fig_name: str = None, save_fig: bool = False
+        self, fig_name: str = None, save_fig: bool = False, **kwarg
     ) -> None:
         """visualize the two-dimensional sampling
 
@@ -118,45 +118,51 @@ class Sampler:
         save_fig : bool, optional
             sigure figure, by default False
         """
+        if "figsize" in kwarg.keys():
+            figsize = kwarg["figsize"]
+        else:
+            figsize = (5, 4)
         if self.num_dim == 1:
-            with plt.style.context(
-                ["ieee", "science", "high-contrast", "grid"]
-            ):
-                fig, ax = plt.subplots()
-                ax.plot(
-                    self.samples.values[:, 0],
-                    np.zeros((self.num_samples, 1)),
-                    ".",
-                    label="Samples",
-                )
-                ax.legend()
-                ax.set(xlabel=r"$x_1$")
-                ax.set(ylabel=r"$y$")
-                ax.autoscale(tight=True)
-                if save_fig is True:
-                    fig.savefig(fig_name, dpi=300)
-                plt.show()
+            # with plt.style.context(
+            #     ["ieee", "science", "high-contrast", "grid"]
+            # ):
+            fig, ax = plt.subplots(figsize=figsize)
+            ax.plot(
+                self.samples.values[:, 0],
+                np.zeros((self.num_samples, 1)),
+                ".",
+                label="Samples",
+            )
+            ax.legend()
+            ax.set(xlabel=r"$x_1$")
+            ax.set(ylabel=r"$y$")
+            # ax.autoscale(tight=True)
+            plt.grid("--")
+            plt.show()
+            if save_fig is True:
+                fig.savefig(fig_name, dpi=300)
 
         elif self.num_dim == 2:
-            with plt.style.context(
-                ["ieee", "science", "high-contrast", "grid"]
-            ):
-                fig, ax = plt.subplots()
-                ax.plot(
-                    self.samples.values[:, 0],
-                    self.samples.values[:, 1],
-                    "*",
-                    label="Samples",
-                )
-                ax.legend()
-                ax.set(xlabel=r"$x_1$")
-                ax.set(ylabel=r"$x_2$")
-                ax.autoscale(tight=True)
-                if save_fig is True:
-                    fig.savefig(fig_name, dpi=300)
-                plt.show()
+            # with plt.style.context(
+            #     ["ieee", "science", "high-contrast", "grid"]
+            # ):
+            fig, ax = plt.subplots(figsize=figsize)
+            ax.plot(
+                self.samples.values[:, 0],
+                self.samples.values[:, 1],
+                "*",
+                label="Samples",
+            )
+            ax.legend()
+            ax.set(xlabel=r"$x_1$")
+            ax.set(ylabel=r"$x_2$")
+            # ax.autoscale(tight=True)
+            plt.grid("--")
+            plt.show()
+            if save_fig is True:
+                fig.savefig(fig_name, dpi=300)
         else:
-            raise Exception("expect 1or2 dimesion problems\n")
+            raise Exception("expect 1 or 2 dimesion problems\n")
 
     @property
     def samples_(self) -> pd.DataFrame:

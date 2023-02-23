@@ -7,8 +7,9 @@ import numpy as np
 
 # local functions
 import rvesimulator
-from rvesimulator.microstructures.heter_radius_circles import \
-    HeterCircleInclusion
+from rvesimulator.microstructures.heter_radius_circles import (
+    HeterCircleInclusion,
+)
 from rvesimulator.simulators.abaqus_simulator import AbaqusSimulator
 from rvesimulator.simulators.utils import create_dir
 
@@ -762,7 +763,7 @@ class CooperativeRVESwap:
         )
         volume_frac = microstructure_generator.generate_rve()
         microstructure_generator.save_results()
-        microstructure_generator.plot_rve(save_figure=False)
+        # microstructure_generator.plot_rve(save_figure=False)
 
         return volume_frac
 
