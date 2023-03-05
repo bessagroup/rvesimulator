@@ -25,7 +25,7 @@ __status__ = "Stable"
 # =============================================================================
 
 
-class HeterCircleInclusion(MicrosctucturaGenerator, PlotRVE2D):
+class CircleParticles(MicrosctucturaGenerator, PlotRVE2D):
     """This class is used to generate the 2DRVe with different size of
         disks
 
@@ -482,7 +482,9 @@ class HeterCircleInclusion(MicrosctucturaGenerator, PlotRVE2D):
 
         return self.rgmsh.T
 
-    def rgmsh_plot(self) -> None:
+    def rgmsh_plot(
+        self, save_fig: bool = False, fig_name: str = "rgmsh"
+    ) -> None:
 
         fig = plt.figure(figsize=(5, 4))
         ax = fig.add_subplot(111)
@@ -492,9 +494,11 @@ class HeterCircleInclusion(MicrosctucturaGenerator, PlotRVE2D):
             interpolation="None",
             cmap="summer_r",
         )
-        fig.colorbar(im)
-        plt.title(f"$V_f$ = {self.vol_frac*100:.2f}")
-        plt.show()
+        ax.set_yticks([])
+        ax.set_xticks([])       
+        if save_fig is True: 
+            plt.savefig(fig_name + '.png', dpi=300)
+            plt.show()
 
     @staticmethod
     def fiber_volume(radius: float) -> float:

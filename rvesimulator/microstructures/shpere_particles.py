@@ -23,7 +23,7 @@ __status__ = "Stable"
 # =============================================================================
 
 
-class HeterRadiusSphere(MicrosctucturaGenerator, PlotRVE3D):
+class SphereParticles(MicrosctucturaGenerator, PlotRVE3D):
     """This class is used to generate the 2DRVe with different size of
         disks
 

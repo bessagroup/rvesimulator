@@ -10,7 +10,7 @@ sys.path.insert(0, folder_path)
 
 from matplotlib import pyplot as plt
 
-from rvesimulator.microstructures.heter_radius_circles import (
+from rvesimulator.microstructures.circle_particles import (
     HeterCircleInclusion,
 )
 

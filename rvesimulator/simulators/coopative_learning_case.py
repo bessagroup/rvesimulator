@@ -7,8 +7,8 @@ import numpy as np
 
 # local functions
 import rvesimulator
-from rvesimulator.microstructures.heter_radius_circles import (
-    HeterCircleInclusion,
+from rvesimulator.microstructures.circle_particles import (
+    CircleParticles,
 )
 from rvesimulator.simulators.abaqus_simulator import AbaqusSimulator
 from rvesimulator.simulators.utils import create_dir
@@ -338,7 +338,7 @@ class CooperativeRVE:
             the actual volume fraction of the micro-structure.
         """
 
-        microstructure_generator = HeterCircleInclusion(
+        microstructure_generator = CircleParticles(
             length=length,
             width=width,
             radius_mu=radius_mu,
@@ -753,7 +753,7 @@ class CooperativeRVESwap:
             the actual volume fraction of the micro-structure.
         """
 
-        microstructure_generator = HeterCircleInclusion(
+        microstructure_generator = CircleParticles(
             length=length,
             width=width,
             radius_mu=radius_mu,

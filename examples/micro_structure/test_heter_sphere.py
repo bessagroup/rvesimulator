@@ -8,7 +8,7 @@ folder_path = "/home/jiaxiangyi/Documents/rvesimulator"
 sys.path.insert(0, folder_path)
 # local packages
 
-from rvesimulator.microstructures.heter_radius_sphere import HeterRadiusSphere
+from rvesimulator.microstructures.shpere_particles import HeterRadiusSphere
 
 # define the geometry information of the RVE
 length = 1.0
