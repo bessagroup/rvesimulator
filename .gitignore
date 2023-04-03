@@ -130,25 +130,5 @@ dmypy.json
 
 
 # folders
-examples/hollow_plate_simulation/Data/
-examples/asca_rve/Data/
-examples/pnas_hollow_plate/basic_illustration/Data/
-examples/pnas_hollow_plate/different_yield_criteria/Data/data/
-examples/pnas_composite/illustration/Data/
-examples/pnas_composite/different_yield_criteria(linear loads)/Data/data/
-examples/pnas_composite/different_yield_criteria(nonlinear loads)/Data/data/
-examples/pnas_composite/different_fiber_material/Data/data/
-examples/pnas_composite/illustration/Data/data/
-examples/taylancase/Illustration/Data/
-examples/taylancase/different_geometry/Data/data/
-examples/statistic_rve/different_geometry/Data/data/
-examples/statistic_rve/different_radius/Data/data/
-examples/tasks_test/with_asca_yield_criterion/Data/data/
-examples/tasks_test/modify_yield_criterion/Data_realization_1/data/
-examples/tasks_test/modify_yield_criterion/Data_realization_2/data/
-examples/cooperative_learning/preparations/2_2_4experiments/Data/data/ 
-examples/cooperative_learning/preparations/3_3_3experiments/path_1/Data/data/ 
-examples/cooperative_learning/preparations/3_3_3experiments/path_2/Data/data/ 
-examples/cooperative_learning/preparations/3_3_3experiments/path_3/Data/data/ 
-examples/cooperative_learning/tasks/Data/data/ 
-examples/cooperative_learning/preparations/different_hardening_law/Data/data/ 
+examples/
+toturials/Data/
