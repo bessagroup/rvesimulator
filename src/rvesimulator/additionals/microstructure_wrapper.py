@@ -15,7 +15,27 @@ class CircleMircoStructure:
         radius_std: float,
         vol_req: float,
         seed: any,
-    ) -> None:
+    ) -> tuple[dict, int | float]:
+        """circrle microstructure wrapper
+
+        Parameters
+        ----------
+        size : float
+            size of rve
+        radius_mu : float
+            radius mean
+        radius_std : float
+            radius std
+        vol_req : float
+            required volume fraction
+        seed : any
+            seed
+
+        Returns
+        -------
+        tuple[dict, int | float]
+            microstructure info in dict format, reached volume fraction
+        """
 
         self.microstructure_generator = CircleParticles(
             length=size,
@@ -41,7 +61,27 @@ class SphereMicroStructrue:
         radius_std: float,
         vol_req: float,
         seed: any = None,
-    ) -> None:
+    ) -> tuple[dict, int | float]:
+        """sphere rve wrapper
+
+        Parameters
+        ----------
+        size : float
+            size of rve
+        radius_mu : float
+            radius mean
+        radius_std : float
+            radius std
+        vol_req : float
+            required volume fraction
+        seed : any, optional
+            seed, by default None
+
+        Returns
+        -------
+        tuple[dict, int | float]
+            microstructure info in dict format, reached volume fraction
+        """
         self.microstructure_generator = SphereParticles(
             length=size,
             width=size,
@@ -58,12 +98,39 @@ class SphereMicroStructrue:
 
 
 class CircleSVEMicroStructure:
+    """circle SVE microstructure"""
+
     def __init__(self, size: float = 1.0, radius: float = 0.2) -> None:
+        """initialization
+
+        Parameters
+        ----------
+        size : float, optional
+            size of sve, by default 1.0
+        radius : float, optional
+            radius of circle/disk, by default 0.2
+        """
         self.size = size
         self.radius = radius
 
     def location_information(self, task: str = "task1") -> np.ndarray:
+        """get location information
 
+        Parameters
+        ----------
+        task : str, optional
+            task number, by default "task1"
+
+        Returns
+        -------
+        location_information : np.ndarray
+            location information
+
+        Raises
+        ------
+        Exception
+            radius check
+        """
         size = self.size
         radius = self.radius
         # compatibility check
@@ -106,7 +173,17 @@ def cricle_plot(
     width: float,
     **kwargs,
 ) -> None:
+    """microstructure plot
 
+    Parameters
+    ----------
+    fibers : np.ndarray
+        fiber location
+    length : float
+        length
+    width : float
+        width
+    """
     fig, axes = plt.subplots(**kwargs)
     for ii in range(fibers.shape[0]):
         cc = plt.Circle(
