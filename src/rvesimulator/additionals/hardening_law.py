@@ -6,9 +6,18 @@ import numpy as np
 
 @dataclass
 class HardeningLaw:
+    """hardening law"""
+
     hardening_law_table: np.ndarray = None
 
     def linear(self, **kwargs) -> list:
+        """linear hardening law
+
+        Returns
+        -------
+        hardening_law_table : list
+            hardening law table
+        """
         # assert the needed constants
         assert "a" in kwargs.keys(), "provide 'a' value "
         assert "yield_stress" in kwargs.keys(), "provide 'yield_stress' value"
@@ -33,6 +42,13 @@ class HardeningLaw:
         return hardening_law_table.tolist()
 
     def swift(self, **kwargs) -> list:
+        """swift hardening law
+
+        Returns
+        -------
+        hardening_law_table : list
+            hardening law table
+        """
         # assert the needed constants
         assert "a" in kwargs.keys(), "provide 'a' value "
         assert "b" in kwargs.keys(), "provide 'b' value "
@@ -57,6 +73,13 @@ class HardeningLaw:
         return hardening_law_table.tolist()
 
     def ramberg(self, **kwargs) -> list:
+        """ramberg hardening law
+
+        Returns
+        -------
+        hardening_law_table : list
+            hardening law table
+        """
         # assert the needed constants
         assert "a" in kwargs.keys(), "provide 'a' value "
         assert "b" in kwargs.keys(), "provide 'b' value "
@@ -83,8 +106,8 @@ class HardeningLaw:
 
         return hardening_law_table.tolist()
 
-    def law_plot(self, **kwargs) -> None:
-
+    def hardening_law_plot(self, **kwargs) -> None:
+        "plot the hardening law"
         fig, ax = plt.subplots(**kwargs)
         ax.plot(
             self.hardening_law_table[1, :],

@@ -105,7 +105,7 @@ class SphereParticles(MicrosctuctureGenerator):
         # x, y,z, r, p (partition)
         self.fiber_positions = None
 
-    def generate_microstructure(self, seed: any = None) -> float:
+    def generate_microstructure(self, seed: any = None) -> None:
 
         # decide to use seed or not
         self.rng = np.random.default_rng(seed=seed)
@@ -117,7 +117,8 @@ class SphereParticles(MicrosctuctureGenerator):
         end_time = time.time()
         self.time_usage = end_time - start_time
 
-    def to_abaqus_format(self, file_name: str = "micro_structure_info.json") -> None:
+
+    def to_abaqus_format(self, file_name: str = "micro_structure_info.json") -> dict:
 
         microstructure_info = {
             "location_information": self.fiber_positions.tolist(),
@@ -139,7 +140,6 @@ class SphereParticles(MicrosctuctureGenerator):
 
         self.sphere_plot(
             fibers=self.fiber_positions,
-            radius_mu=self.radius_mu,
             length=self.length,
             width=self.width,
             height=self.height,
@@ -149,7 +149,7 @@ class SphereParticles(MicrosctuctureGenerator):
         )
 
     def _procedure_initialization(self) -> None:
-        """This function is used to generate the first disk and
+        """This function is used to generate the first sphere and
         assign the initial values of the algorithm
         """
 
@@ -325,7 +325,7 @@ class SphereParticles(MicrosctuctureGenerator):
         Returns
         -------
         np.ndarray
-            2d numpy array that contains the micro-structure information
+            3d numpy array that contains the micro-structure information
         """
 
         self.rgmsh = np.zeros((num_discrete, num_discrete, num_discrete))
@@ -1743,32 +1743,30 @@ class SphereParticles(MicrosctuctureGenerator):
         fiber_index: int = 0,
         stage: str = "step_one",
     ) -> int:
-        """Check if the new positions will overlap with the original one
-        or not ?
-        Parameters
+        """overlap check of the new fiber and the orginal ones 
 
         Parameters
         ----------
         new_fiber : np.ndarray
-            he locations of the new point(in some cases: several
-            positions will be generated for one point because of
-            the splitting )
+            new fiber location
         fiber_pos : np.ndarray
-            location of the original points
-        dist_min : float
-            the allowed minimum distance between disks
-        index : int, optional
-            the index of the checking fibers, which should not be 0
-            when excuting stage two and three
+            original fiber locations 
+        dist_factor : float
+            distance factor 
+        fiber_index : int, optional
+            fiber index, by default 0
         stage : str, optional
-            the stage of the algorithm, step_one, step_two,step_three
-            , by default "step_one"
+            stage of the algorithm, by default "step_one"
 
         Returns
         -------
         int
-            overlap status, 0 is non-overlap and 1 means there is
-            overlap
+            a flag to indicate overlap status 
+
+        Raises
+        ------
+        ValueError
+            stage not been implemented error
         """
         fiber_pos = fiber_pos.copy()
 
@@ -1893,6 +1891,8 @@ class SphereParticles(MicrosctuctureGenerator):
             The considering fiber
         dist_factor : float
             the minimum distance factor between two fibers
+        ang: any
+            a random generator 
 
         Returns
         -------

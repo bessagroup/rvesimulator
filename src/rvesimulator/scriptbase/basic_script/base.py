@@ -4,7 +4,6 @@
 from abaqus import *
 from abaqusConstants import *
 from caeModules import *
-
 ## local
 from jobs import AbaqusJobs
 from loadings import Loading2D
@@ -207,8 +206,8 @@ class RVE2DBase(object):
 
         Parameters
         ----------
-        loads : _type_
-            _description_
+        loads : list
+            loads 
         """
 
         loading_conditon = Loading2D(

@@ -2,8 +2,6 @@ import os
 
 import numpy as np
 from f3dasm.design import ExperimentData
-
-# local functions developed by yaga
 from f3dasm.simulation.abaqus_simulator import AbaqusSimulator
 
 # local functions
@@ -11,10 +9,25 @@ from .utils import create_dir
 
 
 class SimulationBase:
+    """base class of rve simulation problems"""
+
     def __init__(self) -> None:
+        """initialization"""
         pass
 
     def run_f3dasm(self, data: ExperimentData) -> ExperimentData:
+        """run simulation via f3dasm manners
+
+        Parameters
+        ----------
+        data : ExperimentData
+            data object
+
+        Returns
+        -------
+        ExperimentData
+            updated data object
+        """
         # get the samples
         samples = data.data.input.to_dict("record")
         for ii in range(len(data.data)):
@@ -37,6 +50,24 @@ class SimulationBase:
         sub_folder_index: int = None,
         third_folder_index: int = None,
     ) -> dict:
+        """run single simulation
+
+        Parameters
+        ----------
+        sample : dict, optional
+            a dict contains the information of design variables, by default None
+        folder_index : int, optional
+            first fodler index, by default None
+        sub_folder_index : int, optional
+            second folder index, by default None
+        third_folder_index : int, optional
+            third folder index, by default None
+
+        Returns
+        -------
+        dict
+            all the simulation results from abaqus
+        """
         # number of samples
         self._create_working_folder(
             folder_index,
@@ -58,21 +89,64 @@ class SimulationBase:
         return results
 
     def run_batch_simulation(self) -> any:
+        """run batch simulation
+
+        Returns
+        -------
+        any
+            should be defined according to different problems
+
+        Raises
+        ------
+        NotImplementedError
+            should be implemented in specific problems
+        """
         raise NotImplementedError("should be implemented in subclass")
 
-    def update_sim_info(self) -> any:
+    def update_sim_info(self) -> None:
+        """update the required simulation information
+
+        Raises
+        ------
+        NotImplementedError
+            should be implemented in specific problems
+        """
         raise NotImplementedError("should be implemented in subclass")
 
-    def _update_sample_info(self, sample) -> None:
-        """update the design variables"""
+    def _update_sample_info(self, sample: dict) -> None:
+        """update the sample information
+
+        Parameters
+        ----------
+        sample : dict
+            sample
+        """
         self.sim_info.update(sample)
 
     def _create_working_folder(
         self,
-        folder_index=None,
-        sub_folder_index=None,
-        third_folder_index=None,
+        folder_index: int = None,
+        sub_folder_index: int = None,
+        third_folder_index: int = None,
     ) -> None:
+        """create folders for excuting abaqus simulations
+
+        Parameters
+        ----------
+        folder_index : int, optional
+            first folder index , by default None
+        sub_folder_index : _type_, optional
+            second folder index , by default None
+        third_folder_index : _type_, optional
+            third forlder index, by default None
+
+        Raises
+        ------
+        ValueError
+            provide sub_folder_index
+        ValueError
+            provide third_folder_index
+        """
         if folder_index is None:
             if sub_folder_index is None:
                 self.folder_info["current_work_directory"] = "case_" + str(

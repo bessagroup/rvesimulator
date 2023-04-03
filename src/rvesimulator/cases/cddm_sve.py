@@ -6,8 +6,9 @@ import os
 
 import rvesimulator
 from rvesimulator.additionals.hardening_law import HardeningLaw
-from rvesimulator.additionals.microstructure_wrapper import \
-    CircleSVEMicroStructure
+from rvesimulator.additionals.microstructure_wrapper import (
+    CircleSVEMicroStructure,
+)
 
 from .base import SimulationBase
 
@@ -58,6 +59,41 @@ class CDDMSVE(SimulationBase):
         print_info: bool = False,
         **kwargs,
     ) -> None:
+        """update simulation information
+
+        Parameters
+        ----------
+        size : float, optional
+            size of rve, by default 0.048
+        radius : float, optional
+            radius of fibers, by default 0.003
+        task : str
+            flag to get microstructure
+        mesh_partition : int, optional
+            mesh partition, by default 100
+        strain : list, optional
+            applied strain, by default [0.05, 0.0, 0.0]
+        strain_amplitude : list, optional
+            strain amplitude, by default None
+        simulation_time : float, optional
+            simulation time, by default 1.0
+        num_steps : int, optional
+            number steps , by default 100
+        youngs : float, optional
+            young's modulus of matrix material , by default 100.0
+        poisson_ratio : float, optional
+            poisson ratio of matrix material, by default 0.3
+        hardening_law : str, optional
+            name of hardening law, by default "swift"
+        num_cpu : int, optional
+            number of cpu, by default 1
+        platform : str, optional
+            excution platform, by default "ubuntu"
+        seed : any, optional
+            seed of microstructure generation, by default None
+        print_info : bool, optional
+            print info, by default False
+        """
 
         # generate the microstructure
         mircostructure_generator = CircleSVEMicroStructure(

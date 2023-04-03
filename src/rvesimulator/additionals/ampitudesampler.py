@@ -6,6 +6,8 @@ from scipy.interpolate import interp1d
 
 
 class AmplitudeGenerator:
+    """amplitude generator"""
+
     def __init__(self, num_dim: int = 3) -> None:
         """Initialization"""
 
@@ -25,6 +27,28 @@ class AmplitudeGenerator:
         interpolation_method: str = "quadratic",
         seed: any = None,
     ) -> pd.DataFrame:
+        """get amplitude curves
+
+        Parameters
+        ----------
+        num_amplitude : int
+            number of amplitude, usually 3 or 6
+        num_control : int
+            control points number
+        num_steps : int
+            num steps of abaqus simulation
+        arg_name : str, optional
+            name of amplitude, by default "amplitude"
+        interpolation_method : str, optional
+            interpolation method, by default "quadratic"
+        seed : any, optional
+            seed , by default None
+
+        Returns
+        -------
+        pd.DataFrame
+            _description_
+        """
         self.arg_name = arg_name
         self.num_steps = num_steps
         # create df dataframe for amplitude
@@ -72,7 +96,24 @@ class AmplitudeGenerator:
         np.ndarray[any, np.dtype[np.floating]],
         np.ndarray[any, np.dtype[np.floating]],
     ]:
+        """generate control points
 
+        Parameters
+        ----------
+        seed : int
+            seed
+        num_control : int
+            control points number
+        num_steps : int
+            number of steps for abaqus simulation
+        num_dim : int, optional
+            number of dimension, by default 3
+
+        Returns
+        -------
+        tuple[ np.ndarray[any, np.dtype[np.floating]], np.ndarray[any, np.dtype[np.floating]], ]
+            x_location of control points, y_location of control points
+        """
         num_control = int(num_control)
         num_increment = int(num_steps)
         np.random.seed(seed)
@@ -94,7 +135,24 @@ class AmplitudeGenerator:
         num_steps: int,
         interpolation_method: str = "quadratic",
     ) -> np.ndarray:
+        """do interpolation
 
+        Parameters
+        ----------
+        x_control : np.ndarray
+            x location of control points
+        y_control : np.ndarray
+            y location of control points
+        num_steps : int
+            number of steps of abaqus simulation
+        interpolation_method : str, optional
+            interpolation method, by default "quadratic"
+
+        Returns
+        -------
+        np.ndarray
+            amplitude
+        """
         num_dim = y_control.shape[1]
         num_steps = int(num_steps)
         path = np.zeros((num_steps + 1, num_dim))
@@ -114,14 +172,24 @@ class AmplitudeGenerator:
 
         return path
 
-    def plot_path(
+    def plot_amplitude(
         self,
-        fig_name: str = "loads_path.png",
+        fig_name: str = "amplitude_path.png",
         save_fig: bool = False,
         internal: bool = True,
         **kwargs,
     ) -> None:
+        """plot amplitude
 
+        Parameters
+        ----------
+        fig_name : str, optional
+            figure name, by default "amplitude_path.png"
+        save_fig : bool, optional
+            save figure, by default False
+        internal : bool, optional
+            approach this function from internal or external, by default True
+        """
         if internal is True:
             assert (
                 "iteration" in kwargs.keys()

@@ -6,7 +6,6 @@ import math
 import time
 
 import matplotlib.pyplot as plt
-
 # Third party
 import numpy as np
 from scipy.spatial import distance_matrix
@@ -25,7 +24,7 @@ __status__ = "Stable"
 
 
 class CircleParticles(MicrosctuctureGenerator):
-    """2D RVE with different size of disks
+    """2D RVE with different size of disks/circles
 
     Parameters
     ----------
@@ -637,33 +636,33 @@ class CircleParticles(MicrosctuctureGenerator):
         fiber_index: int = 0,
         stage: str = "step_one",
     ) -> int:
-        """Check if the new positions will overlap with the original one
-        or not ?
-        Parameters
+        """overlap check betwwen new fiber and the original ones
 
         Parameters
         ----------
         new_fiber : np.ndarray
-            he locations of the new point(in some cases: several
-            positions will be generated for one point because of
-            the splitting )
+            new fiber location
         fiber_pos : np.ndarray
-            location of the original points
-        dist_min : float
-            the allowed minimum distance between disks
-        index : int, optional
-            the index of the checking fibers, which should not be 0
-            when excuting stage two and three
+            original fibers 
+        dist_factor : float
+            distance factor which used to control the minimum distance between to fibers 
+        fiber_index : int, optional
+            fiber index , by default 0
         stage : str, optional
-            the stage of the algorithm, step_one, step_two,step_three
-            , by default "step_one"
+            stage of the algorithm, by default "step_one"
 
         Returns
         -------
         int
-            overlap status, 0 is non-overlap and 1 means there is
-            overlap
+            a flag number (1: overlap, 0: non-overlap) 
+
+        Raises
+        ------
+        ValueError
+            not defined stage
         """
+
+
         fiber_pos = fiber_pos.copy()
 
         if stage == "step_one":
@@ -732,9 +731,9 @@ class CircleParticles(MicrosctuctureGenerator):
         -------
         fiber_min_dis_vector: np.ndarray
             The updated minimum distance array
-        two: int
+        min_index: int
             The index of the minimum distance point
-        three : float
+        min_dist : float
             The minimum distance to the minimum distance point
 
         """
@@ -781,7 +780,7 @@ class CircleParticles(MicrosctuctureGenerator):
         ref_point: np.ndarray,
         fiber_temp: np.ndarray,
         dist_factor: float,
-        rng,
+        rng : any,
     ) -> np.ndarray:
         """Move fiber to its reference point
 
@@ -793,6 +792,8 @@ class CircleParticles(MicrosctuctureGenerator):
             The considering fiber
         dist_factor : float
             the minimum distance factor between two fibers
+        rng: any 
+            randome generator 
 
         Returns
         -------
@@ -814,7 +815,7 @@ class CircleParticles(MicrosctuctureGenerator):
         return fiber_temp
 
     @staticmethod
-    def _first_new_fiber(x: float, y: float, r: float, portion: int):
+    def _first_new_fiber(x: float, y: float, r: float, portion: int) -> np.ndarray:
         """generate the first new fiber
 
         Parameters

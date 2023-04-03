@@ -6,8 +6,9 @@ import os
 
 import rvesimulator
 from rvesimulator.additionals.hardening_law import HardeningLaw
-from rvesimulator.additionals.microstructure_wrapper import \
-    CircleMircoStructure
+from rvesimulator.additionals.microstructure_wrapper import (
+    CircleMircoStructure,
+)
 
 from .base import SimulationBase
 
@@ -21,7 +22,7 @@ __status__ = "Stable"
 # =============================================================================
 
 
-class AscaRVE(SimulationBase):
+class ASCARVE(SimulationBase):
     def __init__(self) -> None:
         """Interface between python and abaqus of the asca rve case"""
         self.main_folder = os.getcwd()
@@ -32,7 +33,7 @@ class AscaRVE(SimulationBase):
         self.folder_info = {
             "main_work_directory": os.path.join(os.getcwd(), "Data"),
             "script_path": os.path.dirname(rvesimulator.__file__),
-            "current_work_directory": "point_1",
+            "current_work_directory": None,
             "sim_path": "scriptbase.asca_rve_script",
             "sim_script": "ASCARVE",
             "post_path": "scriptbase.basic_script.postprocess",
@@ -62,7 +63,45 @@ class AscaRVE(SimulationBase):
         print_info: bool = False,
         **kwargs,
     ) -> None:
+        """_summary_
 
+        Parameters
+        ----------
+        size : float, optional
+            size of rve, by default 0.048
+        radius_mu : float, optional
+            radius mean of fibers, by default 0.003
+        radius_std : float, optional
+            radius std of fibers , by default 0.000
+        vol_req : float, optional
+            required volume fraction, by default 0.30
+        mesh_partition : int, optional
+            mesh partition, by default 100
+        strain : list, optional
+            applied strain, by default [0.05, 0.0, 0.0]
+        simulation_time : float, optional
+            simulation time, by default 1.0
+        num_steps : int, optional
+            number steps , by default 100
+        E_matrix : float, optional
+            youngs modulus of matrix material, by default 100.0
+        Pr_matrix : float, optional
+            poisson ratio of matrix material, by default 0.3
+        E_fiber : float, optional
+            youngs modulus of fiber material, by default 1.0
+        Pr_fiber : float, optional
+            poisson ratio of fiber material, by default 0.19
+        hardening_law : str, optional
+            name of hardening law, by default "swift"
+        num_cpu : int, optional
+            cpu number, by default 1
+        platform : str, optional
+            platform of excution, by default "ubuntu"
+        seed : any, optional
+            seed for generating microstructure, by default None
+        print_info : bool, optional
+            print info, by default False
+        """
         self.vol_req = vol_req
         # generate the microstructure
         mircostructure_generator = CircleMircoStructure()

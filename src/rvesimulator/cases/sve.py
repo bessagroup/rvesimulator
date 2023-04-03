@@ -61,7 +61,45 @@ class SVE(SimulationBase):
         print_info: bool = False,
         **kwargs,
     ) -> None:
+        """update simulation information
 
+        Parameters
+        ----------
+        size : float, optional
+            size of rve, by default 0.048
+        radius : float, optional
+            radiusof fibers, by default 0.003
+        task: str
+            flag to get microstructure information
+        mesh_partition : int, optional
+            mesh partition, by default 100
+        strain : list, optional
+            applied strain, by default [0.05, 0.0, 0.0]
+        strain_amplitude : list, optional
+            strain amplitude, by default None
+        simulation_time : float, optional
+            simulation time, by default 1.0
+        num_steps : int, optional
+            number steps , by default 100
+        E_matrix : float, optional
+            young's modulus of matrix material , by default 100.0
+        Pr_matrix : float, optional
+            poisson ratio of matrix material, by default 0.3
+        E_fiber : float, optional
+            young's modulsu of fiber material, by default 1.0
+        Pr_fiber : float, optional
+            poisson ratio of fiber material, by default 0.19
+        hardening_law : str, optional
+            name of hardening law, by default "swift"
+        num_cpu : int, optional
+            number of cpu, by default 1
+        platform : str, optional
+            excution platform, by default "ubuntu"
+        seed : any, optional
+            seed of microstructure generation, by default None
+        print_info : bool, optional
+            print info, by default False
+        """
         # generate the microstructure
         mircostructure_generator = CircleSVEMicroStructure(
             size=size,

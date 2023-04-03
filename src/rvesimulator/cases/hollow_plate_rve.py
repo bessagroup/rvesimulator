@@ -49,7 +49,29 @@ class NaiveHollowPlate(SimulationBase):
         platform: str = "ubuntu",
         print_info: bool = False,
     ) -> None:
+        """update simulation information
 
+        Parameters
+        ----------
+        size : float, optional
+            size of rve , by default 1.0
+        radius : float, optional
+            radius of hollow plate , by default 0.2
+        youngs_modulus : float, optional
+            youngs modulus, by default 100.0
+        poisson_ratio : float, optional
+            poisson ratio, by default 0.3
+        mesh_portion : int, optional
+            mesh portion, by default 30
+        strain : list, optional
+            applied strain, by default [0.1, 0.0, 0.0]
+        num_cpu : int, optional
+            number of cpu for simulation, by default 1
+        platform : str, optional
+            platform of excution, by default "ubuntu"
+        print_info : bool, optional
+            print the simulation information, by default False
+        """
         self.sim_info = {
             "job_name": "hollowplate",
             "radius": radius,
