@@ -4,10 +4,8 @@ This repo aims to do representative volume element (RVE) simulation via [ABAQUS]
 
 This idea of the repo is  shown by the following figures: 
 <p align="center">
-    <img src="docs/images/rvesimulator.svg" width="100%" align="center">
+    <img src="docs/images/rvesimulator.svg" width="70%" align="center">
 </p>
-<br/><br/>
-<br/><br/>
 
 ---
 **Author**:
