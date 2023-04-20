@@ -1,6 +1,13 @@
 ## abaqus rve simulator 
 
-This repo aims to do representative volume element (RVE) simulation via [ABAQUS](https://www.3ds.com/products-services/simulia/products/abaqus/). It has two main parts, the first part is to generate microstructure of representative volume element (RVE), and the second part is realize the functionality of do RVE simulation automatically and has the ability to generate large dataset without any GUI operation. 
+This repo aims to do representative volume element (RVE) simulation via [ABAQUS](https://www.3ds.com/products-services/simulia/products/abaqus/). It has two main parts, the first part is to generate microstructure of representative volume element (RVE), and the second part is realize the functionality of do RVE simulation automatically and has the ability to generate large dataset without any GUI operation.
+
+This idea of the repo is  shown by the following figures: 
+<p align="center">
+    <img src="docs/images/rvesimulator.svg" width="100%" align="center">
+</p>
+<br/><br/>
+<br/><br/>
 
 ---
 **Author**:
@@ -39,5 +46,5 @@ microstructure_generator = CircleParticles(
 microstructure_generator.generate_microstructure()
 ```
  
-#### Part I: rve simulation
+#### Part II: rve simulation
 for more details of this part, please go to the tutorials folder to see details instructions for different well defined rve simulation cases. 
