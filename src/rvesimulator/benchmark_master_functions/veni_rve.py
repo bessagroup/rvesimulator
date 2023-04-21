@@ -601,7 +601,7 @@ class VEVP_VPLeonovPathLoads(SimulationBase):
             "script_path": os.path.dirname(rvesimulator.__file__) + "/scriptbase",
             "current_work_directory": "point_1",
             "sim_path": "benchmark_abaqus_scripts.veni_rve",
-            "sim_script": "VEVP_VPLeonovRegularLoads",
+            "sim_script": "VEVP_VPLeonovPathLoads",
             "post_path": "basic_analysis_scripts.post_process",
             "post_script": "PostProcess2D",
         }
