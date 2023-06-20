@@ -20,6 +20,63 @@ __status__ = "Stable"
 
 
 # =============================================================================
+# class HardeningLawInterface(Protocol):
+#     def __init__(self, *args, **kwargs):
+#         ...
+
+
+#     def to_dict(self):  
+#         return {'table': self.table} # self.__dict__
+
+
+# class LinearHardeningLaw(HardeningLawInterface):
+#     def __init__(self,a, b):
+
+#         ...
+
+#         self.table 
+                     
+    
+
+
+# class SimulatorInfo:
+#     def __init__(self, folder_info: FolderInfo, hardening_law: HardeningLawInterface = None, microstructure: MicrostructureInterface):
+#         self.folder_info = folder_info
+#         self.hardening_law = hardening_law
+#         self.microstructure = microstructure
+
+#         self.run_checks()
+
+#     def run_checks(self):
+#         ...
+
+#     def to_dict(self) -> dict:
+#         sim_info: dict = {}
+
+#         sim_info.update(self.hardening_law.to_dict())
+#         sim_info.update(self.microstructure.to_dict())
+
+#         ...
+
+#         return sim_info
+
+# class VonMisesPlasticElasticRegularLoads2(SimulatorInfo):
+#     def run_checks(self):
+#         # Check if the arguments are valid
+#         assert isinstance(self.hardening_law, LinearHardeningLaw)
+
+# ###
+
+# sim_info = SimulatorInfo.to_dict()
+# folder_info = FolderInfo.to_dict()
+# class AbaqusSimulator:
+#     def __init__(self, simulator_info = SimulatorInfo, FolderInfo):
+#         ...
+
+#     def execute
+
+
+
 class VonMisesPlasticElasticRegularLoads(SimulationBase):
     def __init__(self) -> None:
         """Interface between python and abaqus of the Hollow plate case"""

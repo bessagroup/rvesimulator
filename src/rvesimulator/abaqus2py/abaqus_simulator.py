@@ -110,7 +110,7 @@ class AbaqusSimulator(Simulator, AssertInputs):
 
         return flag
 
-    def post_process(self, delete_odb: bool = True) -> None:
+    def post_process(self, delete_odb: bool = False) -> None:
         """post process
 
         Parameters

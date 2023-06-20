@@ -69,22 +69,23 @@ class TwoMaterialsSVEBase(CommonProcedure,
         )
         # fiber faces 
         self.part.Set(faces=fiberface, name="fiberface")
-        for ii in range(1, len(self.circles_information)):
-            fiberface_1 =  self.part.faces.getByBoundingCylinder(
-                (self.circles_information[ii][0], self.circles_information[ii][1], 0.0),
-                (self.circles_information[ii][0], self.circles_information[ii][1], 1.0),
-                self.circles_information[ii][2] + 0.001 * self.circles_information[ii][2],
-            )
-            self.part.Set(faces=fiberface_1, name="fiberface_1")
-            self.part.SetByBoolean(
-                name="fiberface",
-                sets=(self.part.sets["fiberface_1"],  self.part.sets["fiberface"]),
-                operation=UNION,
-            )
+        if len(self.circles_information) > 1:
+            for ii in range(1, len(self.circles_information)):
+                fiberface_1 =  self.part.faces.getByBoundingCylinder(
+                    (self.circles_information[ii][0], self.circles_information[ii][1], 0.0),
+                    (self.circles_information[ii][0], self.circles_information[ii][1], 1.0),
+                    self.circles_information[ii][2] + 0.001 * self.circles_information[ii][2],
+                )
+                self.part.Set(faces=fiberface_1, name="fiberface_1")
+                self.part.SetByBoolean(
+                    name="fiberface",
+                    sets=(self.part.sets["fiberface_1"],  self.part.sets["fiberface"]),
+                    operation=UNION,
+                )
 
-
-        # delete fiberface 1 
-        del self.part.sets["fiberface_1"]
+            # delete fiberface 1 
+            del self.part.sets["fiberface_1"]
+        # boolean operation to get matrix faces 
         self.part.SetByBoolean(
             name="matrixface",
             sets=(self.part.sets["all_faces"], self.part.sets["fiberface"]),
