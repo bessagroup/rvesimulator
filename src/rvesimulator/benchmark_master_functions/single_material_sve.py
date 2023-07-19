@@ -6,9 +6,9 @@ import os
 
 import rvesimulator
 from rvesimulator.additions.hardening_law import HardeningLaw
-from rvesimulator.additions.microstructure_wrapper import (
-    CircleSVEMicroStructure,
-)
+from rvesimulator.additions.microstructure_wrapper import \
+    CircleSVEMicroStructure
+
 from .shared_functionalities import SimulationBase
 
 #                                                          Authorship & Credits
@@ -79,6 +79,8 @@ class ElasticRegularLoads(SimulationBase):
             self._print_sim_info(info=self.sim_info)
 
 # =============================================================================
+
+
 class VonMisesPlasticRegularLoads(SimulationBase):
     def __init__(self) -> None:
         """Interface between python and abaqus of the Hollow plate case"""
@@ -112,14 +114,14 @@ class VonMisesPlasticRegularLoads(SimulationBase):
         print_info: bool = False,
         **kwargs,
     ) -> None:
-        # get the micro_structure information 
+        # get the micro_structure information
         micro_structure_generator = CircleSVEMicroStructure(
             size=size,
             radius=radius,
         )
         microstructure_info = micro_structure_generator.location_information(
             task=sve_geometry_benchmark
-        )        
+        )
         # generate the hardening law
         hardening = HardeningLaw()
         law_function = getattr(hardening, hardening_law)
@@ -194,15 +196,15 @@ class VonMisesPlasticPathLoads(SimulationBase):
         print_info: bool = False,
         **kwargs,
     ) -> None:
-        
-        # get the micro_structure information 
+
+        # get the micro_structure information
         micro_structure_generator = CircleSVEMicroStructure(
             size=size,
             radius=radius,
         )
         microstructure_info = micro_structure_generator.location_information(
             task=sve_geometry_benchmark
-        )         
+        )
         # generate the hardening law
         hardening = HardeningLaw()
         law_function = getattr(hardening, hardening_law)

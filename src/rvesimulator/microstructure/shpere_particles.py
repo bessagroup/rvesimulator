@@ -117,7 +117,6 @@ class SphereParticles(MicrosctuctureGenerator):
         end_time = time.time()
         self.time_usage = end_time - start_time
 
-
     def to_abaqus_format(self, file_name: str = "micro_structure_info.json") -> dict:
 
         microstructure_info = {
@@ -131,7 +130,7 @@ class SphereParticles(MicrosctuctureGenerator):
         }
         with open(file_name, "w") as fp:
             json.dump(microstructure_info, fp)
-        
+
         return microstructure_info
 
     def plot_microstructure(
@@ -221,7 +220,8 @@ class SphereParticles(MicrosctuctureGenerator):
                     dist_factor=self.dist_min_factor,
                 )
                 if overlap_status == 0:
-                    self.fiber_positions = np.vstack((self.fiber_positions, new_fiber))
+                    self.fiber_positions = np.vstack(
+                        (self.fiber_positions, new_fiber))
                     self.vol_frac = (
                         self.vol_frac
                         + self.fiber_volume(new_fiber[0, 3]) / self.vol_total
@@ -274,7 +274,8 @@ class SphereParticles(MicrosctuctureGenerator):
                     # 1 fiber centers) will overlap with the
                     # remaining ones or not
                     if overlap_status == 0:
-                        ii = self._update_fiber_position(new_fiber=new_fiber, iter=ii)
+                        ii = self._update_fiber_position(
+                            new_fiber=new_fiber, iter=ii)
                     else:
                         ii = ii + int(self.fiber_positions[ii, 4])
                     del new_fiber, new_fiber_temp
@@ -339,9 +340,12 @@ class SphereParticles(MicrosctuctureGenerator):
                     loc_temp = np.array(
                         [
                             [
-                                self.length / (2 * num_discrete) + ii * grid_len,
-                                self.width / (2 * num_discrete) + jj * grid_wid,
-                                self.height / (2 * num_discrete) + kk * grid_height,
+                                self.length / (2 * num_discrete) +
+                                ii * grid_len,
+                                self.width / (2 * num_discrete) +
+                                jj * grid_wid,
+                                self.height / (2 * num_discrete) +
+                                kk * grid_height,
                             ]
                         ]
                     )
@@ -468,7 +472,8 @@ class SphereParticles(MicrosctuctureGenerator):
             and radius <= z_center <= height - radius
         ):
             # locate in center region and split = 1
-            new_fiber = self._first_new_fiber(x_center, y_center, z_center, radius, 1)
+            new_fiber = self._first_new_fiber(
+                x_center, y_center, z_center, radius, 1)
 
         elif (
             x_center < radius
@@ -478,7 +483,8 @@ class SphereParticles(MicrosctuctureGenerator):
 
             # locate in center region and split = 2, there should have one
             # fiber in the countpart side
-            new_fiber = self._first_new_fiber(x_center, y_center, z_center, radius, 2)
+            new_fiber = self._first_new_fiber(
+                x_center, y_center, z_center, radius, 2)
             new_fiber = np.vstack(
                 (
                     new_fiber,
@@ -493,7 +499,8 @@ class SphereParticles(MicrosctuctureGenerator):
             and radius < y_center < width - radius
             and radius < z_center < height - radius
         ):
-            new_fiber = self._first_new_fiber(x_center, y_center, z_center, radius, 2)
+            new_fiber = self._first_new_fiber(
+                x_center, y_center, z_center, radius, 2)
             new_fiber = np.vstack(
                 (
                     new_fiber,
@@ -507,7 +514,8 @@ class SphereParticles(MicrosctuctureGenerator):
             and y_center < radius
             and radius < z_center < height - radius
         ):
-            new_fiber = self._first_new_fiber(x_center, y_center, z_center, radius, 2)
+            new_fiber = self._first_new_fiber(
+                x_center, y_center, z_center, radius, 2)
             # add one more point on the counter side
             new_fiber = np.vstack(
                 (
@@ -523,7 +531,8 @@ class SphereParticles(MicrosctuctureGenerator):
             and radius < z_center < height - radius
         ):
 
-            new_fiber = self._first_new_fiber(x_center, y_center, z_center, radius, 2)
+            new_fiber = self._first_new_fiber(
+                x_center, y_center, z_center, radius, 2)
             # add one more point on the counter side
             new_fiber = np.vstack(
                 (
@@ -539,7 +548,8 @@ class SphereParticles(MicrosctuctureGenerator):
             and z_center > height - radius
         ):
 
-            new_fiber = self._first_new_fiber(x_center, y_center, z_center, radius, 2)
+            new_fiber = self._first_new_fiber(
+                x_center, y_center, z_center, radius, 2)
             # add one more point on the counter side
             new_fiber = np.vstack(
                 (
@@ -555,7 +565,8 @@ class SphereParticles(MicrosctuctureGenerator):
             and radius < y_center < width - radius
             and z_center < radius
         ):
-            new_fiber = self._first_new_fiber(x_center, y_center, z_center, radius, 2)
+            new_fiber = self._first_new_fiber(
+                x_center, y_center, z_center, radius, 2)
             # add one more point on the counter side
             new_fiber = np.vstack(
                 (
@@ -571,7 +582,8 @@ class SphereParticles(MicrosctuctureGenerator):
             and y_center < radius
             and radius < z_center < height - radius
         ):  # 4 split
-            new_fiber = self._first_new_fiber(x_center, y_center, z_center, radius, 4)
+            new_fiber = self._first_new_fiber(
+                x_center, y_center, z_center, radius, 4)
 
             # still has three points at counter edges
             new_fiber = np.vstack(
@@ -609,7 +621,8 @@ class SphereParticles(MicrosctuctureGenerator):
             and y_center < radius
             and radius < z_center < height - radius
         ):  # 4 split
-            new_fiber = self._first_new_fiber(x_center, y_center, z_center, radius, 4)
+            new_fiber = self._first_new_fiber(
+                x_center, y_center, z_center, radius, 4)
 
             # still has three points at counter edges
             new_fiber = np.vstack(
@@ -648,7 +661,8 @@ class SphereParticles(MicrosctuctureGenerator):
             and y_center > width - radius
             and radius < z_center < height - radius
         ):  # 4 split
-            new_fiber = self._first_new_fiber(x_center, y_center, z_center, radius, 4)
+            new_fiber = self._first_new_fiber(
+                x_center, y_center, z_center, radius, 4)
 
             # still has three points at counter edges
             new_fiber = np.vstack(
@@ -687,7 +701,8 @@ class SphereParticles(MicrosctuctureGenerator):
             and y_center > width - radius
             and radius < z_center < height - radius
         ):  # split
-            new_fiber = self._first_new_fiber(x_center, y_center, z_center, radius, 4)
+            new_fiber = self._first_new_fiber(
+                x_center, y_center, z_center, radius, 4)
 
             # still has three points at counter edges
             new_fiber = np.vstack(
@@ -726,7 +741,8 @@ class SphereParticles(MicrosctuctureGenerator):
             and radius < y_center < width - radius
             and z_center < radius
         ):  # 4 split
-            new_fiber = self._first_new_fiber(x_center, y_center, z_center, radius, 4)
+            new_fiber = self._first_new_fiber(
+                x_center, y_center, z_center, radius, 4)
 
             # still has three points at counter edges
             new_fiber = np.vstack(
@@ -808,7 +824,8 @@ class SphereParticles(MicrosctuctureGenerator):
             and radius < y_center < width - radius
             and z_center < radius
         ):  # 4 split
-            new_fiber = self._first_new_fiber(x_center, y_center, z_center, radius, 4)
+            new_fiber = self._first_new_fiber(
+                x_center, y_center, z_center, radius, 4)
 
             # still has three points at counter edges
             new_fiber = np.vstack(
@@ -847,7 +864,8 @@ class SphereParticles(MicrosctuctureGenerator):
             and radius < y_center < width - radius
             and z_center > height - radius
         ):  # 4 split
-            new_fiber = self._first_new_fiber(x_center, y_center, z_center, radius, 4)
+            new_fiber = self._first_new_fiber(
+                x_center, y_center, z_center, radius, 4)
 
             # still has three points at counter edges
             new_fiber = np.vstack(
@@ -886,7 +904,8 @@ class SphereParticles(MicrosctuctureGenerator):
             and y_center < radius
             and z_center < radius
         ):  # 4 split
-            new_fiber = self._first_new_fiber(x_center, y_center, z_center, radius, 4)
+            new_fiber = self._first_new_fiber(
+                x_center, y_center, z_center, radius, 4)
 
             # still has three points at counter edges
             new_fiber = np.vstack(
@@ -925,7 +944,8 @@ class SphereParticles(MicrosctuctureGenerator):
             and y_center > width - radius
             and z_center < radius
         ):  # 4 split
-            new_fiber = self._first_new_fiber(x_center, y_center, z_center, radius, 4)
+            new_fiber = self._first_new_fiber(
+                x_center, y_center, z_center, radius, 4)
 
             # still has three points at counter edges
             new_fiber = np.vstack(
@@ -964,7 +984,8 @@ class SphereParticles(MicrosctuctureGenerator):
             and y_center < radius
             and z_center > height - radius
         ):  # 4 split
-            new_fiber = self._first_new_fiber(x_center, y_center, z_center, radius, 4)
+            new_fiber = self._first_new_fiber(
+                x_center, y_center, z_center, radius, 4)
 
             # still has three points at counter edges
             new_fiber = np.vstack(
@@ -1003,7 +1024,8 @@ class SphereParticles(MicrosctuctureGenerator):
             and y_center > width - radius
             and z_center > height - radius
         ):  # 4 split
-            new_fiber = self._first_new_fiber(x_center, y_center, z_center, radius, 4)
+            new_fiber = self._first_new_fiber(
+                x_center, y_center, z_center, radius, 4)
 
             # still has three points at counter edges
             new_fiber = np.vstack(
@@ -1038,7 +1060,8 @@ class SphereParticles(MicrosctuctureGenerator):
             )
 
         elif x_center < radius and y_center < radius and z_center < radius:  # 8 split
-            new_fiber = self._first_new_fiber(x_center, y_center, z_center, radius, 8)
+            new_fiber = self._first_new_fiber(
+                x_center, y_center, z_center, radius, 8)
             # still has three points at counter edges
             new_fiber = np.vstack(
                 (
@@ -1124,7 +1147,8 @@ class SphereParticles(MicrosctuctureGenerator):
         elif (
             x_center < radius and y_center > width - radius and z_center < radius
         ):  # 8 split
-            new_fiber = self._first_new_fiber(x_center, y_center, z_center, radius, 8)
+            new_fiber = self._first_new_fiber(
+                x_center, y_center, z_center, radius, 8)
             # still has three points at counter edges
             new_fiber = np.vstack(
                 (
@@ -1211,7 +1235,8 @@ class SphereParticles(MicrosctuctureGenerator):
             x_center < radius and y_center < radius and z_center > height - radius
         ):  # 8 split
 
-            new_fiber = self._first_new_fiber(x_center, y_center, z_center, radius, 8)
+            new_fiber = self._first_new_fiber(
+                x_center, y_center, z_center, radius, 8)
             # still has three points at counter edges
             new_fiber = np.vstack(
                 (
@@ -1299,7 +1324,8 @@ class SphereParticles(MicrosctuctureGenerator):
             and y_center > width - radius
             and z_center > height - radius
         ):  # 8 split
-            new_fiber = self._first_new_fiber(x_center, y_center, z_center, radius, 8)
+            new_fiber = self._first_new_fiber(
+                x_center, y_center, z_center, radius, 8)
             # still has three points at counter edges
             new_fiber = np.vstack(
                 (
@@ -1385,7 +1411,8 @@ class SphereParticles(MicrosctuctureGenerator):
         elif (
             x_center > length - radius and y_center < radius and z_center < radius
         ):  # 8 split
-            new_fiber = self._first_new_fiber(x_center, y_center, z_center, radius, 8)
+            new_fiber = self._first_new_fiber(
+                x_center, y_center, z_center, radius, 8)
             # still has three points at counter edges
             new_fiber = np.vstack(
                 (
@@ -1472,7 +1499,8 @@ class SphereParticles(MicrosctuctureGenerator):
             and y_center > width - radius
             and z_center < radius
         ):  # 8 split
-            new_fiber = self._first_new_fiber(x_center, y_center, z_center, radius, 8)
+            new_fiber = self._first_new_fiber(
+                x_center, y_center, z_center, radius, 8)
             # still has three points at counter edges
             new_fiber = np.vstack(
                 (
@@ -1559,7 +1587,8 @@ class SphereParticles(MicrosctuctureGenerator):
             and y_center < radius
             and z_center > height - radius
         ):  # 8 split
-            new_fiber = self._first_new_fiber(x_center, y_center, z_center, radius, 8)
+            new_fiber = self._first_new_fiber(
+                x_center, y_center, z_center, radius, 8)
             # still has three points at counter edges
             new_fiber = np.vstack(
                 (
@@ -1647,7 +1676,8 @@ class SphereParticles(MicrosctuctureGenerator):
             and y_center > width - radius
             and z_center > height - radius
         ):  # 8 split
-            new_fiber = self._first_new_fiber(x_center, y_center, z_center, radius, 8)
+            new_fiber = self._first_new_fiber(
+                x_center, y_center, z_center, radius, 8)
             # still has three points at counter edges
             new_fiber = np.vstack(
                 (
@@ -1731,7 +1761,8 @@ class SphereParticles(MicrosctuctureGenerator):
             )
 
         else:
-            raise Exception("The location of the original point was wrong!!! \n")
+            raise Exception(
+                "The location of the original point was wrong!!! \n")
 
         return new_fiber
 
@@ -1774,7 +1805,8 @@ class SphereParticles(MicrosctuctureGenerator):
             min_dis_threhold = dist_factor * (
                 new_fiber[0, 3] + fiber_pos[:, 3]
             ).reshape((-1, 1))
-            points_dis_temp = distance_matrix(fiber_pos[:, 0:3], new_fiber[:, 0:3])
+            points_dis_temp = distance_matrix(
+                fiber_pos[:, 0:3], new_fiber[:, 0:3])
             points_dis = np.min(points_dis_temp, 1, keepdims=True)
             min_dis = points_dis - min_dis_threhold
 
@@ -1783,9 +1815,10 @@ class SphereParticles(MicrosctuctureGenerator):
             min_dis_threhold = dist_factor * (
                 new_fiber[0, 3] + fiber_pos[:, 3]
             ).reshape((-1, 1))
-            points_dis_temp = distance_matrix(fiber_pos[:, 0:3], new_fiber[:, 0:3])
+            points_dis_temp = distance_matrix(
+                fiber_pos[:, 0:3], new_fiber[:, 0:3])
             points_dis_temp[
-                fiber_index : fiber_index + int(fiber_pos[fiber_index, 4]), :
+                fiber_index: fiber_index + int(fiber_pos[fiber_index, 4]), :
             ] = math.inf
             points_dis = np.min(points_dis_temp, 1, keepdims=True)
             min_dis = points_dis - min_dis_threhold
@@ -1892,7 +1925,7 @@ class SphereParticles(MicrosctuctureGenerator):
         dist_factor : float
             the minimum distance factor between two fibers
         ang: any
-            a random generator 
+            a random generator
 
         Returns
         -------

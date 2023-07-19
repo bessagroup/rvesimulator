@@ -165,9 +165,9 @@ class CircleSVEMicroStructure:
                 [3 * size / 4, 3 * size / 4, 2 * radius, 1],
                 [size / 2, size / 2, radius, 1],
             ]
-        elif task == "task5": 
+        elif task == "task5":
             location_information = [
-                [size / 2, size / 2, 2*radius, 1],
+                [size / 2, size / 2, 2 * radius, 1],
             ]
         return location_information
 

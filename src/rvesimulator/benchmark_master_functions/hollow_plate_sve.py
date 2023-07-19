@@ -90,6 +90,8 @@ class ElasticRegularLoads(SimulationBase):
             self._print_sim_info(info=self.sim_info)
 
 # =============================================================================
+
+
 class VonMisesPlasticRegularLoads(SimulationBase):
     def __init__(self) -> None:
         """Interface between python and abaqus of the Hollow plate case"""

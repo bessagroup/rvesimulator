@@ -9,7 +9,16 @@
 	
 	# Exclude (additional) glob patterns from checks:
 	extend-exclude =
-	
+	.tox,
+    __pycache__,
+    dist,
+    data,
+	*.egg,
+	docs,
+	tests
+	.git
+	src/rvesimulator/scriptbase/
+	tutorials
 	# <<< UPDATE ACCORDING WITH YOUR PYTHON PROJECT
 	
 	
