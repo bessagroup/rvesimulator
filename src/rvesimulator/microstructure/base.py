@@ -2,7 +2,6 @@
 # =============================================================================
 
 # Third party
-from turtle import color
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -29,7 +28,8 @@ class MicrosctuctureGenerator:
             seed generator or number , by default None
         """
 
-        raise NotImplementedError("The function should be implemented in sub-class \n")
+        raise NotImplementedError("The function should be implemented \
+                                  in sub-class \n")
 
     def plot_microstructure(
         self, save_figure: bool = False, fig_name: str = "RVE.png"
@@ -49,9 +49,11 @@ class MicrosctuctureGenerator:
             error report
         """
 
-        raise NotImplementedError("The function should be implemented in sub-class \n")
+        raise NotImplementedError("The function should be implemented \
+                                  in sub-class \n")
 
-    def to_abaqus_format(self, file_name: str = "micro_structure_info.json") -> None:
+    def to_abaqus_format(self,
+                         file_name: str = "micro_structure_info.json") -> None:
         """convert microstructure to abaqus format
 
         Parameters
@@ -65,7 +67,8 @@ class MicrosctuctureGenerator:
             error report
         """
 
-        raise NotImplementedError("The function should be implemented in sub-class \n")
+        raise NotImplementedError("The function should be implemented \
+                                  in sub-class \n")
 
     def to_crate_format(self, file_name: str = "microstructure.rgmsh") -> None:
         """convert microstructure to crate format
@@ -84,7 +87,7 @@ class MicrosctuctureGenerator:
         fig_name: str = "rgmsh.png",
         **kwarg,
     ) -> None:
-        """contour or voxel plot of the discrete microstructure 
+        """contour or voxel plot of the discrete microstructure
 
         Parameters
         ----------
@@ -96,7 +99,7 @@ class MicrosctuctureGenerator:
         if self.fiber_positions.shape[1] == 4:
             fig = plt.figure(**kwarg)
             ax = fig.add_subplot(111)
-            im = ax.imshow(
+            ax.imshow(
                 self.rgmsh.T,
                 origin="lower",
                 interpolation="None",
@@ -120,7 +123,7 @@ class MicrosctuctureGenerator:
             plt.show()
 
     @staticmethod
-    def cricle_plot(
+    def circle_plot(
         fibers: np.ndarray,
         length: float,
         width: float,
@@ -136,9 +139,9 @@ class MicrosctuctureGenerator:
         fibers : np.ndarray
             fiber locations/positions
         length : float
-            length of the rve 
+            length of the rve
         width : float
-            with of the rve 
+            with of the rve
         vol_frac : float
             reached volume fraction
         save_figure : bool, optional
@@ -187,7 +190,8 @@ class MicrosctuctureGenerator:
         v = np.linspace(0, np.pi, 20)
         x = loc_info[0, 3] * np.outer(np.cos(u), np.sin(v)) + loc_info[0, 0]
         y = loc_info[0, 3] * np.outer(np.sin(u), np.sin(v)) + loc_info[0, 1]
-        z = loc_info[0, 3] * np.outer(np.ones(np.size(u)), np.cos(v)) + loc_info[0, 2]
+        z = loc_info[0, 3] * np.outer(np.ones(np.size(u)), np.cos(v)) \
+            + loc_info[0, 2]
 
         return x, y, z
 
@@ -216,16 +220,18 @@ class MicrosctuctureGenerator:
         vol_frac : float
             volume fraction
         save_figure : bool, optional
-            a flag to indicate if we want save the figure or not, by default False
+            a flag to indicate if we want save the figure or not,
+            by default False
         fig_name : str, optional
             fig name, by default "cubic_rve.png"
         """
-        # TODO refine this function with better color scheme, 
+        # TODO refine this function with better color scheme
         fig = plt.figure()
         ax = fig.add_subplot(projection="3d")
         # Plot the surface
         for ii in range(fibers.shape[0]):
-            x, y, z = self.sphere_coordinate(location_information=fibers[ii, :])
+            x, y, z = \
+                self.sphere_coordinate(location_information=fibers[ii, :])
             if fibers[ii, 4] == 1:
                 ax.plot_surface(x, y, z, color="lightseagreen")
             elif fibers[ii, 4] == 2:

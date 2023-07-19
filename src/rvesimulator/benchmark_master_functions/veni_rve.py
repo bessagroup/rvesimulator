@@ -5,9 +5,8 @@ import json
 import os
 
 import rvesimulator
-from rvesimulator.additions.microstructure_wrapper import (
-    CircleMircoStructure,
-)
+from rvesimulator.additions.microstructure_wrapper import CircleMircoStructure
+
 from .shared_functionalities import SimulationBase
 
 #                                                          Authorship & Credits
@@ -629,7 +628,7 @@ class VEVP_VPLeonovPathLoads(SimulationBase):
             0.1,
         ],
         paras_pe: list  = [
-            6.016e+02 ,
+            6.016e+02,
             0.45,
             296.0,
             0.1,
@@ -663,16 +662,16 @@ class VEVP_VPLeonovPathLoads(SimulationBase):
             radius_std=radius_std,
             vol_req=vol_req,
             seed=seed,
-        )            
+        )
 
-        # simulation paras 
+        # simulation paras
         self.sim_paras = {
                           "size": size,
                           "radius_mu": radius_mu,
                           "radius_std": radius_std,
                           "vol_req": vol_req,
                           "vol_frac": vol_frac,
-                          "paras_pp": paras_pp, 
+                          "paras_pp": paras_pp,
                           "paras_pe": paras_pe,
                           "mesh_partition": mesh_partition,
                           "strain": strain,
@@ -692,7 +691,7 @@ class VEVP_VPLeonovPathLoads(SimulationBase):
             "len_end": microstructure_info["len_end"],
             "wid_start": microstructure_info["wid_start"],
             "wid_end": microstructure_info["wid_end"],
-            "paras_pp": paras_pp, 
+            "paras_pp": paras_pp,
             "paras_pe": paras_pe,
             "mesh_partition": mesh_partition,
             "num_steps": num_steps,

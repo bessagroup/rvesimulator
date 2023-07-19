@@ -54,3 +54,7 @@
 	# W504 : Line break after binary operator
 	# W505 : Doc line too long (82 > 79 characters) 
 	extend-select = E241, E242, E704, W505
+
+	# Ignore all errors F401 ('imported but unused') and E402 ('module level import
+	# not at top of file') in __init__.py files
+	per-file-ignores = __init__.py: F401, E402
