@@ -53,4 +53,4 @@
 	# E704 : Multiple statements on one line (def)
 	# W504 : Line break after binary operator
 	# W505 : Doc line too long (82 > 79 characters) 
-	extend-select = E241, E242, E704, W504, W505
+	extend-select = E241, E242, E704, W505

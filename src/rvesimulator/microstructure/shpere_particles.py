@@ -4,6 +4,7 @@
 import json
 import math
 import time
+from typing import Any
 
 # third-party
 import numpy as np
@@ -117,7 +118,8 @@ class SphereParticles(MicrosctuctureGenerator):
         end_time = time.time()
         self.time_usage = end_time - start_time
 
-    def to_abaqus_format(self, file_name: str = "micro_structure_info.json") -> dict:
+    def to_abaqus_format(self, 
+                         file_name: str = "micro_structure_info.json") -> dict:
 
         microstructure_info = {
             "location_information": self.fiber_positions.tolist(),
@@ -180,7 +182,8 @@ class SphereParticles(MicrosctuctureGenerator):
         """core iteration part of the micro-structure generation method"""
 
         # the main loop of the algorithm
-        while self.vol_frac < self.vol_req and self.num_cycle < self.num_cycles_max:
+        while (self.vol_frac < self.vol_req and 
+                self.num_cycle < self.num_cycles_max):
             # ================================================================#
             #                   generate the fibers randomly                  #
             # ================================================================#
@@ -460,8 +463,8 @@ class SphereParticles(MicrosctuctureGenerator):
         Returns
         -------
         np.ndarray
-            XC, YC, ZC, radius, and split  which are the new locations of this fiber
-            (because in some locations, the circles need to be split)
+            XC, YC, ZC, radius, and split  which are the new locations of
+            this fiber(because in some locations, the circles need to be split)
 
         """
 
@@ -520,9 +523,14 @@ class SphereParticles(MicrosctuctureGenerator):
             new_fiber = np.vstack(
                 (
                     new_fiber,
-                    np.array([x_center, y_center + width, z_center, radius, 2]).reshape(
-                        (1, 5)
-                    ),
+                    np.array(
+                    [
+                        x_center, 
+                        y_center + width, 
+                        z_center, 
+                        radius, 
+                        2
+                    ]).reshape((1, 5)),
                 ),
             )
         elif (
@@ -537,9 +545,12 @@ class SphereParticles(MicrosctuctureGenerator):
             new_fiber = np.vstack(
                 (
                     new_fiber,
-                    np.array([x_center, y_center - width, z_center, radius, 2]).reshape(
-                        (1, 5)
-                    ),
+                    np.array(
+                [x_center, 
+                 y_center - width, 
+                 z_center, 
+                 radius, 
+                 2]).reshape((1, 5)),
                 ),
             )
         elif (
@@ -597,9 +608,14 @@ class SphereParticles(MicrosctuctureGenerator):
             new_fiber = np.vstack(
                 (
                     new_fiber,
-                    np.array([x_center, y_center + width, z_center, radius, 4]).reshape(
-                        (1, 5)
-                    ),
+                    np.array(
+                [
+                    x_center, 
+                    y_center + width, 
+                    z_center, 
+                    radius, 
+                    4
+                ]).reshape((1, 5)),
                 ),
             )
             new_fiber = np.vstack(
@@ -636,9 +652,12 @@ class SphereParticles(MicrosctuctureGenerator):
             new_fiber = np.vstack(
                 (
                     new_fiber,
-                    np.array([x_center, y_center + width, z_center, radius, 4]).reshape(
-                        (1, 5)
-                    ),
+                    np.array([
+                        x_center, 
+                        y_center + width, 
+                        z_center, 
+                        radius, 
+                        4]).reshape((1, 5)),
                 ),
             )
             new_fiber = np.vstack(
@@ -676,7 +695,10 @@ class SphereParticles(MicrosctuctureGenerator):
             new_fiber = np.vstack(
                 (
                     new_fiber,
-                    np.array([x_center, y_center - width, z_center, radius, 4]).reshape(
+                    np.array([x_center, 
+                              y_center - width, 
+                              z_center, 
+                              radius, 4]).reshape(
                         (1, 5)
                     ),
                 ),
@@ -716,7 +738,11 @@ class SphereParticles(MicrosctuctureGenerator):
             new_fiber = np.vstack(
                 (
                     new_fiber,
-                    np.array([x_center, y_center - width, z_center, radius, 4]).reshape(
+                    np.array([x_center, 
+                              y_center - width, 
+                              z_center, 
+                              radius, 
+                              4]).reshape(
                         (1, 5)
                     ),
                 ),
@@ -911,7 +937,11 @@ class SphereParticles(MicrosctuctureGenerator):
             new_fiber = np.vstack(
                 (
                     new_fiber,
-                    np.array([x_center, y_center + width, z_center, radius, 4]).reshape(
+                    np.array([x_center, 
+                              y_center + width, 
+                              z_center, 
+                              radius, 
+                              4]).reshape(
                         (1, 5)
                     ),
                 ),
@@ -951,7 +981,11 @@ class SphereParticles(MicrosctuctureGenerator):
             new_fiber = np.vstack(
                 (
                     new_fiber,
-                    np.array([x_center, y_center - width, z_center, radius, 4]).reshape(
+                    np.array([x_center, 
+                    y_center - width, 
+                    z_center, 
+                    radius, 
+                    4]).reshape(
                         (1, 5)
                     ),
                 ),
@@ -991,7 +1025,11 @@ class SphereParticles(MicrosctuctureGenerator):
             new_fiber = np.vstack(
                 (
                     new_fiber,
-                    np.array([x_center, y_center + width, z_center, radius, 4]).reshape(
+                    np.array([x_center, 
+                              y_center + width, 
+                              z_center, 
+                              radius, 
+                              4]).reshape(
                         (1, 5)
                     ),
                 ),
@@ -1031,7 +1069,11 @@ class SphereParticles(MicrosctuctureGenerator):
             new_fiber = np.vstack(
                 (
                     new_fiber,
-                    np.array([x_center, y_center - width, z_center, radius, 4]).reshape(
+                    np.array([x_center, 
+                              y_center - width, 
+                              z_center, 
+                              radius, 
+                              4]).reshape(
                         (1, 5)
                     ),
                 ),
@@ -1059,7 +1101,8 @@ class SphereParticles(MicrosctuctureGenerator):
                 ),
             )
 
-        elif x_center < radius and y_center < radius and z_center < radius:  # 8 split
+        elif x_center < radius and y_center < radius and z_center < radius:  
+            # 8 split
             new_fiber = self._first_new_fiber(
                 x_center, y_center, z_center, radius, 8)
             # still has three points at counter edges
@@ -1116,7 +1159,11 @@ class SphereParticles(MicrosctuctureGenerator):
             new_fiber = np.vstack(
                 (
                     new_fiber,
-                    np.array([x_center, y_center + width, z_center, radius, 8]).reshape(
+                    np.array([x_center, 
+                              y_center + width, 
+                              z_center, 
+                              radius, 
+                              8]).reshape(
                         (1, 5)
                     ),
                 ),
@@ -1203,7 +1250,11 @@ class SphereParticles(MicrosctuctureGenerator):
             new_fiber = np.vstack(
                 (
                     new_fiber,
-                    np.array([x_center, y_center - width, z_center, radius, 8]).reshape(
+                    np.array([x_center, 
+                              y_center - width, 
+                              z_center, 
+                              radius, 
+                              8]).reshape(
                         (1, 5)
                     ),
                 ),
@@ -1232,7 +1283,9 @@ class SphereParticles(MicrosctuctureGenerator):
             )
 
         elif (
-            x_center < radius and y_center < radius and z_center > height - radius
+            x_center < radius and 
+            y_center < radius and 
+            z_center > height - radius
         ):  # 8 split
 
             new_fiber = self._first_new_fiber(
@@ -1291,7 +1344,11 @@ class SphereParticles(MicrosctuctureGenerator):
             new_fiber = np.vstack(
                 (
                     new_fiber,
-                    np.array([x_center, y_center + width, z_center, radius, 8]).reshape(
+                    np.array([x_center, 
+                    y_center + width, 
+                    z_center, 
+                    radius, 
+                    8]).reshape(
                         (1, 5)
                     ),
                 ),
@@ -1380,7 +1437,11 @@ class SphereParticles(MicrosctuctureGenerator):
             new_fiber = np.vstack(
                 (
                     new_fiber,
-                    np.array([x_center, y_center - width, z_center, radius, 8]).reshape(
+                    np.array([x_center, 
+                    y_center - width, 
+                    z_center, 
+                    radius, 
+                    8]).reshape(
                         (1, 5)
                     ),
                 ),
@@ -1409,7 +1470,9 @@ class SphereParticles(MicrosctuctureGenerator):
             )
 
         elif (
-            x_center > length - radius and y_center < radius and z_center < radius
+            x_center > length - radius 
+            and y_center < radius 
+            and z_center < radius
         ):  # 8 split
             new_fiber = self._first_new_fiber(
                 x_center, y_center, z_center, radius, 8)
@@ -1467,7 +1530,12 @@ class SphereParticles(MicrosctuctureGenerator):
             new_fiber = np.vstack(
                 (
                     new_fiber,
-                    np.array([x_center, y_center + width, z_center, radius, 8]).reshape(
+                    np.array([
+                    x_center, 
+                    y_center + width, 
+                    z_center, 
+                    radius, 
+                    8]).reshape(
                         (1, 5)
                     ),
                 ),
@@ -1555,9 +1623,15 @@ class SphereParticles(MicrosctuctureGenerator):
             new_fiber = np.vstack(
                 (
                     new_fiber,
-                    np.array([x_center, y_center - width, z_center, radius, 8]).reshape(
-                        (1, 5)
-                    ),
+                    np.array(
+                        [
+                            x_center, 
+                            y_center - width, 
+                            z_center, 
+                            radius, 
+                            8
+                        ]
+                    ).reshape((1, 5)),
                 ),
             )
             new_fiber = np.vstack(
@@ -1643,9 +1717,15 @@ class SphereParticles(MicrosctuctureGenerator):
             new_fiber = np.vstack(
                 (
                     new_fiber,
-                    np.array([x_center, y_center + width, z_center, radius, 8]).reshape(
-                        (1, 5)
-                    ),
+                    np.array(
+                        [
+                            x_center, 
+                            y_center + width, 
+                            z_center, 
+                            radius, 
+                            8
+                        ]
+                    ).reshape((1, 5)),
                 ),
             )
             new_fiber = np.vstack(
@@ -1732,11 +1812,18 @@ class SphereParticles(MicrosctuctureGenerator):
             new_fiber = np.vstack(
                 (
                     new_fiber,
-                    np.array([x_center, y_center - width, z_center, radius, 8]).reshape(
-                        (1, 5)
-                    ),
+                    np.array(
+                        [
+                            x_center,
+                            y_center - width,
+                            z_center,
+                            radius,
+                            8,
+                        ]
+                    ).reshape((1, 5)),
                 ),
             )
+
             new_fiber = np.vstack(
                 (
                     new_fiber,
@@ -1774,16 +1861,16 @@ class SphereParticles(MicrosctuctureGenerator):
         fiber_index: int = 0,
         stage: str = "step_one",
     ) -> int:
-        """overlap check of the new fiber and the orginal ones 
+        """overlap check of the new fiber and the orginal ones
 
         Parameters
         ----------
         new_fiber : np.ndarray
             new fiber location
         fiber_pos : np.ndarray
-            original fiber locations 
+            original fiber locations
         dist_factor : float
-            distance factor 
+            distance factor
         fiber_index : int, optional
             fiber index, by default 0
         stage : str, optional
@@ -1792,12 +1879,7 @@ class SphereParticles(MicrosctuctureGenerator):
         Returns
         -------
         int
-            a flag to indicate overlap status 
-
-        Raises
-        ------
-        ValueError
-            stage not been implemented error
+            a flag to indicate overlap status
         """
         fiber_pos = fiber_pos.copy()
 
@@ -1893,10 +1975,11 @@ class SphereParticles(MicrosctuctureGenerator):
             fiber_min_dis_vector[ii, cycle, 0] = min_index
             fiber_min_dis_vector[ii, cycle, 1] = min_dis
         else:
-
             index_pre = int(fiber_min_dis_vector[ii, cycle - 1, 0])
             index_pre_pre = int(fiber_min_dis_vector[ii, cycle - 2, 0])
-            if index_pre < points_dis.shape[0] and index_pre_pre < points_dis.shape[0]:
+            # delete the previous two points
+            if (index_pre < points_dis.shape[0] and
+                    index_pre_pre < points_dis.shape[0]):
                 points_dis[index_pre, :] = math.inf
                 points_dis[index_pre_pre, :] = math.inf
             # identify the minimum index
@@ -1912,7 +1995,7 @@ class SphereParticles(MicrosctuctureGenerator):
         ref_point: np.ndarray,
         fiber_temp: np.ndarray,
         dist_factor: float,
-        rng: any,
+        rng: Any,
     ) -> np.ndarray:
         """Move fiber to its reference point
 
@@ -1947,7 +2030,11 @@ class SphereParticles(MicrosctuctureGenerator):
         return fiber_temp
 
     @staticmethod
-    def _first_new_fiber(x: float, y: float, z: float, r: float, portion: int):
+    def _first_new_fiber(x: float,
+                         y: float,
+                         z: float,
+                         r: float,
+                         portion: int ) -> np.ndarray:
         """generate the first new fiber
 
         Parameters
@@ -1956,7 +2043,7 @@ class SphereParticles(MicrosctuctureGenerator):
             x center
         y : float
             y center
-        z :flost
+        z :float
             z center
         r : float
             radius
