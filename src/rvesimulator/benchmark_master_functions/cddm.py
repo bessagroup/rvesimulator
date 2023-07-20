@@ -1,7 +1,6 @@
 #                                                                       Modules
 # =============================================================================
 # Standard
-import json
 import os
 
 import rvesimulator
@@ -24,7 +23,8 @@ class VonMisesPlasticElasticRegularLoads(SimulationBase):
         self.main_folder = os.getcwd()
         self.folder_info = {
             "main_work_directory": os.path.join(os.getcwd(), "Data"),
-            "script_path": os.path.dirname(rvesimulator.__file__) + "/scriptbase",
+            "script_path": os.path.dirname(rvesimulator.__file__)
+            + "/scriptbase",
             "current_work_directory": "point_1",
             "sim_path": "benchmark_abaqus_scripts.two_materials_rve",
             "sim_script": "VonMisesPlasticElasticRegularLoads",
@@ -125,7 +125,8 @@ class VonMisesPlasticElasticPathLoads(SimulationBase):
         self.main_folder = os.getcwd()
         self.folder_info = {
             "main_work_directory": os.path.join(os.getcwd(), "Data"),
-            "script_path": os.path.dirname(rvesimulator.__file__) + "/scriptbase",
+            "script_path": os.path.dirname(rvesimulator.__file__) +
+            "/scriptbase",
             "current_work_directory": "point_1",
             "sim_path": "benchmark_abaqus_scripts.two_materials_rve",
             "sim_script": "VonMisesPlasticElasticPathLoads",
