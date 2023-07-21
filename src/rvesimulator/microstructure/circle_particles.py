@@ -402,7 +402,7 @@ class CircleParticles(MicrosctuctureGenerator):
         x = rng.uniform(len_start, len_end, 1)
         y = rng.uniform(wid_start, wid_end, 1)
         r = rng.normal(radius_mu, radius_std, 1)
-        while r <= 0:
+        while r <= 0.02*(len_end - len_start - 2*radius_mu):
             r = rng.normal(radius_mu, radius_std, 1)
         fiber = np.array([x, y, r])
         return fiber
@@ -658,7 +658,6 @@ class CircleParticles(MicrosctuctureGenerator):
             a flag number (1: overlap, 0: non-overlap)
 
         """
-
 
         fiber_pos = fiber_pos.copy()
 
