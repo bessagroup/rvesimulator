@@ -33,7 +33,7 @@ def create_dir(current_folder: str, dir_name: str) -> str:
     path = os.path.join(current_folder, dir_name)
     try:
         os.makedirs(path, exist_ok=True)
-    except OSError as error:
+    except OSError:
         print(f"Directory {dir_name} can not be created")
 
     return path

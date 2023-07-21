@@ -9,7 +9,17 @@
 	
 	# Exclude (additional) glob patterns from checks:
 	extend-exclude =
-	
+		.tox,
+		__pycache__,
+		dist,
+		data,
+		*.egg,
+		docs,
+		tests
+		.git
+		src/rvesimulator/scriptbase/
+		examples/
+		tutorials
 	# <<< UPDATE ACCORDING WITH YOUR PYTHON PROJECT
 	
 	
@@ -36,7 +46,7 @@
 	#       Remark: Use the appropriate delimiters if not following PEP8!
 	# E226: Missing whitespace around arithmetic operator
 	#       Remark: Flake8 does not distinguish +, - from *, /, ** cases yet.
-	extend-ignore = E226, E3
+	extend-ignore = E226, E3, C901
 	
 	# List of (additional) error codes to check:
 	# E241 : Multiple spaces after ‘,’
@@ -44,4 +54,8 @@
 	# E704 : Multiple statements on one line (def)
 	# W504 : Line break after binary operator
 	# W505 : Doc line too long (82 > 79 characters) 
-	extend-select = E241, E242, E704, W504, W505
+	extend-select = E241, E242, E704, W505
+
+	# Ignore all errors F401 ('imported but unused') and E402 ('module level import
+	# not at top of file') in __init__.py files
+	per-file-ignores = __init__.py: F401, E402

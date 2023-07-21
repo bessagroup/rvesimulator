@@ -1,14 +1,13 @@
 #                                                                       Modules
 # =============================================================================
 # Standard
-import json
 import os
 
 import rvesimulator
 from rvesimulator.additions.hardening_law import HardeningLaw
-from rvesimulator.additions.microstructure_wrapper import (
-    CircleSVEMicroStructure,
-)
+from rvesimulator.additions.microstructure_wrapper import \
+    CircleSVEMicroStructure
+
 from .shared_functionalities import SimulationBase
 
 #                                                          Authorship & Credits
@@ -19,7 +18,6 @@ __status__ = "Stable"
 # =============================================================================
 
 
-
 # =============================================================================
 class VonMisesPlasticElasticRegularLoads(SimulationBase):
     def __init__(self) -> None:
@@ -27,7 +25,8 @@ class VonMisesPlasticElasticRegularLoads(SimulationBase):
         self.main_folder = os.getcwd()
         self.folder_info = {
             "main_work_directory": os.path.join(os.getcwd(), "Data"),
-            "script_path": os.path.dirname(rvesimulator.__file__) + "/scriptbase",
+            "script_path": os.path.dirname(rvesimulator.__file__) +
+            "/scriptbase",
             "current_work_directory": "point_1",
             "sim_path": "benchmark_abaqus_scripts.two_materials_sve",
             "sim_script": "VonMisesPlasticElasticRegularLoads",
@@ -44,8 +43,8 @@ class VonMisesPlasticElasticRegularLoads(SimulationBase):
         sve_geometry_benchmark: str = "task1",
         youngs_modulus_matrix: float = 100.0,
         poisson_ratio_matrix: float = 0.3,
-        youngs_modulus_fiber: float = 1.0, 
-        poisson_ratio_fiber: float  = 0.19, 
+        youngs_modulus_fiber: float = 1.0,
+        poisson_ratio_fiber: float = 0.19,
         mesh_partition: int = 30,
         strain: list = [0.1, 0.0, 0.0],
         num_steps: int = 100,
@@ -56,14 +55,14 @@ class VonMisesPlasticElasticRegularLoads(SimulationBase):
         print_info: bool = False,
         **kwargs,
     ) -> None:
-        # get the micro_structure information 
+        # get the micro_structure information
         micro_structure_generator = CircleSVEMicroStructure(
             size=size,
             radius=radius,
         )
         microstructure_info = micro_structure_generator.location_information(
             task=sve_geometry_benchmark
-        )        
+        )
         # generate the hardening law
         hardening = HardeningLaw()
         law_function = getattr(hardening, hardening_law)
@@ -107,13 +106,16 @@ class VonMisesPlasticElasticRegularLoads(SimulationBase):
             self._print_sim_info(info=self.sim_paras)
 
 # =============================================================================
+
+
 class VonMisesPlasticElasticPathLoads(SimulationBase):
     def __init__(self) -> None:
         """Interface between python and abaqus of the Hollow plate case"""
         self.main_folder = os.getcwd()
         self.folder_info = {
             "main_work_directory": os.path.join(os.getcwd(), "Data"),
-            "script_path": os.path.dirname(rvesimulator.__file__) + "/scriptbase",
+            "script_path": os.path.dirname(rvesimulator.__file__) +
+            "/scriptbase",
             "current_work_directory": "point_1",
             "sim_path": "benchmark_abaqus_scripts.two_materials_sve",
             "sim_script": "VonMisesPlasticElasticPathLoads",
@@ -130,8 +132,8 @@ class VonMisesPlasticElasticPathLoads(SimulationBase):
         sve_geometry_benchmark: str = "task1",
         youngs_modulus_matrix: float = 100.0,
         poisson_ratio_matrix: float = 0.3,
-        youngs_modulus_fiber: float = 1.0, 
-        poisson_ratio_fiber: float  = 0.19, 
+        youngs_modulus_fiber: float = 1.0,
+        poisson_ratio_fiber: float = 0.19,
         mesh_partition: int = 30,
         strain: list = [0.1, 0.0, 0.0],
         strain_amplitude: list = None,
@@ -143,15 +145,15 @@ class VonMisesPlasticElasticPathLoads(SimulationBase):
         print_info: bool = False,
         **kwargs,
     ) -> None:
-        
-        # get the micro_structure information 
+
+        # get the micro_structure information
         micro_structure_generator = CircleSVEMicroStructure(
             size=size,
             radius=radius,
         )
         microstructure_info = micro_structure_generator.location_information(
             task=sve_geometry_benchmark
-        )         
+        )
         # generate the hardening law
         hardening = HardeningLaw()
         law_function = getattr(hardening, hardening_law)

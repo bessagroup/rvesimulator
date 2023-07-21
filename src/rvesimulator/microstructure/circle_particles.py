@@ -4,8 +4,8 @@
 import json
 import math
 import time
+from typing import Any
 
-import matplotlib.pyplot as plt
 # Third party
 import numpy as np
 from scipy.spatial import distance_matrix
@@ -28,8 +28,8 @@ class CircleParticles(MicrosctuctureGenerator):
 
     Parameters
     ----------
-    MicrosctucturaGenerator : class
-        parent class of microstructure generater
+    MicrosctuctureGenerator : class
+        parent class of microstructure generator
     """
 
     def __init__(
@@ -134,7 +134,7 @@ class CircleParticles(MicrosctuctureGenerator):
         fig_name: str = "mircostructure.png",
         **kwargs,
     ) -> None:
-        self.cricle_plot(
+        self.circle_plot(
             fibers=self.fiber_positions,
             length=self.length,
             width=self.width,
@@ -225,7 +225,7 @@ class CircleParticles(MicrosctuctureGenerator):
                 del new_fiber
 
             # ================================================================#
-            #                   striring the fibers (Firts stage)             #
+            #                   stirring the fibers (first stage)             #
             # ================================================================#
             ii = 0
             if self.fiber_positions.shape[0] < self.num_fibers_max:
@@ -294,7 +294,7 @@ class CircleParticles(MicrosctuctureGenerator):
         """
         # check the location compatibility
         if new_fiber[0, 3] != new_fiber.shape[0]:
-            raise ValueError("fiber number comparibility issue")
+            raise ValueError("fiber number compatibility issue")
         fiber_portion = int(self.fiber_positions[iter, 3].copy())
         self.fiber_positions = np.delete(
             self.fiber_positions,
@@ -402,7 +402,7 @@ class CircleParticles(MicrosctuctureGenerator):
         x = rng.uniform(len_start, len_end, 1)
         y = rng.uniform(wid_start, wid_end, 1)
         r = rng.normal(radius_mu, radius_std, 1)
-        while r <= 0:
+        while r <= 0.02*(len_end - len_start - 2*radius_mu):
             r = rng.normal(radius_mu, radius_std, 1)
         fiber = np.array([x, y, r])
         return fiber
@@ -636,16 +636,17 @@ class CircleParticles(MicrosctuctureGenerator):
         fiber_index: int = 0,
         stage: str = "step_one",
     ) -> int:
-        """overlap check betwwen new fiber and the original ones
+        """overlap check between new fiber and the original ones
 
         Parameters
         ----------
         new_fiber : np.ndarray
             new fiber location
         fiber_pos : np.ndarray
-            original fibers 
+            original fibers
         dist_factor : float
-            distance factor which used to control the minimum distance between to fibers 
+            distance factor which used to control the minimum distance
+            between to fibers
         fiber_index : int, optional
             fiber index , by default 0
         stage : str, optional
@@ -654,40 +655,35 @@ class CircleParticles(MicrosctuctureGenerator):
         Returns
         -------
         int
-            a flag number (1: overlap, 0: non-overlap) 
+            a flag number (1: overlap, 0: non-overlap)
 
-        Raises
-        ------
-        ValueError
-            not defined stage
         """
-
 
         fiber_pos = fiber_pos.copy()
 
         if stage == "step_one":
-            min_dis_threhold = dist_factor * (
+            min_dis_threshold = dist_factor * (
                 new_fiber[0, 2] + fiber_pos[:, 2]
             ).reshape((-1, 1))
             points_dis_temp = distance_matrix(
                 fiber_pos[:, 0:2], new_fiber[:, 0:2]
             )
             points_dis = np.min(points_dis_temp, 1, keepdims=True)
-            min_dis = points_dis - min_dis_threhold
+            min_dis = points_dis - min_dis_threshold
 
         elif stage == "step_two":
-            # calculate the minmum distance threshold
-            min_dis_threhold = dist_factor * (
+            # calculate the minimum distance threshold
+            min_dis_threshold = dist_factor * (
                 new_fiber[0, 2] + fiber_pos[:, 2]
             ).reshape((-1, 1))
             points_dis_temp = distance_matrix(
                 fiber_pos[:, 0:2], new_fiber[:, 0:2]
             )
             points_dis_temp[
-                fiber_index : fiber_index + int(fiber_pos[fiber_index, 3]), :
+                fiber_index: fiber_index + int(fiber_pos[fiber_index, 3]), :
             ] = math.inf
             points_dis = np.min(points_dis_temp, 1, keepdims=True)
-            min_dis = points_dis - min_dis_threhold
+            min_dis = points_dis - min_dis_threshold
 
         else:
             raise ValueError(" Not defined stage \n")
@@ -780,7 +776,7 @@ class CircleParticles(MicrosctuctureGenerator):
         ref_point: np.ndarray,
         fiber_temp: np.ndarray,
         dist_factor: float,
-        rng : any,
+        rng: Any,
     ) -> np.ndarray:
         """Move fiber to its reference point
 
@@ -792,8 +788,8 @@ class CircleParticles(MicrosctuctureGenerator):
             The considering fiber
         dist_factor : float
             the minimum distance factor between two fibers
-        rng: any 
-            randome generator 
+        rng: Any
+            random generator
 
         Returns
         -------
@@ -815,7 +811,10 @@ class CircleParticles(MicrosctuctureGenerator):
         return fiber_temp
 
     @staticmethod
-    def _first_new_fiber(x: float, y: float, r: float, portion: int) -> np.ndarray:
+    def _first_new_fiber(x: float,
+                         y: float,
+                         r: float,
+                         portion: int) -> np.ndarray:
         """generate the first new fiber
 
         Parameters

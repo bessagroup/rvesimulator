@@ -1,7 +1,8 @@
-import os
 import json
-import numpy as np
+import os
+
 from f3dasm.design import ExperimentData
+
 from rvesimulator.abaqus2py.abaqus_simulator import AbaqusSimulator
 
 # local functions
@@ -51,7 +52,8 @@ class SimulationBase:
         Parameters
         ----------
         sample : dict, optional
-            a dict contains the information of design variables, by default None
+            a dict contains the information of design variables,
+            by default None
         folder_index : int, optional
             first fodler index, by default None
         sub_folder_index : int, optional

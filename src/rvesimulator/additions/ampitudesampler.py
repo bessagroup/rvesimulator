@@ -109,7 +109,8 @@ class AmplitudeGenerator:
 
         Returns
         -------
-        tuple[ np.ndarray[any, np.dtype[np.floating]], np.ndarray[any, np.dtype[np.floating]], ]
+        tuple[ np.ndarray[any, np.dtype[np.floating]],
+                np.ndarray[any, np.dtype[np.floating]], ]
             x_location of control points, y_location of control points
         """
         num_control = int(num_control)
