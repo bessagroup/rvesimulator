@@ -299,6 +299,7 @@ class AbaqusSimulator(Simulator, AssertInputs):
             filtered_files = [
                 file for file in all_files if file.endswith(target_file)
             ]
+
             # remove the target files is existed
             for file in filtered_files:
                 path_to_file = os.path.join(directory, file)

@@ -1,4 +1,6 @@
 # Third party
+from typing import Any
+
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
@@ -23,7 +25,7 @@ class AmplitudeGenerator:
         num_steps: int,
         arg_name: str = "amplitude",
         interpolation_method: str = "quadratic",
-        seed: any = None,
+        seed: Any = None,
     ) -> pd.DataFrame:
         """get amplitude curves
 
@@ -91,8 +93,8 @@ class AmplitudeGenerator:
     def generate_control_points(
         seed: int, num_control: int, num_steps: int, num_dim: int = 3
     ) -> tuple[
-        np.ndarray[any, np.dtype[np.floating]],
-        np.ndarray[any, np.dtype[np.floating]],
+        np.ndarray[Any, np.dtype[np.floating]],
+        np.ndarray[Any, np.dtype[np.floating]],
     ]:
         """generate control points
 

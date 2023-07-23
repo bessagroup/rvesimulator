@@ -27,8 +27,8 @@ class ElasticRegularLoads(SimulationBase):
         self.main_folder = os.getcwd()
         self.folder_info = {
             "main_work_directory": os.path.join(os.getcwd(), "Data"),
-            "script_path": os.path.dirname(rvesimulator.__file__) +
-            "/scriptbase",
+            "script_path": os.path.dirname(rvesimulator.__file__) + \
+                "/scriptbase",
             "current_work_directory": "point_1",
             "sim_path": "benchmark_abaqus_scripts.hollow_plate_sve",
             "sim_script": "ElasticRegularLoads",
@@ -98,8 +98,8 @@ class VonMisesPlasticRegularLoads(SimulationBase):
         self.main_folder = os.getcwd()
         self.folder_info = {
             "main_work_directory": os.path.join(os.getcwd(), "Data"),
-            "script_path": os.path.dirname(rvesimulator.__file__) +
-            "/scriptbase",
+            "script_path": os.path.dirname(rvesimulator.__file__) + \
+                "/scriptbase",
             "current_work_directory": "point_1",
             "sim_path": "benchmark_abaqus_scripts.hollow_plate_sve",
             "sim_script": "VonMisesPlasticRegularLoads",
@@ -171,8 +171,8 @@ class VonMisesPlasticPathLoads(SimulationBase):
         self.main_folder = os.getcwd()
         self.folder_info = {
             "main_work_directory": os.path.join(os.getcwd(), "Data"),
-            "script_path": os.path.dirname(rvesimulator.__file__) +
-            "/scriptbase",
+            "script_path": os.path.dirname(rvesimulator.__file__) + \
+                "/scriptbase",
             "current_work_directory": "point_1",
             "sim_path": "benchmark_abaqus_scripts.hollow_plate_sve",
             "sim_script": "VonMisesPlasticPathLoads",

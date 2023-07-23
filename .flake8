@@ -18,7 +18,6 @@
 		tests
 		.git
 		src/rvesimulator/scriptbase/
-		examples/
 		tutorials
 	# <<< UPDATE ACCORDING WITH YOUR PYTHON PROJECT
 	
@@ -46,9 +45,7 @@
 	#       Remark: Use the appropriate delimiters if not following PEP8!
 	# E226: Missing whitespace around arithmetic operator
 	#       Remark: Flake8 does not distinguish +, - from *, /, ** cases yet.
-	# E901: SyntaxError or IndentationError
-	# F811: Redefinition of unused name from line %s
-	extend-ignore = E226, E3, C901, F811
+	extend-ignore = E226, E3, C901
 	
 	# List of (additional) error codes to check:
 	# E241 : Multiple spaces after ‘,’
