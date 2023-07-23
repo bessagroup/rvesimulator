@@ -4,7 +4,7 @@
    :align: center
 
 
-`Docs <https://bessagroup.github.io/rvesimulator/>`__ | `GitHub <https://github.com/bessagroup/rvesimulator>`__
+`Docs <https://bessagroup.github.io/rvesimulator/>`__ | `GitHub <https://github.com/bessagroup/rvesimulator.git>`__
 
 .. <!-- | `Installation <link_to_installation_instructions>` -->
 .. <!-- | `PyPI <link_to_pypi_package_website>` -->
