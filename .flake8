@@ -45,7 +45,16 @@
 	#       Remark: Use the appropriate delimiters if not following PEP8!
 	# E226: Missing whitespace around arithmetic operator
 	#       Remark: Flake8 does not distinguish +, - from *, /, ** cases yet.
-	extend-ignore = E226, E3, C901
+	# E502: The backslash is redundant between brackets
+	#       Remark: Flake8 does not distinguish between brackets and parentheses
+	#               yet.
+	# E131: Continuation line unaligned for hanging indent
+	#       Remark: Flake8 does not distinguish between brackets and parentheses
+	#               yet.
+	# C901: Function is too complex
+	#       Remark: Flake8 does not distinguish between brackets and parentheses
+	#               yet.
+	extend-ignore = E226, E3, C901, F811, E502, E131
 	
 	# List of (additional) error codes to check:
 	# E241 : Multiple spaces after ‘,’
