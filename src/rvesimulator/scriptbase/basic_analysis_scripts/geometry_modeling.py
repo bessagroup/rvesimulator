@@ -26,7 +26,6 @@ class HollowPlate:
         self.part.BaseShell(sketch=sketch)
 
 
-
 class MultiCirclesPlates: 
     def create_part(self): 
         # create sketch 

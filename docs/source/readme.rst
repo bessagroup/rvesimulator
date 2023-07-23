@@ -4,7 +4,7 @@
    :align: center
 
 
-`Docs <https://bessagroup.github.io/bessa-pypi-template/>`__ | `GitHub <https://github.com/bessagroup/bessa-pypi-template>`__
+`Docs <https://bessagroup.github.io/rvesimulator/>`__ | `GitHub <https://github.com/bessagroup/rvesimulator>`__
 
 .. <!-- | `Installation <link_to_installation_instructions>` -->
 .. <!-- | `PyPI <link_to_pypi_package_website>` -->
@@ -27,13 +27,13 @@ Authorship
 ----------
 
 **Authors**:
-    - Martin van der Schelling (M.P.vanderSchelling@tudelft.nl)
+    - Jiaxiang Yi (J.Yi@tudelft.nl)
 
 **Authors afilliation:**
     - Bessa Research Group @ Delft University of Technology
 
 **Maintainer:**
-    - Martin van der Schelling (M.P.vanderSchelling@tudelft.nl)
+    - Jiaxiang Yi (J.Yi@tudelft.nl)
 
 **Maintainer afilliation:**
     - Bessa Research Group @ Delft University of Technology
@@ -80,8 +80,8 @@ If you find any issues, bugs or problems with this template, please use the `Git
 License
 -------
 
-Copyright 2023, Martin van der Schelling
+Copyright 2023, Jiaxiang Yi
 
 All rights reserved.
 
-This project is licensed under the BSD 3-Clause License. See `LICENSE <https://github.com/bessagroup/bessa-pypi-template/blob/main/LICENSE>`__ for the full license text.
+This project is licensed under the MIT License. See `LICENSE <https://github.com/bessagroup/bessa-pypi-template/blob/main/LICENSE>`__ for the full license text.

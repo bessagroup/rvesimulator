@@ -6,6 +6,13 @@ from caeModules import *
 
 class Jobs:
     def create_sequential_job(self, subroutine_path):
+        """create sequential jobs
+
+        Parameters
+        ----------
+        subroutine_path : str
+            path for subroutine
+        """
 
         mdb.Job(
             name=self.job_name,
