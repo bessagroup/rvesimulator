@@ -2,6 +2,7 @@
 # =============================================================================
 # Standard
 import os
+from typing import Any
 
 import rvesimulator
 from rvesimulator.additions.microstructure_wrapper import CircleMircoStructure
@@ -16,16 +17,14 @@ __status__ = "Stable"
 # =============================================================================
 
 # =============================================================================
-
-
 class BothVPLeonovRegularLoads(SimulationBase):
     def __init__(self) -> None:
         """Interface between python and abaqus of the Hollow plate case"""
         self.main_folder = os.getcwd()
         self.folder_info = {
             "main_work_directory": os.path.join(os.getcwd(), "Data"),
-            "script_path": os.path.dirname(rvesimulator.__file__) +
-            "/scriptbase",
+            "script_path": os.path.dirname(rvesimulator.__file__) + \
+                "/scriptbase",
             "current_work_directory": "point_1",
             "sim_path": "benchmark_abaqus_scripts.veni_rve",
             "sim_script": "BothVPLeonovRegularLoads",
@@ -74,7 +73,7 @@ class BothVPLeonovRegularLoads(SimulationBase):
         simulation_time: float = 10.0,
         num_cpu: int = 1,
         platform: str = "ubuntu",
-        seed: any = None,
+        seed: Any = None,
         print_info: bool = False,
     ) -> None:
         # get the micro_structure information
@@ -129,15 +128,13 @@ class BothVPLeonovRegularLoads(SimulationBase):
             self._print_sim_info(info=self.sim_paras)
 
 # =============================================================================
-
-
 class BothVPLeonovPathLoads(SimulationBase):
     def __init__(self) -> None:
         """Interface between python and abaqus of the Hollow plate case"""
         self.main_folder = os.getcwd()
         self.folder_info = {
             "main_work_directory": os.path.join(os.getcwd(), "Data"),
-            "script_path": os.path.dirname(rvesimulator.__file__) +
+            "script_path": os.path.dirname(rvesimulator.__file__) + \
             "/scriptbase",
             "current_work_directory": "point_1",
             "sim_path": "benchmark_abaqus_scripts.veni_rve",
@@ -188,10 +185,9 @@ class BothVPLeonovPathLoads(SimulationBase):
         simulation_time: float = 10.0,
         num_cpu: int = 1,
         platform: str = "ubuntu",
-        seed: any = None,
+        seed: Any = None,
         print_info: bool = False,
     ) -> None:
-
         # get the micro_structure information
         mirco_structure_generator = CircleMircoStructure()
         microstructure_info, vol_frac = mirco_structure_generator(
@@ -253,7 +249,7 @@ class BothVEVPLeonovRegularLoads(SimulationBase):
         self.main_folder = os.getcwd()
         self.folder_info = {
             "main_work_directory": os.path.join(os.getcwd(), "Data"),
-            "script_path": os.path.dirname(rvesimulator.__file__) +
+            "script_path": os.path.dirname(rvesimulator.__file__) + \
             "/scriptbase",
             "current_work_directory": "point_1",
             "sim_path": "benchmark_abaqus_scripts.veni_rve",
@@ -309,7 +305,7 @@ class BothVEVPLeonovRegularLoads(SimulationBase):
         simulation_time: float = 10.0,
         num_cpu: int = 1,
         platform: str = "ubuntu",
-        seed: any = None,
+        seed: Any = None,
         print_info: bool = False,
     ) -> None:
         # get the micro_structure information
@@ -321,7 +317,6 @@ class BothVEVPLeonovRegularLoads(SimulationBase):
             vol_req=vol_req,
             seed=seed,
         )
-
         self.sim_paras = {
             "size": size,
             "radius_mu": radius_mu,
@@ -364,16 +359,14 @@ class BothVEVPLeonovRegularLoads(SimulationBase):
             self._print_sim_info(info=self.sim_paras)
 
 # =============================================================================
-
-
 class BothVEVPLeonovPathLoads(SimulationBase):
     def __init__(self) -> None:
         """Interface between python and abaqus of the Hollow plate case"""
         self.main_folder = os.getcwd()
         self.folder_info = {
             "main_work_directory": os.path.join(os.getcwd(), "Data"),
-            "script_path": os.path.dirname(rvesimulator.__file__) +
-            "/scriptbase",
+            "script_path": os.path.dirname(rvesimulator.__file__) + \
+                "/scriptbase",
             "current_work_directory": "point_1",
             "sim_path": "benchmark_abaqus_scripts.veni_rve",
             "sim_script": "BothVEVPLeonovPathLoads",
@@ -429,10 +422,9 @@ class BothVEVPLeonovPathLoads(SimulationBase):
         simulation_time: float = 10.0,
         num_cpu: int = 1,
         platform: str = "ubuntu",
-        seed: any = None,
+        seed: Any = None,
         print_info: bool = False,
     ) -> None:
-
         # get the micro_structure information
         mirco_structure_generator = CircleMircoStructure()
         microstructure_info, vol_frac = mirco_structure_generator(
@@ -494,8 +486,8 @@ class VEVP_VPLeonovRegularLoads(SimulationBase):
         self.main_folder = os.getcwd()
         self.folder_info = {
             "main_work_directory": os.path.join(os.getcwd(), "Data"),
-            "script_path": os.path.dirname(rvesimulator.__file__) +
-            "/scriptbase",
+            "script_path": os.path.dirname(rvesimulator.__file__) + \
+                "/scriptbase",
             "current_work_directory": "point_1",
             "sim_path": "benchmark_abaqus_scripts.veni_rve",
             "sim_script": "VEVP_VPLeonovRegularLoads",
@@ -525,27 +517,28 @@ class VEVP_VPLeonovRegularLoads(SimulationBase):
             296.0,
             0.1,
         ],
-        paras_pe: list = [601.6,
-                          0.45,
-                          298.0,
-                          0.1,
-                          0.4004,
-                          0.0006281,
-                          709.0,
-                          233000000.0,
-                          4.0209e-25,
-                          5495000.0,
-                          0.3448,
-                          21.0,
-                          13.32,
-                          0.1],
+        paras_pe: list = [
+            601.6,
+            0.45,
+            298.0,
+            0.1,
+            0.4004,
+            0.0006281,
+            709.0,
+            233000000.0,
+            4.0209e-25,
+            5495000.0,
+            0.3448,
+            21.0,
+            13.32,
+            0.1],
         mesh_partition: int = 50,
         strain: list = [0.1, 0.0, 0.0],
         num_steps: int = 1000,
         simulation_time: float = 10.0,
         num_cpu: int = 1,
         platform: str = "ubuntu",
-        seed: any = None,
+        seed: Any = None,
         print_info: bool = False,
     ) -> None:
         # get the micro_structure information
@@ -557,7 +550,6 @@ class VEVP_VPLeonovRegularLoads(SimulationBase):
             vol_req=vol_req,
             seed=seed,
         )
-
         self.sim_paras = {
             "size": size,
             "radius_mu": radius_mu,
@@ -571,7 +563,8 @@ class VEVP_VPLeonovRegularLoads(SimulationBase):
             "num_steps": num_steps,
             "simulation_time": simulation_time,
             "num_cpu": num_cpu,
-            "platform": platform, }
+            "platform": platform,
+            }
 
         self.sim_info = {
             "job_name": "veni_mix_leonov_rve",
@@ -607,8 +600,8 @@ class VEVP_VPLeonovPathLoads(SimulationBase):
         self.main_folder = os.getcwd()
         self.folder_info = {
             "main_work_directory": os.path.join(os.getcwd(), "Data"),
-            "script_path": os.path.dirname(rvesimulator.__file__) +
-            "/scriptbase",
+            "script_path": os.path.dirname(rvesimulator.__file__) + \
+                        "scriptbase",
             "current_work_directory": "point_1",
             "sim_path": "benchmark_abaqus_scripts.veni_rve",
             "sim_script": "VEVP_VPLeonovPathLoads",
@@ -636,8 +629,7 @@ class VEVP_VPLeonovPathLoads(SimulationBase):
             1.00e-2,
             1.03e-1,
             296.0,
-            0.1,
-        ],
+            0.1],
         paras_pe: list = [
             6.016e+02,
             0.45,
@@ -661,7 +653,7 @@ class VEVP_VPLeonovPathLoads(SimulationBase):
         simulation_time: float = 10.0,
         num_cpu: int = 1,
         platform: str = "ubuntu",
-        seed: any = None,
+        seed: Any = None,
         print_info: bool = False,
     ) -> None:
         # get the micro_structure information
@@ -688,7 +680,8 @@ class VEVP_VPLeonovPathLoads(SimulationBase):
             "num_steps": num_steps,
             "simulation_time": simulation_time,
             "num_cpu": num_cpu,
-            "platform": platform, }
+            "platform": platform,
+            }
 
         self.sim_info = {
             "job_name": "veni_mix_leonov_rve",

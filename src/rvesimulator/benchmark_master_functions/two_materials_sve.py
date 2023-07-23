@@ -17,7 +17,6 @@ __credits__ = ["Jiaxiang Yi"]
 __status__ = "Stable"
 # =============================================================================
 
-
 # =============================================================================
 class VonMisesPlasticElasticRegularLoads(SimulationBase):
     def __init__(self) -> None:
@@ -25,8 +24,8 @@ class VonMisesPlasticElasticRegularLoads(SimulationBase):
         self.main_folder = os.getcwd()
         self.folder_info = {
             "main_work_directory": os.path.join(os.getcwd(), "Data"),
-            "script_path": os.path.dirname(rvesimulator.__file__) +
-            "/scriptbase",
+            "script_path": os.path.dirname(rvesimulator.__file__) + \
+                "/scriptbase",
             "current_work_directory": "point_1",
             "sim_path": "benchmark_abaqus_scripts.two_materials_sve",
             "sim_script": "VonMisesPlasticElasticRegularLoads",
@@ -106,16 +105,14 @@ class VonMisesPlasticElasticRegularLoads(SimulationBase):
             self._print_sim_info(info=self.sim_paras)
 
 # =============================================================================
-
-
 class VonMisesPlasticElasticPathLoads(SimulationBase):
     def __init__(self) -> None:
         """Interface between python and abaqus of the Hollow plate case"""
         self.main_folder = os.getcwd()
         self.folder_info = {
             "main_work_directory": os.path.join(os.getcwd(), "Data"),
-            "script_path": os.path.dirname(rvesimulator.__file__) +
-            "/scriptbase",
+            "script_path": os.path.dirname(rvesimulator.__file__) + \
+                "/scriptbase",
             "current_work_directory": "point_1",
             "sim_path": "benchmark_abaqus_scripts.two_materials_sve",
             "sim_script": "VonMisesPlasticElasticPathLoads",
@@ -145,7 +142,6 @@ class VonMisesPlasticElasticPathLoads(SimulationBase):
         print_info: bool = False,
         **kwargs,
     ) -> None:
-
         # get the micro_structure information
         micro_structure_generator = CircleSVEMicroStructure(
             size=size,
