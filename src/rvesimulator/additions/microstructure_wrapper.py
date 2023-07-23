@@ -1,5 +1,7 @@
 
 
+from typing import Any
+
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -14,9 +16,9 @@ class CircleMircoStructure:
         radius_mu: float,
         radius_std: float,
         vol_req: float,
-        seed: any,
-    ) -> tuple[dict, int | float]:
-        """circrle microstructure wrapper
+        seed: Any,
+    ) -> tuple[dict, float]:
+        """circle microstructure wrapper
 
         Parameters
         ----------
@@ -33,7 +35,7 @@ class CircleMircoStructure:
 
         Returns
         -------
-        tuple[dict, int | float]
+        tuple[dict, float]
             microstructure info in dict format, reached volume fraction
         """
 
@@ -61,7 +63,7 @@ class SphereMicroStructrue:
         radius_mu: float,
         radius_std: float,
         vol_req: float,
-        seed: any = None,
+        seed: Any = None,
     ) -> tuple[dict, int | float]:
         """sphere rve wrapper
 

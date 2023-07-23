@@ -84,11 +84,11 @@ class HardeningLaw:
         assert "a" in kwargs.keys(), "provide 'a' value "
         assert "b" in kwargs.keys(), "provide 'b' value "
         assert "yield_stress" in kwargs.keys(), "provide 'yield_stress' value"
-        # get the arguements
+        # get the arguments
         yield_stress = kwargs["yield_stress"]
         a = kwargs["a"]
         b = kwargs["b"]
-        # dfine the table for hardening law
+        # define the table for hardening law
         hardening_law_table = np.zeros((101, 2))
         hardening_law_table[:, 1] = np.linspace(0, 1, 101)
 

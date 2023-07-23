@@ -4,7 +4,7 @@
 import json
 import math
 import time
-from typing import Any
+from typing import Any, List
 
 # Third party
 import numpy as np
@@ -98,7 +98,7 @@ class CircleParticles(MicrosctuctureGenerator):
 
     def generate_microstructure(
         self,
-        seed: any = None,
+        seed: Any = None,
     ) -> None:
 
         # decide to use seed or not
@@ -702,7 +702,7 @@ class CircleParticles(MicrosctuctureGenerator):
         fiber_min_dis_vector: np.ndarray,
         ii: int,
         cycle: int,
-    ) -> list[np.ndarray, int, float]:
+    ) -> List[np.ndarray, int, float]:
         """This function is used to identify the index of closest fiber
         of every fiber, which is very import for the first heuristic
         stirring to get more space placing the new disks.

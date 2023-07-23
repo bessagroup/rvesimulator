@@ -1,18 +1,26 @@
-# Third party
+#                                                                       Modules
+# =============================================================================
+# Standard
 from typing import Any
 
+# Third-party
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 from scipy.interpolate import interp1d
 
+#                                                          Authorship & Credits
+# =============================================================================
+__author__ = 'Jiaxiang Yi'
+__credits__ = ['Jiaxiang Yi']
+__status__ = 'Stable'
+# =============================================================================
 
 class AmplitudeGenerator:
     """amplitude generator"""
 
     def __init__(self, num_dim: int = 3) -> None:
         """Initialization"""
-
         self.num_dim = num_dim
 
         # assert dimension
@@ -36,7 +44,7 @@ class AmplitudeGenerator:
         num_control : int
             control points number
         num_steps : int
-            num steps of abaqus simulation
+            num steps of ABAQUS simulation
         arg_name : str, optional
             name of amplitude, by default "amplitude"
         interpolation_method : str, optional
@@ -51,7 +59,7 @@ class AmplitudeGenerator:
         """
         self.arg_name = arg_name
         self.num_steps = num_steps
-        # create df dataframe for amplitude
+        # create df Dataframe for amplitude
         amplitude_temp = np.empty([num_amplitude, 3])
         amplitude_temp[:] = np.nan
         self.amplitude = pd.DataFrame(
@@ -112,7 +120,7 @@ class AmplitudeGenerator:
         Returns
         -------
         tuple[ np.ndarray[any, np.dtype[np.floating]],
-                np.ndarray[any, np.dtype[np.floating]], ]
+               np.ndarray[any, np.dtype[np.floating]], ]
             x_location of control points, y_location of control points
         """
         num_control = int(num_control)
