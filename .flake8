@@ -46,7 +46,9 @@
 	#       Remark: Use the appropriate delimiters if not following PEP8!
 	# E226: Missing whitespace around arithmetic operator
 	#       Remark: Flake8 does not distinguish +, - from *, /, ** cases yet.
-	extend-ignore = E226, E3, C901
+	# E901: SyntaxError or IndentationError
+	# F811: Redefinition of unused name from line %s
+	extend-ignore = E226, E3, C901, F811
 	
 	# List of (additional) error codes to check:
 	# E241 : Multiple spaces after ‘,’
