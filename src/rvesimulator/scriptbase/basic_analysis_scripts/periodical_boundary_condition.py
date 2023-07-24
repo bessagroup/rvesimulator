@@ -7,7 +7,11 @@ from caeModules import *
 
 
 class PeriodicalBoundaryCondition2D:
+    """create pbcs to 2D RVE
+    """
     def create_reference_points(self):
+        """create reference points
+        """
         # right reference point
         right_reference_point_id = self.assembly.ReferencePoint(
             point=(self.length * 1.5, self.center[1], 0.0)
@@ -29,6 +33,15 @@ class PeriodicalBoundaryCondition2D:
         )
 
     def pbc_for_vertices(self, set_name, geometry_name):
+        """pbc for vertices
+
+        Parameters
+        ----------
+        set_name : list
+            set names for vertices
+        geometry_name : list
+            geometry set names
+        """
 
         # import session
         import assembly
@@ -87,6 +100,9 @@ class PeriodicalBoundaryCondition2D:
         )
 
     def pbc_for_edges(self):
+        """pbc for edges
+        """
+
         import assembly
 
         session.viewports["Viewport: 1"].setValues(
@@ -174,8 +190,34 @@ class PeriodicalBoundaryCondition2D:
 
 
 def get_node_y(node):
+    """get node coordinate of y axis
+
+    Parameters
+    ----------
+    node : abaqus mesh nodes
+        nodes
+
+    Returns
+    -------
+    node coordinates
+        node coordinates
+    """
+    
     return node.coordinates[1]
 
 
 def get_node_x(node):
+    """get node coordinate of x axis
+
+    Parameters
+    ----------
+    node : abaqus mesh nodes
+        nodes
+
+    Returns
+    -------
+    node coordinates
+        node coordinates
+    """
+    
     return node.coordinates[0]

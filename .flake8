@@ -18,7 +18,8 @@
 		tests
 		.git
 		src/rvesimulator/scriptbase/
-		tutorials
+		tutorials/
+		examples/
 	# <<< UPDATE ACCORDING WITH YOUR PYTHON PROJECT
 	
 	

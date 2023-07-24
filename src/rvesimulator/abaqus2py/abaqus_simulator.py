@@ -5,7 +5,9 @@ import os
 import pickle
 import subprocess
 import time
+from math import inf
 
+# local
 from .simulator_interface import AssertInputs, Simulator
 from .utils import create_dir, print_banner, write_json
 
@@ -31,7 +33,7 @@ class AbaqusSimulator(Simulator, AssertInputs):
     """
 
     def __init__(self, sim_info: dict, folder_info: dict) -> None:
-        """initilization of abaqussimulator
+        """initialization of abaqus simulator class
 
         Parameters
         ----------
@@ -69,7 +71,7 @@ class AbaqusSimulator(Simulator, AssertInputs):
 
     def execute(
         self,
-        max_time: float = None,
+        max_time: float = inf,
         sleep_time: float = 20.0,
         refresh_time: float = 5.0,
     ) -> str:
@@ -122,12 +124,12 @@ class AbaqusSimulator(Simulator, AssertInputs):
         if self.platform == "ubuntu":
             print_banner("abaqus post analysis")
             # path with the python-script
-            postprocess_script = "getResults.py"
+            post_process_script = "getResults.py"
             self.make_new_script(
-                file_name=postprocess_script,
+                file_name=post_process_script,
                 status="post_process",
             )
-            command = "abaqus cae noGUI=" + str(postprocess_script) + " -mesa"
+            command = "abaqus cae noGUI=" + str(post_process_script) + " -mesa"
             os.system(command)
 
             # remove files that influence the simulation process
@@ -149,7 +151,7 @@ class AbaqusSimulator(Simulator, AssertInputs):
     def _run_abaqus_simulation(
         self,
         command: str,
-        max_time: float = None,
+        max_time: float = inf,
         sleep_time: float = 20.0,
         refresh_time: float = 5.0,
     ) -> str:
@@ -181,7 +183,7 @@ class AbaqusSimulator(Simulator, AssertInputs):
                         "waiting for license authorization"
                     )
                 # over time killing
-                if max_time is not None:
+                if max_time is not inf:
                     if (end_time - start_time) > max_time:
                         proc.kill()
                         self.kill_abaqus_process()
@@ -192,6 +194,7 @@ class AbaqusSimulator(Simulator, AssertInputs):
             # remove files that influence the simulation process
             self.remove_files(directory=os.getcwd())
         elif self.platform == "cluster":
+            # count time for simulation
             start_time = time.time()
             os.system(command)
             flag = "finished"
@@ -208,6 +211,16 @@ class AbaqusSimulator(Simulator, AssertInputs):
         file_name: str,
         status: str = "simulation",
     ) -> None:
+        """make a small python script for running abaqus
+
+        Parameters
+        ----------
+        file_name : str
+            file name
+        status : str, optional
+            status of  simulation, by default "simulation"
+
+        """
 
         if status == "simulation":
             with open(file_name, "w") as file:

@@ -8,42 +8,39 @@ from caeModules import *
 
 class CommonProcedure(object):
     def delete_existed_models(self):
+        """delete existed models
         """
-        This function is used to delete the existed abaqus models
-        :param None
-        :return: None
-        """
+
         if "Model-1" in mdb.models.keys():
             del mdb.models["Model-1"]
 
     def create_new_model(self):
-        """
-        create a new abaqus model
-        :param case_name: a tring of the new model
-        :return: None
-        """
+        """create ne model"""
         Mdb()
         self.model = mdb.Model(
             name=self.model_name, modelType=STANDARD_EXPLICIT
         )
 
     def delta_for_mesh(self):
+        """calculate delta for mesh
+
+        Returns
+        -------
+        float
+            delta for mesh
         """
-        calculate the
-        param: none
-        return: delta, a float to loose the selection of edges and vertices
-        """
+
         delta = min(min(self.length, self.width) / 1000, self.mesh_size / 10)
         return delta
 
 
     def create_sets_for_edges(self):
-        """
-        an internal function used to create the edges sets of 2D RVE
+        """create set for edges
 
-        param: none
-        return: the names of the edges of the RVE
-
+        Returns
+        -------
+        list
+            names of edges
         """
         # information for delta
         delta = self.delta_for_mesh()
@@ -90,10 +87,12 @@ class CommonProcedure(object):
         return name_edges
 
     def create_sets_for_vertices(self):
-        """
-        this function is used to create sets for vertices
-        param: none
-        return: names of the vertices
+        """create sets for vertices
+
+        Returns
+        -------
+        list
+            names for vertices
         """
         # information for delta
         delta = self.delta_for_mesh()
@@ -139,7 +138,8 @@ class CommonProcedure(object):
         return vertices_name
 
     def create_assembly(self):
-
+        """create assembly
+        """
         if "Final_Stuff-1" in self.model.rootAssembly.features.keys():
             self.model.rootAssembly.features.changeKey(
                 fromName="Final_Stuff-1", toName=self.instance_name

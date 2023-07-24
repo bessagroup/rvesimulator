@@ -45,7 +45,7 @@ def write_json(sim_info: dict, file_name: str) -> None:
     Parameters
     ----------
     sim_info : dict
-        dict that constains
+        dict that contains all simulation information
     file_name : str
         file name of json file
     """

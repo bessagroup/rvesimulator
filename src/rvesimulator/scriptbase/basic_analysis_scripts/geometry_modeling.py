@@ -5,6 +5,7 @@ from caeModules import *
 
 
 class HollowPlate:
+    """create a geometry of a hollow plate"""
     def create_part(self):
         # create sketch 
         sketch = self.model.ConstrainedSketch(
@@ -26,14 +27,14 @@ class HollowPlate:
         self.part.BaseShell(sketch=sketch)
 
 
-
-class MultiCirclesPlates: 
-    def create_part(self): 
-        # create sketch 
+class MultiCirclesPlates:
+    """multi circles fully inside the square plate"""
+    def create_part(self):
+        # create sketch
         sketch = self.model.ConstrainedSketch(
             name="sketch_profile", sheetSize=2.0
         )
-        # create the rectangle 
+        # create the rectangle
         sketch.rectangle(
             point1=(0, 0),
             point2=(self.length, self.width),
