@@ -6,12 +6,26 @@
 Welcome to rvesimulator's documentation!
 ========================================
 
+
+
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+   :maxdepth: 3
+   :caption: Overview:
    
-   rvesimulator
-   readme
+   readme.rst
+
+.. toctree::
+   :maxdepth: 3
+   :caption: Get started:
+   
+   get_started.rst
+
+.. toctree::
+   :maxdepth: 3
+   :caption: API Reference:
+   
+   rvesimulator.rst 
+   
 
 
 

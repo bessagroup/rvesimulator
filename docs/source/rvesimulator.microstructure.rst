@@ -1,37 +1,28 @@
-rvesimulator.microstructure package
-===================================
+rvesimulator.microstructure
+===========================
 
-Submodules
-----------
 
-rvesimulator.microstructure.base module
----------------------------------------
+rvesimulator.microstructure.base 
+--------------------------------
 
 .. automodule:: rvesimulator.microstructure.base
    :members:
    :undoc-members:
    :show-inheritance:
 
-rvesimulator.microstructure.circle\_particles module
-----------------------------------------------------
+rvesimulator.microstructure.circle\_particles
+---------------------------------------------
 
 .. automodule:: rvesimulator.microstructure.circle_particles
    :members:
    :undoc-members:
    :show-inheritance:
 
-rvesimulator.microstructure.shpere\_particles module
-----------------------------------------------------
+rvesimulator.microstructure.shpere\_particles
+---------------------------------------------
 
 .. automodule:: rvesimulator.microstructure.shpere_particles
    :members:
    :undoc-members:
    :show-inheritance:
 
-Module contents
----------------
-
-.. automodule:: rvesimulator.microstructure
-   :members:
-   :undoc-members:
-   :show-inheritance:

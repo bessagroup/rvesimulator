@@ -1,10 +1,8 @@
-rvesimulator.additions package
+rvesimulator.additions
 ==============================
 
-Submodules
-----------
 
-rvesimulator.additions.ampitudesampler module
+rvesimulator.additions.ampitudesampler
 ---------------------------------------------
 
 .. automodule:: rvesimulator.additions.ampitudesampler
@@ -12,7 +10,7 @@ rvesimulator.additions.ampitudesampler module
    :undoc-members:
    :show-inheritance:
 
-rvesimulator.additions.hardening\_law module
+rvesimulator.additions.hardening\_law
 --------------------------------------------
 
 .. automodule:: rvesimulator.additions.hardening_law
@@ -20,18 +18,10 @@ rvesimulator.additions.hardening\_law module
    :undoc-members:
    :show-inheritance:
 
-rvesimulator.additions.microstructure\_wrapper module
+rvesimulator.additions.microstructure\_wrapper
 -----------------------------------------------------
 
 .. automodule:: rvesimulator.additions.microstructure_wrapper
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: rvesimulator.additions
    :members:
    :undoc-members:
    :show-inheritance:

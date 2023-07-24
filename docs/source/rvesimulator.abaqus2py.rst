@@ -1,10 +1,8 @@
-rvesimulator.abaqus2py package
+rvesimulator.abaqus2py
 ==============================
 
-Submodules
-----------
 
-rvesimulator.abaqus2py.abaqus\_simulator module
+rvesimulator.abaqus2py.abaqus\_simulator
 -----------------------------------------------
 
 .. automodule:: rvesimulator.abaqus2py.abaqus_simulator
@@ -12,7 +10,7 @@ rvesimulator.abaqus2py.abaqus\_simulator module
    :undoc-members:
    :show-inheritance:
 
-rvesimulator.abaqus2py.simulator\_interface module
+rvesimulator.abaqus2py.simulator\_interface
 --------------------------------------------------
 
 .. automodule:: rvesimulator.abaqus2py.simulator_interface
@@ -20,18 +18,10 @@ rvesimulator.abaqus2py.simulator\_interface module
    :undoc-members:
    :show-inheritance:
 
-rvesimulator.abaqus2py.utils module
+rvesimulator.abaqus2py.utils
 -----------------------------------
 
 .. automodule:: rvesimulator.abaqus2py.utils
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: rvesimulator.abaqus2py
    :members:
    :undoc-members:
    :show-inheritance:
