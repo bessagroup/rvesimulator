@@ -7,10 +7,6 @@ from abaqusConstants import *
 from caeModules import *
 
 
-class Loading2D:
-    pass
-
-
 class LoadingRigid2D:
     def rigid_constraint_for_complex_loading(self):
         """displacement rigid constraints for complex loading where
@@ -139,6 +135,13 @@ class LoadingRigid2D:
 
 
 class NormalDisplacementLoading(LoadingRigid2D):
+    """small displacement loading
+
+    Parameters
+    ----------
+    LoadingRigid2D : abaqus.module
+        rigid loading class to restrict the rigid movement
+    """
 
     def create_load(self):
         E11 = self.strain[0]
@@ -231,8 +234,7 @@ class NormalDisplacementLoading(LoadingRigid2D):
 
 
 class HistoryDependentDisplacement2D(LoadingRigid2D):
- 
-
+    """history dependent displacement loading"""
     def create_load(self):
 
         # loads should be a list with three elements
@@ -335,6 +337,15 @@ class HistoryDependentDisplacement2D(LoadingRigid2D):
         )
 
     def _create_random_path(self, path_tale, path_name):
+        """create a tabular amplitude for history dependent loading path
+
+        Parameters
+        ----------
+        path_tale : list
+            a table contains the amplitude
+        path_name : str
+            name of the amplitude
+        """
 
         # generate the table
         self.model.TabularAmplitude(

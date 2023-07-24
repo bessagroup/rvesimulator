@@ -10,14 +10,14 @@ class MaterialLib:
     def create_elastic_material(
         self, geometry_set_name, material_name, youngs, poisson
     ):
-        """create elastic material 
+        """create elastic material
 
         Parameters
         ----------
         geometry_set_name : str
-            geometry set name 
+            geometry set name
         material_name : str
-            material name 
+            material name
         youngs : float
             youngs modulus
         poisson : float
@@ -44,6 +44,21 @@ class MaterialLib:
                                           youngs,
                                           poisson,
                                           hardening_table):
+        """create von mises plastic material model
+
+        Parameters
+        ----------
+        geometry_set_name : str
+            geometry set name
+        material_name : str
+            material names
+        youngs : float
+            youngs modulus
+        poisson : float
+            poisson ratio of the material
+        hardening_table : np.ndarray
+            a table contains the hardening law
+        """
 
         material = self.model.Material(name=material_name)
         material.Elastic(table=((youngs, poisson),))
@@ -70,14 +85,14 @@ class MaterialLib:
 
         Parameters
         ----------
-        geometry_set_name : _type_
-            _description_
-        material_name : _type_
-            _description_
-        num_stv : _type_
-            _description_
-        para : _type_
-            _description_
+        geometry_set_name : str
+            geometry set name
+        material_name : str
+            material name of this section
+        num_stv : int
+            num of state variable
+        para : list
+            variables of vevp Leonov model
         """
         material = self.model.Material(name=material_name)
         material.Depvar(n=num_stv)
@@ -114,21 +129,21 @@ class MaterialLib:
 
     def create_user_material_VP_Leonov_model(self,
                                             geometry_set_name,
-                                            material_name,  
-                                            num_stv, 
+                                            material_name,
+                                            num_stv,
                                             para):
-        """use VP Leonov model as user material 
+        """use VP Leonov model as user material
 
         Parameters
         ----------
-        geometry_set_name : _type_
-            _description_
-        material_name : _type_
-            _description_
-        num_stv : _type_
-            _description_
-        para : _type_
-            _description_
+        geometry_set_name : str
+            geometry set for this material
+        material_name : str
+            material name
+        num_stv : int
+            number of state variables
+        para : list
+            variables of vp Leonov model
         """
         material = self.model.Material(name=material_name)
         material.Depvar(n=num_stv)

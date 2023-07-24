@@ -8,7 +8,19 @@ from caeModules import *
 
 
 class Mesh2D:
+    """mesh for 2D rve
+    """
     def create_mesh(self, edges_name, element_type):
+        """function to create mesh
+
+        Parameters
+        ----------
+        edges_name : str
+            edges name
+        element_type : str
+            choose linear elements or quadratic elements
+        """
+
         import mesh
 
         # get the element type
@@ -38,6 +50,13 @@ class Mesh2D:
         self.part.generateMesh()
 
     def _define_linear_element(self):
+        """define linear element
+
+        Returns
+        -------
+        tuple[element_type, element_type]
+            element types
+        """
 
         elemType1 = mesh.ElemType(
             elemCode=CPE4R,
@@ -51,6 +70,13 @@ class Mesh2D:
         return elemType1, elemType2
 
     def _define_quadratic_element(self):
+        """define quadratic elements
+
+        Returns
+        -------
+        tuple[element_type, element_type]
+            element types
+        """
 
         elemType1 = mesh.ElemType(elemCode=CPE8R, elemLibrary=STANDARD)
         elemType2 = mesh.ElemType(elemCode=CPE6M, elemLibrary=STANDARD)

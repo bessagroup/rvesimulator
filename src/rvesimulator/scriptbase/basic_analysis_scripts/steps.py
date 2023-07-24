@@ -5,6 +5,8 @@ from caeModules import *
 
 
 class FieldOutputs:
+    """define field outputs
+    """
 
     def _define_field_outputs(self):
         # create Final-outputs
@@ -30,6 +32,8 @@ class FieldOutputs:
 
 
 class HistoryOutputs:
+    """define history outputs
+    """
     def _define_history_outputs(self):
         self.model.historyOutputRequests["H-Output-1"].setValues(
             variables=(
@@ -47,6 +51,15 @@ class HistoryOutputs:
 
 
 class SmallDeformationSteps(FieldOutputs, HistoryOutputs):
+    """define small deformation steps
+
+    Parameters
+    ----------
+    FieldOutputs : class
+        field outputs
+    HistoryOutputs : class
+        history outputs
+    """
     def create_step(
         self,
         initialInc=0.1,
@@ -71,6 +84,15 @@ class SmallDeformationSteps(FieldOutputs, HistoryOutputs):
 
 
 class LargeDeformationSteps(FieldOutputs, HistoryOutputs):
+    """large deformation steps
+
+    Parameters
+    ----------
+    FieldOutputs : class
+        filed outputs
+    HistoryOutputs : class
+        historical outputs
+    """
     def create_step(
         self,
         initialInc=0.1,
