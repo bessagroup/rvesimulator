@@ -39,7 +39,7 @@ class CircleMircoStructure:
             microstructure info in dict format, reached volume fraction
         """
 
-        self.microstructure_generator = CircleParticles(
+        self.rve_geo = CircleParticles(
             length=size,
             width=size,
             radius_mu=radius_mu,
@@ -47,13 +47,14 @@ class CircleMircoStructure:
             vol_req=vol_req,
             dist_min_factor=1.2,
         )
-        self.microstructure_generator.generate_microstructure(seed=seed)
-        microstrcutrue_info = self.microstructure_generator.to_abaqus_format(
-            file_name="micro_structure.json"
+        self.rve_geo.generate_microstructure(seed=seed)
+        microstrcutrue_info = self.rve_geo.to_abaqus_format(
+            file_name="micro_structure_" + str(seed) + ".json"
         )
-        self.microstructure_generator.plot_microstructure(save_figure=True)
+        self.rve_geo.plot_microstructure(save_figure=True,
+                                         fig_name="rve" + str(seed) + ".png")
 
-        return microstrcutrue_info, self.microstructure_generator.vol_frac
+        return microstrcutrue_info, self.rve_geo.vol_frac
 
 
 class SphereMicroStructrue:
@@ -85,7 +86,7 @@ class SphereMicroStructrue:
         tuple[dict, int | float]
             microstructure info in dict format, reached volume fraction
         """
-        self.microstructure_generator = SphereParticles(
+        self.rve_geo = SphereParticles(
             length=size,
             width=size,
             height=size,
@@ -93,11 +94,11 @@ class SphereMicroStructrue:
             radius_std=radius_std,
             vol_req=vol_req,
         )
-        self.microstructure_generator.generate_microstructure(seed=seed)
-        microstrcutrue_info = self.microstructure_generator.to_abaqus_format(
+        self.rve_geo.generate_microstructure(seed=seed)
+        microstrcutrue_info = self.rve_geo.to_abaqus_format(
             file_name="micro_structure.json"
         )
-        return microstrcutrue_info, self.microstructure_generator.vol_frac
+        return microstrcutrue_info, self.rve_geo.vol_frac
 
 
 class CircleSVEMicroStructure:
