@@ -2,6 +2,7 @@
 # =============================================================================
 # Standard
 import os
+from typing import Any
 
 import rvesimulator
 from rvesimulator.additions.hardening_law import HardeningLaw
@@ -55,6 +56,45 @@ class VonMisesPlasticElasticRegularLoads(SimulationBase):
         print_info: bool = False,
         **kwargs,
     ) -> None:
+        """update simulation information for CDDM case
+
+        Parameters
+        ----------
+        size : float, optional
+            size of rve, by default 0.048
+        radius_mu : float, optional
+            radius mean of rve, by default 0.003
+        radius_std : float, optional
+            radius standard deviation of rve, by default 0.0
+        vol_req : float, optional
+            volume requirement of rve, by default 0.30
+        youngs_modulus_matrix : float, optional
+            youngs modulus of matrix material, by default 100.0
+        poisson_ratio_matrix : float, optional
+            poisson ratio of matrix material, by default 0.3
+        youngs_modulus_fiber : float, optional
+            youngs modulus of fiber material, by default 1.0
+        poisson_ratio_fiber : float, optional
+            poisson ratio of fiber material, by default 0.19
+        mesh_partition : int, optional
+            mesh partitions for edges, by default 30
+        strain : list, optional
+            applied maximum strain, by default [0.1, 0.0, 0.0]
+        num_steps : int, optional
+            number of simulation steps, by default 100
+        simulation_time : float, optional
+            total simulation time, by default 1.0
+        num_cpu : int, optional
+            number of cpu been used, by default 1
+        platform : str, optional
+            simulation platform, by default "ubuntu"
+        hardening_law : str, optional
+            name of hardening law, by default "swift"
+        seed : any, optional
+            seed number, by default None
+        print_info : bool, optional
+            print simulation information or not, by default False
+        """
         # get the micro_structure information
         mirco_structure_generator = CircleMircoStructure()
         microstructure_info, vol_frac = mirco_structure_generator(
@@ -154,10 +194,51 @@ class VonMisesPlasticElasticPathLoads(SimulationBase):
         num_cpu: int = 1,
         platform: str = "ubuntu",
         hardening_law: str = "swift",
-        seed: any = None,
+        seed: Any = None,
         print_info: bool = False,
         **kwargs,
     ) -> None:
+        """path dependent rve for cddm
+
+        Parameters
+        ----------
+        size : float, optional
+            size of the rve, by default 0.048
+        radius_mu : float, optional
+            radius mean of the rve, by default 0.003
+        radius_std : float, optional
+            radius deviation of the rve, by default 0.0
+        vol_req : float, optional
+            volume fraction requirement, by default 0.30
+        youngs_modulus_matrix : float, optional
+            youngs modulus of the matrix material, by default 100.0
+        poisson_ratio_matrix : float, optional
+            poisson ratio of the matrix material, by default 0.3
+        youngs_modulus_fiber : float, optional
+            youngs modulus of the fiber material, by default 1.0
+        poisson_ratio_fiber : float, optional
+            poisson ratio of the fiber material, by default 0.19
+        mesh_partition : int, optional
+            mesh partition for the edges, by default 30
+        strain : list, optional
+            applied maximum strain, by default [0.1, 0.0, 0.0]
+        strain_amplitude : list, optional
+            applied strain amplitude to mimic path dependence, by default None
+        num_steps : int, optional
+            number of simulation steps, by default 100
+        simulation_time : float, optional
+            total simulation time, by default 1.0
+        num_cpu : int, optional
+            number of cpu used for simulation, by default 1
+        platform : str, optional
+            platform for simulation, by default "ubuntu"
+        hardening_law : str, optional
+            name of hardening law, by default "swift"
+        seed : Any, optional
+            seed number, by default None
+        print_info : bool, optional
+            print simulation information or not, by default False
+        """
 
         # get the micro_structure information
         mirco_structure_generator = CircleMircoStructure()

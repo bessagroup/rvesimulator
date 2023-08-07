@@ -100,6 +100,13 @@ class CircleParticles(MicrosctuctureGenerator):
         self,
         seed: Any = None,
     ) -> None:
+        """generate microstructure
+
+        Parameters
+        ----------
+        seed : Any, optional
+            seed number, by default None
+        """
 
         # decide to use seed or not
         self.rng = np.random.default_rng(seed=seed)
@@ -113,7 +120,19 @@ class CircleParticles(MicrosctuctureGenerator):
 
     def to_abaqus_format(
         self, file_name: str = "micro_structure_info.json"
-    ) -> None:
+    ) -> dict:
+        """save rve microstructure to abaqus format
+
+        Parameters
+        ----------
+        file_name : str, optional
+            name of saved file, by default "micro_structure_info.json"
+
+        Returns
+        -------
+        dict
+            a dict contains all info of rve microstructure
+        """
         microstructure_info = {
             "location_information": self.fiber_positions.tolist(),
             "radius_mu": self.radius_mu,
@@ -134,6 +153,15 @@ class CircleParticles(MicrosctuctureGenerator):
         fig_name: str = "mircostructure.png",
         **kwargs,
     ) -> None:
+        """plot microstructure
+
+        Parameters
+        ----------
+        save_figure : bool, optional
+            save figure or not, by default False
+        fig_name : str, optional
+            name of figure, by default "mircostructure.png"
+        """
         self.circle_plot(
             fibers=self.fiber_positions,
             length=self.length,
@@ -199,6 +227,28 @@ class CircleParticles(MicrosctuctureGenerator):
                     radius_std=self.radius_std,
                     rng=self.rng,
                 )
+                # if the temp fiber locates at un-proper location for mesh
+                while self.proper_vertices_mesh_location(fiber_temp) == 0:
+                    fiber_temp = self.generate_random_fibers(
+                        len_start=0,
+                        len_end=self.length,
+                        wid_start=0,
+                        wid_end=self.width,
+                        radius_mu=self.radius_mu,
+                        radius_std=self.radius_std,
+                        rng=self.rng,
+                    )
+                # if the temp fiber locates at un-proper location for mesh
+                while self.proper_edge_mesh_location(fiber_temp) == 0:
+                    fiber_temp = self.generate_random_fibers(
+                        len_start=0,
+                        len_end=self.length,
+                        wid_start=0,
+                        wid_end=self.width,
+                        radius_mu=self.radius_mu,
+                        radius_std=self.radius_std,
+                        rng=self.rng,
+                    )
                 # check the location of the fiber and
                 new_fiber = self.new_positions(
                     x_center=fiber_temp[0, 0],
@@ -242,13 +292,38 @@ class CircleParticles(MicrosctuctureGenerator):
                         ii,
                         self.num_cycle,
                     )
-
+                    # generate the new fiber location
                     new_fiber_temp = self.generate_first_heuristic_fibers(
                         ref_point=self.fiber_positions[min_index, 0:3].copy(),
                         fiber_temp=self.fiber_positions[ii, 0:3].copy(),
                         dist_factor=self.dist_min_factor,
                         rng=self.rng,
                     )
+                    # check proper location for mesh
+                    while self.proper_vertices_mesh_location(
+                        new_fiber_temp
+                    ) == 0:
+                        new_fiber_temp = self.generate_first_heuristic_fibers(
+                            ref_point=self.fiber_positions[
+                                min_index, 0:3
+                            ].copy(),
+                            fiber_temp=self.fiber_positions[ii, 0:3].copy(),
+                            dist_factor=self.dist_min_factor,
+                            rng=self.rng,
+                        )
+                    # check proper location for mesh
+                    while self.proper_edge_mesh_location(
+                        new_fiber_temp
+                    ) == 0:
+                        new_fiber_temp = self.generate_first_heuristic_fibers(
+                            ref_point=self.fiber_positions[
+                                min_index, 0:3
+                            ].copy(),
+                            fiber_temp=self.fiber_positions[ii, 0:3].copy(),
+                            dist_factor=self.dist_min_factor,
+                            rng=self.rng,
+                        )
+                    # check the overlap of new fiber
                     new_fiber = self.new_positions(
                         x_center=new_fiber_temp[0, 0],
                         y_center=new_fiber_temp[0, 1],
@@ -348,64 +423,65 @@ class CircleParticles(MicrosctuctureGenerator):
 
         return self.rgmsh.T
 
-    @staticmethod
-    def fiber_volume(radius: float) -> float:
-        """calculate the fiber volume of the current fiber
+    def proper_vertices_mesh_location(self, fiber: np.ndarray) -> int:
+        """identify proper vertices location for meshing
 
         Parameters
         ----------
-        radius : float
-            radius
+        fiber : np.ndarray
+            temp fiber
 
         Returns
         -------
-        vol:float
-            volume of current fiber(disk)
+        int
+            status of the fiber(0: improper, 1: proper)
         """
-        return np.pi * radius**2
+        # reformat the fiber location
+        fiber = fiber.reshape((1, 3))
+        vertices = np.array([[0, 0],
+                             [0, self.width],
+                             [self.length, self.width],
+                             [self.length, 0]])
+        # calculate the distance between the fiber and the vertices
+        points_dis_temp = distance_matrix(
+            vertices,
+            fiber[:, 0:2],
+        )
+        min_points_dis = points_dis_temp.min(0)
+        if 0.9*fiber[0, 2] < min_points_dis < np.sqrt(2)*fiber[0, 2]:
+            return 0
+        else:
+            return 1
 
-    @staticmethod
-    def generate_random_fibers(
-        len_start: float,
-        len_end: float,
-        wid_start: float,
-        wid_end: float,
-        radius_mu: float,
-        radius_std: float,
-        rng,
-    ) -> np.ndarray:
-        """generate random fibers with different radiis
+    def proper_edge_mesh_location(self, fiber: np.ndarray) -> int:
+        """identify proper edge location for meshing
 
         Parameters
         ----------
-        len_start : float
-            the start location of length
-        len_end : float
-            the end location of length
-        wid_start : float
-            the start location of width
-        wid_end : float
-            the end location of width
-        radius_mu : float
-            mean of radius
-        radius_std : float
-            standard deviation of radius
-        rng: any
-            random seed or generator
+        fiber : np.ndarray
+            temp fiber
 
         Returns
         -------
-        np.ndarray
-            location information of generated fiber
+        int
+            status of the fiber(0: improper, 1: proper)
         """
+        # reformat the fiber location
+        fiber = fiber.reshape((1, 3))
+        # for x edges
+        dis_x = np.abs(np.array([fiber[0, 0], self.width - fiber[0, 0]]))
+        if 0.8*fiber[0, 2] < min(dis_x) < fiber[0, 2]:
+            return 0
+        elif fiber[0, 2] < min(dis_x) < 1.1*fiber[0, 2]:
+            return 0
+        # for y edges
+        dis_y = np.abs(np.array([fiber[0, 1], self.length - fiber[0, 1]]))
+        if 0.8*fiber[0, 2] < min(dis_y) < fiber[0, 2]:
+            return 0
+        elif fiber[0, 2] < min(dis_y) < 1.1*fiber[0, 2]:
+            return 0
 
-        x = rng.uniform(len_start, len_end, 1)
-        y = rng.uniform(wid_start, wid_end, 1)
-        r = rng.normal(radius_mu, radius_std, 1)
-        while r <= 0.02*(len_end - len_start - 2*radius_mu):
-            r = rng.normal(radius_mu, radius_std, 1)
-        fiber = np.array([x, y, r])
-        return fiber
+        return 1
 
     def new_positions(
         self,
@@ -834,3 +910,64 @@ class CircleParticles(MicrosctuctureGenerator):
             new fiber
         """
         return np.array([[x, y, r, portion]])
+
+
+    @staticmethod
+    def fiber_volume(radius: float) -> float:
+        """calculate the fiber volume of the current fiber
+
+        Parameters
+        ----------
+        radius : float
+            radius
+
+        Returns
+        -------
+        vol:float
+            volume of current fiber(disk)
+        """
+        return np.pi * radius**2
+
+    @staticmethod
+    def generate_random_fibers(
+        len_start: float,
+        len_end: float,
+        wid_start: float,
+        wid_end: float,
+        radius_mu: float,
+        radius_std: float,
+        rng,
+    ) -> np.ndarray:
+        """generate random fibers with different radiis
+
+        Parameters
+        ----------
+        len_start : float
+            the start location of length
+        len_end : float
+            the end location of length
+        wid_start : float
+            the start location of width
+        wid_end : float
+            the end location of width
+        radius_mu : float
+            mean of radius
+        radius_std : float
+            standard deviation of radius
+        rng: any
+            random seed or generator
+
+        Returns
+        -------
+        np.ndarray
+            location information of generated fiber
+        """
+
+        x = rng.uniform(len_start, len_end, 1)
+        y = rng.uniform(wid_start, wid_end, 1)
+        r = rng.normal(radius_mu, radius_std, 1)
+        # the radius is too small for mesh
+        while r <= 0.02*(len_end - len_start - 2*radius_mu):
+            r = rng.normal(radius_mu, radius_std, 1)
+        fiber = np.array([x, y, r])
+        return fiber
