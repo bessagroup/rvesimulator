@@ -103,14 +103,14 @@ class AbaqusSimulator(Simulator, AssertInputs):
         command = "abaqus cae noGUI=" + str(abaqus_py_script) + " -mesa"
 
         # run (flag is for advanced usage)
-        flag = self._run_abaqus_simulation(
+        self.flag = self._run_abaqus_simulation(
             command=command,
             max_time=max_time,
             sleep_time=sleep_time,
             refresh_time=refresh_time,
         )
 
-        return flag
+        return self.flag
 
     def post_process(self, delete_odb: bool = False) -> None:
         """post process
@@ -122,6 +122,8 @@ class AbaqusSimulator(Simulator, AssertInputs):
         """
 
         if self.platform == "ubuntu":
+            if self.flag == "error": 
+                self.job_name = "error"
             print_banner("abaqus post analysis")
             # path with the python-script
             post_process_script = "getResults.py"
@@ -175,7 +177,7 @@ class AbaqusSimulator(Simulator, AssertInputs):
                     if word1 in file.read():
                         proc.kill()
                         self.kill_abaqus_process()
-                        flag = "finished"
+                        self.flag = "finished"
                         break
                 except FileNotFoundError:
                     print(
@@ -188,8 +190,19 @@ class AbaqusSimulator(Simulator, AssertInputs):
                         proc.kill()
                         self.kill_abaqus_process()
                         print("overtime kill")
-                        flag = "killed"
+                        self.flag = "killed"
                         break
+                # kill the process if error in mesh 
+                try:
+                    file = open(self.job_name + ".dat")
+                    word1 = "ERROR"
+                    if word1 in file.read():
+                        proc.kill()
+                        self.kill_abaqus_process()
+                        self.flag = "error"
+                        break
+                except FileNotFoundError:
+                    print("under modeling and meshing")
             print(f"simulation time :{(end_time - start_time):2f} s")
             # remove files that influence the simulation process
             self.remove_files(directory=os.getcwd())
@@ -197,14 +210,14 @@ class AbaqusSimulator(Simulator, AssertInputs):
             # count time for simulation
             start_time = time.time()
             os.system(command)
-            flag = "finished"
+            self.flag = "finished"
             end_time = time.time()
             print(f"simulation time :{(end_time - start_time):2f} s")
 
         else:
             raise NotImplementedError("platform not be implemented")
 
-        return flag
+        return self.flag
 
     def make_new_script(
         self,
