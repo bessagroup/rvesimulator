@@ -1,11 +1,18 @@
 rvesimulator.benchmarks
 =======================
 
+rvesimulator.benchmarks.shared\_functionalities
+-----------------------------------------------------------------
 
-rvesimulator.benchmarks.cddm 
+.. automodule:: rvesimulator.benchmarks.shared_functionalities
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+rvesimulator.benchmarks.cddm\_rve
 ----------------------------------------------
 
-.. automodule:: rvesimulator.benchmarks.cddm
+.. automodule:: rvesimulator.benchmarks.cddm_rve
    :members:
    :undoc-members:
    :show-inheritance:
@@ -18,13 +25,6 @@ rvesimulator.benchmarks.hollow\_plate\_sve
    :undoc-members:
    :show-inheritance:
 
-rvesimulator.benchmarks.shared\_functionalities
------------------------------------------------------------------
-
-.. automodule:: rvesimulator.benchmarks.shared_functionalities
-   :members:
-   :undoc-members:
-   :show-inheritance:
 
 rvesimulator.benchmarks.single\_material\_sve
 ---------------------------------------------------------------

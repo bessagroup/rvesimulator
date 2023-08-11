@@ -37,6 +37,7 @@ Welcome to rvesimulator's documentation!
    :caption: benchmarks:
 
    hollow_plate_sve.rst
+   cddm.rst
    
 .. toctree::
    :maxdepth: 2

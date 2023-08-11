@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cddm_rve &mdash; rvesimulator 0.0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/readthedocs-custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="rvesimulator" href="rvesimulator.html" />
+    <link rel="prev" title="hollow_plate_sve" href="hollow_plate_sve.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            rvesimulator
+          </a>
+              <div class="version">
+                0.0.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Overview:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Summary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html#statement-of-need">Statement of need</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html#authorship">Authorship</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html#community-support">Community Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html#license">License</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Get started:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="get_started.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">abaqus to python:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="abaqus2py.html">abaqus2py</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">microstructure:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="microstructure.html">microstructure</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">benchmarks:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="hollow_plate_sve.html">hollow_plate_sve</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">cddm_rve</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#problem-description">1. problem description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tasks-set-up">2. tasks set up</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#implementation">3. implementation</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="rvesimulator.html">rvesimulator</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">rvesimulator</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">cddm_rve</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="cddm-rve">
+<h1>cddm_rve<a class="headerlink" href="#cddm-rve" title="Permalink to this heading">¶</a></h1>
+<section id="problem-description">
+<h2>1. problem description<a class="headerlink" href="#problem-description" title="Permalink to this heading">¶</a></h2>
+<p>RVE simulation is an effective approach to explore constitutive laws of composites.
+Generally, An RVE has two material Phases which are matrix phase and fiber phase.
+The following figure gives an illustration of micro-structure of a 2D RVE.</p>
+<a class="reference internal image-reference" href="_images/tasks_rve.svg"><img alt="cddm_RVE_illustration" class="align-center" src="_images/tasks_rve.svg" width="100%" /></a>
+<p><strong>microstructures</strong>, <strong>material properties</strong>, and <strong>loading conditions</strong> are three
+major variables which will influence the RVE properties. In order to exploit the advantages and limits of CDDM,
+several RVEs with similarities and differences are set up as different tasks.
+In detail, different tasks have different microstructures and material properties and apply the same dependent
+paths to generate the learning dataset</p>
+</section>
+<section id="tasks-set-up">
+<h2>2. tasks set up<a class="headerlink" href="#tasks-set-up" title="Permalink to this heading">¶</a></h2>
+<p>From the above figure, it can be seen that the microstructure of an RVE is controlled by four factors
+which are size of the square, volume fraction of fiber phase, and distribution parameters for generating
+fibers. Meanwhile, the material properties of fiber and matrix phases also influence the performance of
+RVEs significantly.</p>
+<p>Therefore, several designated microstructures and material properties are given as the design variables
+for generating different tasks. The details of for different tasks are summarized in the following table.</p>
+<a class="reference internal image-reference" href="_images/tasks_details.png"><img alt="tasks_details" class="align-center" src="_images/tasks_details.png" style="width: 100%;" /></a>
+<p>Moreover, the illustration of the microstructure of each task is given in the following figure.</p>
+<a class="reference internal image-reference" href="_images/tasks_microstructures.svg"><img alt="tasks_microstructures" class="align-center" src="_images/tasks_microstructures.svg" width="100%" /></a>
+</section>
+<section id="implementation">
+<h2>3. implementation<a class="headerlink" href="#implementation" title="Permalink to this heading">¶</a></h2>
+<p>The implementation of task A is based on the following steps:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># import the function</span>
+<span class="kn">from</span> <span class="nn">rvesimulator.benchmarks.cddm_rve</span> <span class="kn">import</span> <span class="n">CDDM_RVE</span>
+<span class="kn">from</span> <span class="nn">rvesimulator.additions.ampitudesampler</span> <span class="kn">import</span> <span class="n">AmplitudeGenerator</span>
+
+<span class="c1"># generate amplitude path as the design variable</span>
+<span class="c1"># number of path</span>
+<span class="n">num_amplitude</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="c1"># initialize path sampler</span>
+<span class="n">path_sampler</span> <span class="o">=</span> <span class="n">AmplitudeGenerator</span><span class="p">(</span><span class="n">num_dim</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="c1"># get paths</span>
+<span class="n">paths</span> <span class="o">=</span> <span class="n">path_sampler</span><span class="o">.</span><span class="n">get_amplitude</span><span class="p">(</span>
+    <span class="n">num_amplitude</span><span class="o">=</span><span class="n">num_amplitude</span><span class="p">,</span>
+    <span class="n">num_control</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+    <span class="n">num_steps</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">arg_name</span><span class="o">=</span><span class="s2">&quot;strain_amplitude&quot;</span><span class="p">,</span>
+    <span class="n">seed</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="c1"># convert to dict</span>
+<span class="n">samples_dict</span> <span class="o">=</span> <span class="n">paths</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="s2">&quot;records&quot;</span><span class="p">)</span>
+<span class="c1"># initialization for task A</span>
+<span class="n">task_A</span> <span class="o">=</span> <span class="n">CDDM_RVE</span><span class="p">()</span>
+<span class="c1"># update simulation info</span>
+<span class="n">task_A</span><span class="o">.</span><span class="n">update_sim_info</span><span class="p">(</span><span class="n">mesh_partition</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                    <span class="n">strain</span><span class="o">=</span><span class="p">[</span><span class="mf">0.02</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">],</span>
+                    <span class="n">vol_req</span><span class="o">=</span><span class="mf">0.45</span><span class="p">,</span>
+                    <span class="n">radius_mu</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+                    <span class="n">radius_std</span><span class="o">=</span><span class="mf">0.003</span><span class="p">,</span>
+                    <span class="n">E_fiber</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                    <span class="n">E_matrix</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                    <span class="n">hardening_law</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span>
+                    <span class="n">yield_stress</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                    <span class="n">a</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                    <span class="n">num_cpu</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+                    <span class="n">seed</span><span class="o">=</span><span class="mi">23</span><span class="p">,</span>
+                    <span class="n">print_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">task_A_results</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="c1"># calculate responses of simulation</span>
+<span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">samples_dict</span><span class="p">)):</span>
+    <span class="n">task_A_results</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">task1</span><span class="o">.</span><span class="n">run_simulation</span><span class="p">(</span>
+        <span class="n">sample</span><span class="o">=</span><span class="n">samples_dict</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span> <span class="n">third_folder_index</span><span class="o">=</span><span class="n">ii</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For other tasks, the only difference is the initialization of the task. you can
+easily change the task by using corresponding parameters from the above table.</p>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="hollow_plate_sve.html" class="btn btn-neutral float-left" title="hollow_plate_sve" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="rvesimulator.html" class="btn btn-neutral float-right" title="rvesimulator" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Jiaxiang Yi.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

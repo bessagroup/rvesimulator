@@ -64,6 +64,7 @@
 <p class="caption" role="heading"><span class="caption-text">benchmarks:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="hollow_plate_sve.html">hollow_plate_sve</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cddm.html">cddm_rve</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
 <ul>
@@ -136,6 +137,8 @@
 </li>
         <li><a href="rvesimulator.benchmarks.html#rvesimulator.benchmarks.veni_rve.BothVPLeonovRegularLoads.__init__">(BothVPLeonovRegularLoads method)</a>
 </li>
+        <li><a href="rvesimulator.benchmarks.html#rvesimulator.benchmarks.cddm_rve.CDDM_RVE.__init__">(CDDM_RVE method)</a>
+</li>
         <li><a href="rvesimulator.microstructure.html#rvesimulator.microstructure.circle_particles.CircleParticles.__init__">(CircleParticles method)</a>
 </li>
         <li><a href="rvesimulator.additions.html#rvesimulator.additions.microstructure_wrapper.CircleSVEMicroStructure.__init__">(CircleSVEMicroStructure method)</a>
@@ -148,9 +151,9 @@
 </li>
         <li><a href="rvesimulator.benchmarks.html#rvesimulator.benchmarks.veni_rve.VEVP_VPLeonovRegularLoads.__init__">(VEVP_VPLeonovRegularLoads method)</a>
 </li>
-        <li><a href="rvesimulator.benchmarks.html#rvesimulator.benchmarks.cddm.VonMisesPlasticElasticPathLoads.__init__">(VonMisesPlasticElasticPathLoads method)</a>, <a href="rvesimulator.benchmarks.html#rvesimulator.benchmarks.two_materials_rve.VonMisesPlasticElasticPathLoads.__init__">[1]</a>, <a href="rvesimulator.benchmarks.html#rvesimulator.benchmarks.two_materials_sve.VonMisesPlasticElasticPathLoads.__init__">[2]</a>
+        <li><a href="rvesimulator.benchmarks.html#rvesimulator.benchmarks.two_materials_rve.VonMisesPlasticElasticPathLoads.__init__">(VonMisesPlasticElasticPathLoads method)</a>, <a href="rvesimulator.benchmarks.html#rvesimulator.benchmarks.two_materials_sve.VonMisesPlasticElasticPathLoads.__init__">[1]</a>
 </li>
-        <li><a href="rvesimulator.benchmarks.html#rvesimulator.benchmarks.cddm.VonMisesPlasticElasticRegularLoads.__init__">(VonMisesPlasticElasticRegularLoads method)</a>, <a href="rvesimulator.benchmarks.html#rvesimulator.benchmarks.two_materials_rve.VonMisesPlasticElasticRegularLoads.__init__">[1]</a>, <a href="rvesimulator.benchmarks.html#rvesimulator.benchmarks.two_materials_sve.VonMisesPlasticElasticRegularLoads.__init__">[2]</a>
+        <li><a href="rvesimulator.benchmarks.html#rvesimulator.benchmarks.two_materials_rve.VonMisesPlasticElasticRegularLoads.__init__">(VonMisesPlasticElasticRegularLoads method)</a>, <a href="rvesimulator.benchmarks.html#rvesimulator.benchmarks.two_materials_sve.VonMisesPlasticElasticRegularLoads.__init__">[1]</a>
 </li>
         <li><a href="rvesimulator.benchmarks.html#rvesimulator.benchmarks.hollow_plate_sve.VonMisesPlasticPathLoads.__init__">(VonMisesPlasticPathLoads method)</a>, <a href="rvesimulator.benchmarks.html#rvesimulator.benchmarks.single_material_sve.VonMisesPlasticPathLoads.__init__">[1]</a>
 </li>
@@ -233,6 +236,8 @@
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="rvesimulator.benchmarks.html#rvesimulator.benchmarks.cddm_rve.CDDM_RVE">CDDM_RVE (class in rvesimulator.benchmarks.cddm_rve)</a>
+</li>
       <li><a href="rvesimulator.microstructure.html#rvesimulator.microstructure.base.MicrosctuctureGenerator.circle_plot">circle_plot() (MicrosctuctureGenerator static method)</a>
 </li>
       <li><a href="rvesimulator.additions.html#rvesimulator.additions.microstructure_wrapper.CircleMircoStructure">CircleMircoStructure (class in rvesimulator.additions.microstructure_wrapper)</a>
@@ -241,14 +246,14 @@
 </li>
       <li><a href="rvesimulator.additions.html#rvesimulator.additions.microstructure_wrapper.CircleSVEMicroStructure">CircleSVEMicroStructure (class in rvesimulator.additions.microstructure_wrapper)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="rvesimulator.microstructure.html#rvesimulator.microstructure.circle_particles.CircleParticles.crate_rgmsh">crate_rgmsh() (CircleParticles method)</a>
 
       <ul>
         <li><a href="rvesimulator.microstructure.html#rvesimulator.microstructure.shpere_particles.SphereParticles.crate_rgmsh">(SphereParticles method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="rvesimulator.abaqus2py.html#rvesimulator.abaqus2py.utils.create_dir">create_dir() (in module rvesimulator.abaqus2py.utils)</a>
 
       <ul>
@@ -419,7 +424,7 @@
 </li>
         <li><a href="rvesimulator.additions.html#module-rvesimulator.additions.microstructure_wrapper">rvesimulator.additions.microstructure_wrapper</a>
 </li>
-        <li><a href="rvesimulator.benchmarks.html#module-rvesimulator.benchmarks.cddm">rvesimulator.benchmarks.cddm</a>
+        <li><a href="rvesimulator.benchmarks.html#module-rvesimulator.benchmarks.cddm_rve">rvesimulator.benchmarks.cddm_rve</a>
 </li>
         <li><a href="rvesimulator.benchmarks.html#module-rvesimulator.benchmarks.hollow_plate_sve">rvesimulator.benchmarks.hollow_plate_sve</a>
 </li>
@@ -559,10 +564,10 @@
 </li>
       </ul></li>
       <li>
-    rvesimulator.benchmarks.cddm
+    rvesimulator.benchmarks.cddm_rve
 
       <ul>
-        <li><a href="rvesimulator.benchmarks.html#module-rvesimulator.benchmarks.cddm">module</a>
+        <li><a href="rvesimulator.benchmarks.html#module-rvesimulator.benchmarks.cddm_rve">module</a>
 </li>
       </ul></li>
   </ul></td>
@@ -692,6 +697,8 @@
 </li>
         <li><a href="rvesimulator.benchmarks.html#rvesimulator.benchmarks.veni_rve.BothVPLeonovRegularLoads.update_sim_info">(BothVPLeonovRegularLoads method)</a>
 </li>
+        <li><a href="rvesimulator.benchmarks.html#rvesimulator.benchmarks.cddm_rve.CDDM_RVE.update_sim_info">(CDDM_RVE method)</a>
+</li>
         <li><a href="rvesimulator.benchmarks.html#rvesimulator.benchmarks.hollow_plate_sve.ElasticRegularLoads.update_sim_info">(ElasticRegularLoads method)</a>, <a href="rvesimulator.benchmarks.html#rvesimulator.benchmarks.single_material_sve.ElasticRegularLoads.update_sim_info">[1]</a>
 </li>
         <li><a href="rvesimulator.benchmarks.html#rvesimulator.benchmarks.shared_functionalities.SimulationBase.update_sim_info">(SimulationBase method)</a>
@@ -700,9 +707,9 @@
 </li>
         <li><a href="rvesimulator.benchmarks.html#rvesimulator.benchmarks.veni_rve.VEVP_VPLeonovRegularLoads.update_sim_info">(VEVP_VPLeonovRegularLoads method)</a>
 </li>
-        <li><a href="rvesimulator.benchmarks.html#rvesimulator.benchmarks.cddm.VonMisesPlasticElasticPathLoads.update_sim_info">(VonMisesPlasticElasticPathLoads method)</a>, <a href="rvesimulator.benchmarks.html#rvesimulator.benchmarks.two_materials_rve.VonMisesPlasticElasticPathLoads.update_sim_info">[1]</a>, <a href="rvesimulator.benchmarks.html#rvesimulator.benchmarks.two_materials_sve.VonMisesPlasticElasticPathLoads.update_sim_info">[2]</a>
+        <li><a href="rvesimulator.benchmarks.html#rvesimulator.benchmarks.two_materials_rve.VonMisesPlasticElasticPathLoads.update_sim_info">(VonMisesPlasticElasticPathLoads method)</a>, <a href="rvesimulator.benchmarks.html#rvesimulator.benchmarks.two_materials_sve.VonMisesPlasticElasticPathLoads.update_sim_info">[1]</a>
 </li>
-        <li><a href="rvesimulator.benchmarks.html#rvesimulator.benchmarks.cddm.VonMisesPlasticElasticRegularLoads.update_sim_info">(VonMisesPlasticElasticRegularLoads method)</a>, <a href="rvesimulator.benchmarks.html#rvesimulator.benchmarks.two_materials_rve.VonMisesPlasticElasticRegularLoads.update_sim_info">[1]</a>, <a href="rvesimulator.benchmarks.html#rvesimulator.benchmarks.two_materials_sve.VonMisesPlasticElasticRegularLoads.update_sim_info">[2]</a>
+        <li><a href="rvesimulator.benchmarks.html#rvesimulator.benchmarks.two_materials_rve.VonMisesPlasticElasticRegularLoads.update_sim_info">(VonMisesPlasticElasticRegularLoads method)</a>, <a href="rvesimulator.benchmarks.html#rvesimulator.benchmarks.two_materials_sve.VonMisesPlasticElasticRegularLoads.update_sim_info">[1]</a>
 </li>
         <li><a href="rvesimulator.benchmarks.html#rvesimulator.benchmarks.hollow_plate_sve.VonMisesPlasticPathLoads.update_sim_info">(VonMisesPlasticPathLoads method)</a>, <a href="rvesimulator.benchmarks.html#rvesimulator.benchmarks.single_material_sve.VonMisesPlasticPathLoads.update_sim_info">[1]</a>
 </li>
@@ -719,19 +726,15 @@
 </li>
       <li><a href="rvesimulator.benchmarks.html#rvesimulator.benchmarks.veni_rve.VEVP_VPLeonovRegularLoads">VEVP_VPLeonovRegularLoads (class in rvesimulator.benchmarks.veni_rve)</a>
 </li>
-      <li><a href="rvesimulator.benchmarks.html#rvesimulator.benchmarks.cddm.VonMisesPlasticElasticPathLoads">VonMisesPlasticElasticPathLoads (class in rvesimulator.benchmarks.cddm)</a>
+      <li><a href="rvesimulator.benchmarks.html#rvesimulator.benchmarks.two_materials_rve.VonMisesPlasticElasticPathLoads">VonMisesPlasticElasticPathLoads (class in rvesimulator.benchmarks.two_materials_rve)</a>
 
       <ul>
-        <li><a href="rvesimulator.benchmarks.html#rvesimulator.benchmarks.two_materials_rve.VonMisesPlasticElasticPathLoads">(class in rvesimulator.benchmarks.two_materials_rve)</a>
-</li>
         <li><a href="rvesimulator.benchmarks.html#rvesimulator.benchmarks.two_materials_sve.VonMisesPlasticElasticPathLoads">(class in rvesimulator.benchmarks.two_materials_sve)</a>
 </li>
       </ul></li>
-      <li><a href="rvesimulator.benchmarks.html#rvesimulator.benchmarks.cddm.VonMisesPlasticElasticRegularLoads">VonMisesPlasticElasticRegularLoads (class in rvesimulator.benchmarks.cddm)</a>
+      <li><a href="rvesimulator.benchmarks.html#rvesimulator.benchmarks.two_materials_rve.VonMisesPlasticElasticRegularLoads">VonMisesPlasticElasticRegularLoads (class in rvesimulator.benchmarks.two_materials_rve)</a>
 
       <ul>
-        <li><a href="rvesimulator.benchmarks.html#rvesimulator.benchmarks.two_materials_rve.VonMisesPlasticElasticRegularLoads">(class in rvesimulator.benchmarks.two_materials_rve)</a>
-</li>
         <li><a href="rvesimulator.benchmarks.html#rvesimulator.benchmarks.two_materials_sve.VonMisesPlasticElasticRegularLoads">(class in rvesimulator.benchmarks.two_materials_sve)</a>
 </li>
       </ul></li>
