@@ -69,7 +69,7 @@ The implementation of the RVE simulator is based on the following steps:
     This example gives you an intuition on how the rvesimulator works by integrating all the modulus, :attr:`rvesimulator.abaqus2py`, 
     :attr:`rvesimulator.microstructure`, and some default made abaqus scripts which is in the **scriptbase** folder.
 
-2. Other cases based on the same microstructure
+3. Other cases based on the same microstructure
 -----------------------------------------------
 As we know the, we can change the material properties and loading conditions to create other RVE simulations. Here more 
 examples are given based on the same hollow plate microstructure:
