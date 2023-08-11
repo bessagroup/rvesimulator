@@ -1,4 +1,4 @@
-name: Publish Sphinx Documentation to gh-pages
+name: release-sphinx-documentation
 
 on:
   push:
