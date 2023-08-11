@@ -1,11 +1,3 @@
-.. image:: https://user-images.githubusercontent.com/25851824/200928507-a65327f9-bc70-4c12-beaa-bc6ba74d968e.svg
-   :alt: logo
-   :width: 60%
-   :align: center
-
-
-`Docs <https://bessagroup.github.io/rvesimulator/>`__ | `GitHub <https://github.com/bessagroup/rvesimulator.git>`__
-
 
 **First publication:** July 23, 2023
 

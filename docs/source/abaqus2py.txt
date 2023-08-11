@@ -1,0 +1,13 @@
+├── abaqus_sim_main/
+|   ├── case.py
+│   │   __init__.py
+│   │
+├── rvesimulator/
+│   ├── src/
+│   │   ├── abaqus2py/
+│   │   ├── microstructure/
+│   │   └── ...
+│   ├── docs/
+│   └── README.md
+├── LICENSE
+└── .gitignore

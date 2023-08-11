@@ -14,7 +14,7 @@ rvesimulator
 .. toctree::
    :maxdepth: 4    
 
-   rvesimulator.benchmark_master_functions
+   rvesimulator.benchmarks
 
 .. toctree::
    :maxdepth: 4 

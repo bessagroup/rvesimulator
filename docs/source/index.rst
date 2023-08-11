@@ -12,7 +12,7 @@ Welcome to rvesimulator's documentation!
    :maxdepth: 3
    :caption: Overview:
    
-   readme.rst
+   overview.rst
 
 .. toctree::
    :maxdepth: 3
@@ -22,11 +22,28 @@ Welcome to rvesimulator's documentation!
 
 .. toctree::
    :maxdepth: 3
+   :caption: abaqus to python:
+   
+   abaqus2py.rst
+
+.. toctree::
+   :maxdepth: 3
+   :caption: microstructure:
+
+   microstructure.rst
+
+.. toctree::
+   :maxdepth: 3
+   :caption: benchmarks:
+
+   hollow_plate_sve.rst
+   
+.. toctree::
+   :maxdepth: 2
    :caption: API Reference:
    
    rvesimulator.rst 
    
-
 
 
 Indices and tables

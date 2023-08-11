@@ -30,7 +30,17 @@ class AbaqusSimulator(Simulator, AssertInputs):
         simulator interface
     AssertInputs: class
         assert inputs
+
+    Examples
+    --------
+    >>> from rvesimulator.abaqus2py.simulator_interface import AbaqusSimulator
+    >>> sim_info = {}
+    >>> folder_info = {}
+    >>> simulator = AbaqusSimulator(sim_info=sim_info, folder_info=folder_info)
+    >>> simulator.run()
+    >>> simulator.read_back_results()
     """
+
 
     def __init__(self, sim_info: dict, folder_info: dict) -> None:
         """initialization of abaqus simulator class

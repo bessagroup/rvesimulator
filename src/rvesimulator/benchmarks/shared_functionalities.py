@@ -1,8 +1,6 @@
 import json
 import os
 
-from f3dasm.design import ExperimentData
-
 from rvesimulator.abaqus2py.abaqus_simulator import AbaqusSimulator
 
 # local functions
@@ -11,36 +9,6 @@ from .utils import create_dir
 
 class SimulationBase:
     """base class of rve simulation problems"""
-
-    def run_f3dasm(self, data: ExperimentData) -> ExperimentData:
-        """run simulation via f3dasm manners
-
-        Parameters
-        ----------
-        data : ExperimentData
-            data object
-
-        Returns
-        -------
-        ExperimentData
-            updated data object
-        """
-        # TODO update it
-
-        # get the samples
-        samples = data.data.input.to_dict("record")
-        for ii in range(len(data.data)):
-            results = self.run_simulation(
-                sample=samples[ii], third_folder_index=ii
-            )
-            # fill the data class
-            data.data["output"] = data.data["output"].astype(object)
-            for jj in range(len(list(data.data["output"].keys()))):
-                data.data[("output", list(data.data["output"].keys())[jj])][
-                    ii
-                ] = results[list(data.data["output"].keys())[jj]]
-
-        return data
 
     def run_simulation(
         self,

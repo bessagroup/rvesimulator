@@ -30,6 +30,21 @@ class CircleParticles(MicrosctuctureGenerator):
     ----------
     MicrosctuctureGenerator : class
         parent class of microstructure generator
+
+    Examples
+    --------
+    >>> from rvesimulator.microstructure import CircleParticles
+    >>> circle_particles = CircleParticles(
+    ...     length=1,
+    ...     width=1,
+    ...     radius_mu=0.1,
+    ...     radius_std=0.01,
+    ...     vol_req=0.1,
+    ... )
+    >>> circle_particles.generate_microstructure()
+    >>> circle_particles.plot_microstructure()
+    >>> circle_particles.to_abaqus_format()
+    >>> circle_particles.crate_rgmsh()
     """
 
     def __init__(
