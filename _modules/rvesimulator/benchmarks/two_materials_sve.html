@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>rvesimulator.benchmarks.two_materials_sve &mdash; rvesimulator 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/readthedocs-custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            rvesimulator
+          </a>
+              <div class="version">
+                0.0.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Overview:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview.html">Summary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview.html#statement-of-need">Statement of need</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview.html#authorship">Authorship</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview.html#community-support">Community Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview.html#license">License</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Get started:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../get_started.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">abaqus to python:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../abaqus2py.html">abaqus2py</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">microstructure:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../microstructure.html">microstructure</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">benchmarks:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../hollow_plate_sve.html">hollow_plate_sve</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../rvesimulator.html">rvesimulator</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">rvesimulator</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">rvesimulator.benchmarks.two_materials_sve</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for rvesimulator.benchmarks.two_materials_sve</h1><div class="highlight"><pre>
+<span></span><span class="c1">#                                                                       Modules</span>
+<span class="c1"># =============================================================================</span>
+<span class="c1"># Standard</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">import</span> <span class="nn">rvesimulator</span>
+<span class="kn">from</span> <span class="nn">rvesimulator.additions.hardening_law</span> <span class="kn">import</span> <span class="n">HardeningLaw</span>
+<span class="kn">from</span> <span class="nn">rvesimulator.additions.microstructure_wrapper</span> <span class="kn">import</span> \
+    <span class="n">CircleSVEMicroStructure</span>
+
+<span class="kn">from</span> <span class="nn">.shared_functionalities</span> <span class="kn">import</span> <span class="n">SimulationBase</span>
+
+<span class="c1">#                                                          Authorship &amp; Credits</span>
+<span class="c1"># =============================================================================</span>
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Jiaxiang Yi (J.Yi@tudelft.nl)&quot;</span>
+<span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Jiaxiang Yi&quot;</span><span class="p">]</span>
+<span class="n">__status__</span> <span class="o">=</span> <span class="s2">&quot;Stable&quot;</span>
+<span class="c1"># =============================================================================</span>
+
+<span class="c1"># =============================================================================</span>
+<div class="viewcode-block" id="VonMisesPlasticElasticRegularLoads"><a class="viewcode-back" href="../../../rvesimulator.benchmarks.html#rvesimulator.benchmarks.two_materials_sve.VonMisesPlasticElasticRegularLoads">[docs]</a><span class="k">class</span> <span class="nc">VonMisesPlasticElasticRegularLoads</span><span class="p">(</span><span class="n">SimulationBase</span><span class="p">):</span>
+<div class="viewcode-block" id="VonMisesPlasticElasticRegularLoads.__init__"><a class="viewcode-back" href="../../../rvesimulator.benchmarks.html#rvesimulator.benchmarks.two_materials_sve.VonMisesPlasticElasticRegularLoads.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Interface between python and abaqus of the Hollow plate case&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">main_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">folder_info</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;main_work_directory&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="s2">&quot;Data&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;script_path&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">rvesimulator</span><span class="o">.</span><span class="vm">__file__</span><span class="p">)</span> <span class="o">+</span> \
+                <span class="s2">&quot;/scriptbase&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;current_work_directory&quot;</span><span class="p">:</span> <span class="s2">&quot;point_1&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;sim_path&quot;</span><span class="p">:</span> <span class="s2">&quot;benchmark_abaqus_scripts.two_materials_sve&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;sim_script&quot;</span><span class="p">:</span> <span class="s2">&quot;VonMisesPlasticElasticRegularLoads&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;post_path&quot;</span><span class="p">:</span> <span class="s2">&quot;basic_analysis_scripts.post_process&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;post_script&quot;</span><span class="p">:</span> <span class="s2">&quot;PostProcess2D&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_sim_info</span><span class="p">(</span><span class="n">yield_stress</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="VonMisesPlasticElasticRegularLoads.update_sim_info"><a class="viewcode-back" href="../../../rvesimulator.benchmarks.html#rvesimulator.benchmarks.two_materials_sve.VonMisesPlasticElasticRegularLoads.update_sim_info">[docs]</a>    <span class="k">def</span> <span class="nf">update_sim_info</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">size</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">radius</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.15</span><span class="p">,</span>
+        <span class="n">sve_geometry_benchmark</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;task1&quot;</span><span class="p">,</span>
+        <span class="n">youngs_modulus_matrix</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span>
+        <span class="n">poisson_ratio_matrix</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">,</span>
+        <span class="n">youngs_modulus_fiber</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">poisson_ratio_fiber</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.19</span><span class="p">,</span>
+        <span class="n">mesh_partition</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span>
+        <span class="n">strain</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+        <span class="n">num_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="n">simulation_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">num_cpu</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">platform</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;ubuntu&quot;</span><span class="p">,</span>
+        <span class="n">hardening_law</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;swift&quot;</span><span class="p">,</span>
+        <span class="n">print_info</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># get the micro_structure information</span>
+        <span class="n">micro_structure_generator</span> <span class="o">=</span> <span class="n">CircleSVEMicroStructure</span><span class="p">(</span>
+            <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">,</span>
+            <span class="n">radius</span><span class="o">=</span><span class="n">radius</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">microstructure_info</span> <span class="o">=</span> <span class="n">micro_structure_generator</span><span class="o">.</span><span class="n">location_information</span><span class="p">(</span>
+            <span class="n">task</span><span class="o">=</span><span class="n">sve_geometry_benchmark</span>
+        <span class="p">)</span>
+        <span class="c1"># generate the hardening law</span>
+        <span class="n">hardening</span> <span class="o">=</span> <span class="n">HardeningLaw</span><span class="p">()</span>
+        <span class="n">law_function</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">hardening</span><span class="p">,</span> <span class="n">hardening_law</span><span class="p">)</span>
+        <span class="n">hardening_table</span> <span class="o">=</span> <span class="n">law_function</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">sim_paras</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;job_name&quot;</span><span class="p">:</span> <span class="s2">&quot;two_materials_sve&quot;</span><span class="p">,</span>
+                          <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="n">size</span><span class="p">,</span>
+                          <span class="s2">&quot;location_information&quot;</span><span class="p">:</span> <span class="n">microstructure_info</span><span class="p">,</span>
+                          <span class="s2">&quot;youngs_modulus_matrix&quot;</span><span class="p">:</span> <span class="n">youngs_modulus_matrix</span><span class="p">,</span>
+                          <span class="s2">&quot;poisson_ratio_matrix&quot;</span><span class="p">:</span> <span class="n">poisson_ratio_matrix</span><span class="p">,</span>
+                          <span class="s2">&quot;hardening_law&quot;</span><span class="p">:</span> <span class="n">hardening_law</span><span class="p">,</span>
+                          <span class="s2">&quot;hardening_paras&quot;</span><span class="p">:</span> <span class="n">kwargs</span><span class="p">,</span>
+                          <span class="s2">&quot;youngs_modulus_fiber&quot;</span><span class="p">:</span> <span class="n">youngs_modulus_fiber</span><span class="p">,</span>
+                          <span class="s2">&quot;poisson_ratio_fiber&quot;</span><span class="p">:</span> <span class="n">poisson_ratio_fiber</span><span class="p">,</span>
+                          <span class="s2">&quot;mesh_partition&quot;</span><span class="p">:</span> <span class="n">mesh_partition</span><span class="p">,</span>
+                          <span class="s2">&quot;strain&quot;</span><span class="p">:</span> <span class="n">strain</span><span class="p">,</span>
+                          <span class="s2">&quot;num_steps&quot;</span><span class="p">:</span> <span class="n">num_steps</span><span class="p">,</span>
+                          <span class="s2">&quot;simulation_time&quot;</span><span class="p">:</span> <span class="n">simulation_time</span><span class="p">,</span>
+                          <span class="s2">&quot;num_cpu&quot;</span><span class="p">:</span> <span class="n">num_cpu</span><span class="p">,</span>
+                          <span class="s2">&quot;platform&quot;</span><span class="p">:</span> <span class="n">platform</span><span class="p">,</span> <span class="p">}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">sim_info</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;job_name&quot;</span><span class="p">:</span> <span class="s2">&quot;two_materials_sve&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="n">size</span><span class="p">,</span>
+            <span class="s2">&quot;location_information&quot;</span><span class="p">:</span> <span class="n">microstructure_info</span><span class="p">,</span>
+            <span class="s2">&quot;youngs_modulus_matrix&quot;</span><span class="p">:</span> <span class="n">youngs_modulus_matrix</span><span class="p">,</span>
+            <span class="s2">&quot;poisson_ratio_matrix&quot;</span><span class="p">:</span> <span class="n">poisson_ratio_matrix</span><span class="p">,</span>
+            <span class="s2">&quot;youngs_modulus_fiber&quot;</span><span class="p">:</span> <span class="n">youngs_modulus_fiber</span><span class="p">,</span>
+            <span class="s2">&quot;poisson_ratio_fiber&quot;</span><span class="p">:</span> <span class="n">poisson_ratio_fiber</span><span class="p">,</span>
+            <span class="s2">&quot;mesh_partition&quot;</span><span class="p">:</span> <span class="n">mesh_partition</span><span class="p">,</span>
+            <span class="s2">&quot;hardening_table&quot;</span><span class="p">:</span> <span class="n">hardening_table</span><span class="p">,</span>
+            <span class="s2">&quot;num_steps&quot;</span><span class="p">:</span> <span class="n">num_steps</span><span class="p">,</span>
+            <span class="s2">&quot;simulation_time&quot;</span><span class="p">:</span> <span class="n">simulation_time</span><span class="p">,</span>
+            <span class="s2">&quot;strain&quot;</span><span class="p">:</span> <span class="n">strain</span><span class="p">,</span>
+            <span class="s2">&quot;num_cpu&quot;</span><span class="p">:</span> <span class="n">num_cpu</span><span class="p">,</span>
+            <span class="s2">&quot;platform&quot;</span><span class="p">:</span> <span class="n">platform</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="c1"># print simulation information to screen</span>
+        <span class="k">if</span> <span class="n">print_info</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_print_sim_info</span><span class="p">(</span><span class="n">info</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sim_paras</span><span class="p">)</span></div></div>
+
+<span class="c1"># =============================================================================</span>
+<div class="viewcode-block" id="VonMisesPlasticElasticPathLoads"><a class="viewcode-back" href="../../../rvesimulator.benchmarks.html#rvesimulator.benchmarks.two_materials_sve.VonMisesPlasticElasticPathLoads">[docs]</a><span class="k">class</span> <span class="nc">VonMisesPlasticElasticPathLoads</span><span class="p">(</span><span class="n">SimulationBase</span><span class="p">):</span>
+<div class="viewcode-block" id="VonMisesPlasticElasticPathLoads.__init__"><a class="viewcode-back" href="../../../rvesimulator.benchmarks.html#rvesimulator.benchmarks.two_materials_sve.VonMisesPlasticElasticPathLoads.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Interface between python and abaqus of the Hollow plate case&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">main_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">folder_info</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;main_work_directory&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="s2">&quot;Data&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;script_path&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">rvesimulator</span><span class="o">.</span><span class="vm">__file__</span><span class="p">)</span> <span class="o">+</span> \
+                <span class="s2">&quot;/scriptbase&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;current_work_directory&quot;</span><span class="p">:</span> <span class="s2">&quot;point_1&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;sim_path&quot;</span><span class="p">:</span> <span class="s2">&quot;benchmark_abaqus_scripts.two_materials_sve&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;sim_script&quot;</span><span class="p">:</span> <span class="s2">&quot;VonMisesPlasticElasticPathLoads&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;post_path&quot;</span><span class="p">:</span> <span class="s2">&quot;basic_analysis_scripts.post_process&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;post_script&quot;</span><span class="p">:</span> <span class="s2">&quot;PostProcess2D&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_sim_info</span><span class="p">(</span><span class="n">yield_stress</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="VonMisesPlasticElasticPathLoads.update_sim_info"><a class="viewcode-back" href="../../../rvesimulator.benchmarks.html#rvesimulator.benchmarks.two_materials_sve.VonMisesPlasticElasticPathLoads.update_sim_info">[docs]</a>    <span class="k">def</span> <span class="nf">update_sim_info</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">size</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">radius</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.15</span><span class="p">,</span>
+        <span class="n">sve_geometry_benchmark</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;task1&quot;</span><span class="p">,</span>
+        <span class="n">youngs_modulus_matrix</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span>
+        <span class="n">poisson_ratio_matrix</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">,</span>
+        <span class="n">youngs_modulus_fiber</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">poisson_ratio_fiber</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.19</span><span class="p">,</span>
+        <span class="n">mesh_partition</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span>
+        <span class="n">strain</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+        <span class="n">strain_amplitude</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">num_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="n">simulation_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">num_cpu</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">platform</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;ubuntu&quot;</span><span class="p">,</span>
+        <span class="n">hardening_law</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;swift&quot;</span><span class="p">,</span>
+        <span class="n">print_info</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># get the micro_structure information</span>
+        <span class="n">micro_structure_generator</span> <span class="o">=</span> <span class="n">CircleSVEMicroStructure</span><span class="p">(</span>
+            <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">,</span>
+            <span class="n">radius</span><span class="o">=</span><span class="n">radius</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">microstructure_info</span> <span class="o">=</span> <span class="n">micro_structure_generator</span><span class="o">.</span><span class="n">location_information</span><span class="p">(</span>
+            <span class="n">task</span><span class="o">=</span><span class="n">sve_geometry_benchmark</span>
+        <span class="p">)</span>
+        <span class="c1"># generate the hardening law</span>
+        <span class="n">hardening</span> <span class="o">=</span> <span class="n">HardeningLaw</span><span class="p">()</span>
+        <span class="n">law_function</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">hardening</span><span class="p">,</span> <span class="n">hardening_law</span><span class="p">)</span>
+        <span class="n">hardening_table</span> <span class="o">=</span> <span class="n">law_function</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">sim_paras</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;job_name&quot;</span><span class="p">:</span> <span class="s2">&quot;two_materials_sve&quot;</span><span class="p">,</span>
+                          <span class="s2">&quot;location_information&quot;</span><span class="p">:</span> <span class="n">microstructure_info</span><span class="p">,</span>
+                          <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="n">size</span><span class="p">,</span>
+                          <span class="s2">&quot;youngs_modulus_matrix&quot;</span><span class="p">:</span> <span class="n">youngs_modulus_matrix</span><span class="p">,</span>
+                          <span class="s2">&quot;poisson_ratio_matrix&quot;</span><span class="p">:</span> <span class="n">poisson_ratio_matrix</span><span class="p">,</span>
+                          <span class="s2">&quot;hardening_law&quot;</span><span class="p">:</span> <span class="n">hardening_law</span><span class="p">,</span>
+                          <span class="s2">&quot;hardening_paras&quot;</span><span class="p">:</span> <span class="n">kwargs</span><span class="p">,</span>
+                          <span class="s2">&quot;youngs_modulus_fiber&quot;</span><span class="p">:</span> <span class="n">youngs_modulus_fiber</span><span class="p">,</span>
+                          <span class="s2">&quot;poisson_ratio_fiber&quot;</span><span class="p">:</span> <span class="n">poisson_ratio_fiber</span><span class="p">,</span>
+                          <span class="s2">&quot;mesh_partition&quot;</span><span class="p">:</span> <span class="n">mesh_partition</span><span class="p">,</span>
+                          <span class="s2">&quot;strain&quot;</span><span class="p">:</span> <span class="n">strain</span><span class="p">,</span>
+                          <span class="s2">&quot;strain_amplitude&quot;</span><span class="p">:</span> <span class="n">strain_amplitude</span><span class="p">,</span>
+                          <span class="s2">&quot;num_steps&quot;</span><span class="p">:</span> <span class="n">num_steps</span><span class="p">,</span>
+                          <span class="s2">&quot;simulation_time&quot;</span><span class="p">:</span> <span class="n">simulation_time</span><span class="p">,</span>
+                          <span class="s2">&quot;num_cpu&quot;</span><span class="p">:</span> <span class="n">num_cpu</span><span class="p">,</span>
+                          <span class="s2">&quot;platform&quot;</span><span class="p">:</span> <span class="n">platform</span><span class="p">,</span> <span class="p">}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">sim_info</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;job_name&quot;</span><span class="p">:</span> <span class="s2">&quot;two_materials_sve&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;location_information&quot;</span><span class="p">:</span> <span class="n">microstructure_info</span><span class="p">,</span>
+            <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="n">size</span><span class="p">,</span>
+            <span class="s2">&quot;youngs_modulus_matrix&quot;</span><span class="p">:</span> <span class="n">youngs_modulus_matrix</span><span class="p">,</span>
+            <span class="s2">&quot;poisson_ratio_matrix&quot;</span><span class="p">:</span> <span class="n">poisson_ratio_matrix</span><span class="p">,</span>
+            <span class="s2">&quot;youngs_modulus_fiber&quot;</span><span class="p">:</span> <span class="n">youngs_modulus_fiber</span><span class="p">,</span>
+            <span class="s2">&quot;poisson_ratio_fiber&quot;</span><span class="p">:</span> <span class="n">poisson_ratio_fiber</span><span class="p">,</span>
+            <span class="s2">&quot;mesh_partition&quot;</span><span class="p">:</span> <span class="n">mesh_partition</span><span class="p">,</span>
+            <span class="s2">&quot;hardening_table&quot;</span><span class="p">:</span> <span class="n">hardening_table</span><span class="p">,</span>
+            <span class="s2">&quot;num_steps&quot;</span><span class="p">:</span> <span class="n">num_steps</span><span class="p">,</span>
+            <span class="s2">&quot;simulation_time&quot;</span><span class="p">:</span> <span class="n">simulation_time</span><span class="p">,</span>
+            <span class="s2">&quot;strain&quot;</span><span class="p">:</span> <span class="n">strain</span><span class="p">,</span>
+            <span class="s2">&quot;strain_amplitude&quot;</span><span class="p">:</span> <span class="n">strain_amplitude</span><span class="p">,</span>
+            <span class="s2">&quot;num_cpu&quot;</span><span class="p">:</span> <span class="n">num_cpu</span><span class="p">,</span>
+            <span class="s2">&quot;platform&quot;</span><span class="p">:</span> <span class="n">platform</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="c1"># print simulation information to screen</span>
+        <span class="k">if</span> <span class="n">print_info</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_print_sim_info</span><span class="p">(</span><span class="n">info</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sim_paras</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Jiaxiang Yi.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

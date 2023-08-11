@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>abaqus2py &mdash; rvesimulator 0.0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/readthedocs-custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="microstructure" href="microstructure.html" />
+    <link rel="prev" title="Installation" href="get_started.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            rvesimulator
+          </a>
+              <div class="version">
+                0.0.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Overview:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Summary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html#statement-of-need">Statement of need</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html#authorship">Authorship</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html#community-support">Community Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html#license">License</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Get started:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="get_started.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">abaqus to python:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">abaqus2py</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#script-requirements">script requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#basic-usage">basic usage</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">microstructure:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="microstructure.html">microstructure</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">benchmarks:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="hollow_plate_sve.html">hollow_plate_sve</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="rvesimulator.html">rvesimulator</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">rvesimulator</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">abaqus2py</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="abaqus2py">
+<h1>abaqus2py<a class="headerlink" href="#abaqus2py" title="Permalink to this heading">¶</a></h1>
+<p>This module is most important part of this repo, it used to run abaqus python script with out abaqus GUI.
+Ideally, this module can handle any abaqus simulation as long as you have a well defined abaqus script.
+However, in order to make your script work with this module, you need to modify your script a little bit.</p>
+<section id="script-requirements">
+<h2>script requirements<a class="headerlink" href="#script-requirements" title="Permalink to this heading">¶</a></h2>
+<ol class="arabic simple">
+<li><p>if you prefer to use <strong>functional</strong> code, you have to modify your script into the following format:</p></li>
+</ol>
+<div class="highlight-python notranslate" id="abaqus-sim-function-py"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">simulation</span><span class="p">(</span><span class="n">sim_info</span><span class="p">):</span>
+    <span class="c1"># note: name of the function is optinal, you can name it whatever you want</span>
+    <span class="c1"># sim_info is a dictionary contains all variables you need to run your simulation</span>
+    <span class="c1"># for example:</span>
+    <span class="c1"># sim_info = {&quot;youngs_modulus&quot;: 1000, &quot;poisson_ratio&quot;: 0.3}</span>
+    <span class="n">youngs_modulus</span> <span class="o">=</span> <span class="n">sim_info</span><span class="p">[</span><span class="s2">&quot;youngs_modulus&quot;</span><span class="p">]</span>
+    <span class="n">poisson_ratio</span> <span class="o">=</span> <span class="n">sim_info</span><span class="p">[</span><span class="s2">&quot;poisson_ratio&quot;</span><span class="p">]</span>
+    <span class="c1"># write your whole abaqus script below:</span>
+    <span class="o">...</span>
+
+<span class="k">def</span> <span class="nf">post_process</span><span class="p">(</span><span class="n">job_name</span><span class="p">):</span>
+    <span class="c1"># note: name of the function is optinal, you can name it whatever you want</span>
+    <span class="c1"># job_name is the name of the job you just run</span>
+
+    <span class="c1"># write your post process code here</span>
+    <span class="o">...</span>
+
+    <span class="c1"># finally, return the result you want to save into pickle file</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;stress&quot;</span><span class="p">:</span> <span class="n">stress</span><span class="p">,</span> <span class="s2">&quot;strain&quot;</span><span class="p">:</span> <span class="n">strain</span><span class="p">}</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;results.p&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p>if you prefer to use <strong>objected-oriented</strong> code, you have to modify your script into the following format:</p></li>
+</ol>
+<div class="highlight-python notranslate" id="abaqus-sim-main-py"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Simulation</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sim_info</span><span class="p">):</span>
+        <span class="c1"># sim_info is a dictionary contains all variables you need to run your simulation</span>
+        <span class="c1"># for example:</span>
+        <span class="c1"># sim_info = {&quot;youngs_modulus&quot;: 1000,</span>
+        <span class="c1">#              &quot;poisson_ratio&quot;: 0.3,</span>
+        <span class="c1">#              &quot;platform&quot;: &quot;ubuntu&quot;,</span>
+        <span class="c1">#              &quot;job_name&quot;: &quot;job&quot;}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">youngs_modulus</span> <span class="o">=</span> <span class="n">sim_info</span><span class="p">[</span><span class="s2">&quot;youngs_modulus&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">poisson_ratio</span> <span class="o">=</span> <span class="n">sim_info</span><span class="p">[</span><span class="s2">&quot;poisson_ratio&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">platform</span> <span class="o">=</span> <span class="n">sim_info</span><span class="p">[</span><span class="s2">&quot;platform&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">job_name</span> <span class="o">=</span> <span class="n">sim_info</span><span class="p">[</span><span class="s2">&quot;job_name&quot;</span><span class="p">]</span>
+        <span class="c1"># write write other variables you need here</span>
+        <span class="o">...</span>
+        <span class="c1"># do simulation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simulation</span><span class="p">()</span>
+        <span class="c1"># do raw post process right after simulation</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s2">&quot;cluster&quot;</span><span class="p">:</span>
+            <span class="n">PostProcess</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">job_name</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">simulation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># write your whole abaqus script below:</span>
+        <span class="o">...</span>
+
+<span class="k">class</span> <span class="nc">PostProcess</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">post_process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_name</span><span class="p">):</span>
+        <span class="c1"># job_name is the name of the job you just run</span>
+        <span class="c1"># write your post process code here</span>
+        <span class="o">...</span>
+
+        <span class="c1"># finally, return the result you want to save into pickle file</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;stress&quot;</span><span class="p">:</span> <span class="n">stress</span><span class="p">,</span> <span class="s2">&quot;strain&quot;</span><span class="p">:</span> <span class="n">strain</span><span class="p">}</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;results.p&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="basic-usage">
+<h2>basic usage<a class="headerlink" href="#basic-usage" title="Permalink to this heading">¶</a></h2>
+<p>Once you have your script ready as the following format, then you can put your script to a folder you want. Here I want
+to show a simple example about the folder structure of your own script and <a class="reference internal" href="#"><span class="doc">abaqus2py</span></a> module.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>├── abaqus_sim_main/
+|   ├── case.py
+│   │   __init__.py
+│   │
+├── rvesimulator/
+│   ├── src/
+│   │   ├── abaqus2py/
+│   │   ├── microstructure/
+│   │   └── ...
+│   ├── docs/
+│   └── README.md
+├── LICENSE
+└── .gitignore
+</pre></div>
+</div>
+<p>The above case, the folder <strong>abaqus_script</strong> is parallel to the repo folder <strong>rvesimulator</strong>.
+Then you can run your simulation by:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rvesimulator.abaqus2py.abaqus_simulator</span> <span class="kn">import</span> <span class="n">AbaqusSimulator</span>
+<span class="n">folder_info</span> <span class="o">=</span> <span class="p">{</span>
+<span class="s2">&quot;main_work_directory&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="s2">&quot;Data&quot;</span><span class="p">),</span> <span class="c1"># you can change where to do your simulation here</span>
+<span class="s2">&quot;script_path&quot;</span><span class="p">:</span> <span class="s2">&quot;.../abaqus_script&quot;</span><span class="p">,</span> <span class="c1"># absolute path to your script folder</span>
+<span class="s2">&quot;current_work_directory&quot;</span><span class="p">:</span> <span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="c1"># random name</span>
+<span class="s2">&quot;sim_path&quot;</span><span class="p">:</span> <span class="s2">&quot;case&quot;</span><span class="p">,</span> <span class="c1"># important part, this is the name of your script</span>
+<span class="s2">&quot;sim_script&quot;</span><span class="p">:</span> <span class="s2">&quot;Simulation&quot;</span><span class="p">,</span> <span class="c1"># important</span>
+<span class="s2">&quot;post_path&quot;</span><span class="p">:</span> <span class="s2">&quot;case&quot;</span><span class="p">,</span><span class="c1"># important</span>
+<span class="s2">&quot;post_script&quot;</span><span class="p">:</span> <span class="s2">&quot;PostProcess&quot;</span><span class="p">,</span><span class="c1"># important</span>
+<span class="p">}</span>
+<span class="n">sim_info</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">job_name</span><span class="p">:</span> <span class="s2">&quot;job&quot;</span><span class="p">,</span> <span class="c1"># important</span>
+            <span class="n">platform</span><span class="p">:</span> <span class="s2">&quot;ubuntu&quot;</span><span class="p">,</span> <span class="c1"># important</span>
+            <span class="p">}</span>
+<span class="c1"># intialize the simulator</span>
+<span class="n">simulator</span> <span class="o">=</span> <span class="n">AbaqusSimulator</span><span class="p">(</span><span class="n">sim_info</span><span class="o">=</span><span class="n">sim_info</span><span class="p">,</span> <span class="n">folder_info</span><span class="o">=</span><span class="n">folder_info</span><span class="p">)</span>
+<span class="c1"># run the simulation</span>
+<span class="n">simulator</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="c1"># read back the results</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">simulator</span><span class="o">.</span><span class="n">read_back_results</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>where <code class="docutils literal notranslate"><span class="pre">folder_info</span></code> is a dictionary indicates where to find your abaqus script and where to run and save your simulation.
+In the way, it has a bit strict requirement on the folder structure of your script. For the <code class="docutils literal notranslate"><span class="pre">sim_info</span></code> dictionary, it encode the design
+of experiment to abaqus simulation. Also, the <strong>job_name</strong> and <strong>platform</strong> are important keys in the dictionary, you have to include them in your
+<code class="docutils literal notranslate"><span class="pre">sim_info</span></code> dictionary.</p>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="get_started.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="microstructure.html" class="btn btn-neutral float-right" title="microstructure" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Jiaxiang Yi.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

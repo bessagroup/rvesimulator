@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>hollow_plate_sve &mdash; rvesimulator 0.0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/readthedocs-custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="rvesimulator" href="rvesimulator.html" />
+    <link rel="prev" title="microstructure" href="microstructure.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            rvesimulator
+          </a>
+              <div class="version">
+                0.0.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Overview:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Summary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html#statement-of-need">Statement of need</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html#authorship">Authorship</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html#community-support">Community Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html#license">License</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Get started:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="get_started.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">abaqus to python:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="abaqus2py.html">abaqus2py</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">microstructure:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="microstructure.html">microstructure</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">benchmarks:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">hollow_plate_sve</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#problem-description">1. problem description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#implementation">2. Implementation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#other-cases-based-on-the-same-microstructure">2. Other cases based on the same microstructure</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="rvesimulator.html">rvesimulator</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">rvesimulator</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">hollow_plate_sve</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="hollow-plate-sve">
+<h1>hollow_plate_sve<a class="headerlink" href="#hollow-plate-sve" title="Permalink to this heading">¶</a></h1>
+<section id="problem-description">
+<h2>1. problem description<a class="headerlink" href="#problem-description" title="Permalink to this heading">¶</a></h2>
+<p>In this part, we are trying to show how the developed RVE simulator works by a simple RVE case called hollow plate RVE.
+The schematic of the RVE is given by:</p>
+<a class="reference internal image-reference" href="_images/hollow_plate_rve.png"><img alt="hollow_plate_rve" class="align-center" src="_images/hollow_plate_rve.png" style="width: 50%;" /></a>
+<p><strong>Geometry parameters to describe the RVE</strong></p>
+<ol class="arabic simple">
+<li><p>length: <span class="math notranslate nohighlight">\(L\)</span>, width: <span class="math notranslate nohighlight">\(W\)</span>. Usually, <span class="math notranslate nohighlight">\(L=W\)</span>; therefore, we only use one parameter (size) to define the shape of RVE</p></li>
+<li><p>radius: <span class="math notranslate nohighlight">\(R\)</span>, which is the radius of the plate inside the square</p></li>
+</ol>
+<p><strong>Other parameters for simulation</strong></p>
+<ol class="arabic simple">
+<li><dl class="simple">
+<dt>Material parameters:</dt><dd><ul class="simple">
+<li><p>Young’s modulus, the default value is <span class="math notranslate nohighlight">\(100 \mathrm{Mpa}\)</span></p></li>
+<li><p>Poission ratio , the default value is <span class="math notranslate nohighlight">\(0.3\)</span></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Loading:</dt><dd><p><span class="math notranslate nohighlight">\([ E_{xx}, E_{yy}, E_{xy} ]\)</span></p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Mesh:</dt><dd><ul class="simple">
+<li><p>mesh portion: divisions of every edges when meshing</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ol>
+</section>
+<section id="implementation">
+<h2>2. Implementation<a class="headerlink" href="#implementation" title="Permalink to this heading">¶</a></h2>
+<p>The implementation of the RVE simulator is based on the following steps:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># import the function</span>
+<span class="kn">from</span> <span class="nn">rvesimulator.benchmarks.hollow_plate_sve</span> <span class="kn">import</span> <span class="n">ElasticRegularLoads</span>
+<span class="c1"># create the problem</span>
+<span class="n">problem</span> <span class="o">=</span> <span class="n">ElasticRegularLoads</span><span class="p">()</span>
+<span class="c1"># set the parameters</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">update_sim_info</span><span class="p">(</span><span class="n">print_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="c1"># default simulation information</span>
+<span class="p">{</span>
+<span class="s2">&quot;job_name&quot;</span><span class="p">:</span> <span class="s2">&quot;hollow_plate&quot;</span><span class="p">,</span>
+<span class="s2">&quot;radius&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span>
+<span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+<span class="s2">&quot;youngs_modulus&quot;</span><span class="p">:</span> <span class="mf">100.0</span><span class="p">,</span>
+<span class="s2">&quot;poisson_ratio&quot;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span>
+<span class="s2">&quot;mesh_partition&quot;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span>
+<span class="s2">&quot;strain&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="mf">0.05</span><span class="p">,</span>
+    <span class="mf">0.05</span><span class="p">,</span>
+    <span class="mf">0.05</span>
+<span class="p">],</span>
+<span class="s2">&quot;num_cpu&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+<span class="s2">&quot;platform&quot;</span><span class="p">:</span> <span class="s2">&quot;ubuntu&quot;</span>
+<span class="p">}</span>
+<span class="c1"># run the simulation by changing the parameters</span>
+<span class="n">samples</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;radius&quot;</span><span class="p">:</span><span class="mf">0.15</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span><span class="mf">1.0</span><span class="p">}</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">run_simulation</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">folder_index</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+<span class="o">&gt;&gt;&gt;</span>
+<span class="n">dict_keys</span><span class="p">([</span><span class="s1">&#39;total_time&#39;</span><span class="p">,</span> <span class="s1">&#39;stress&#39;</span><span class="p">,</span> <span class="s1">&#39;plastic_energy&#39;</span><span class="p">,</span> <span class="s1">&#39;deformation_gradient&#39;</span><span class="p">,</span> <span class="s1">&#39;strain&#39;</span><span class="p">,</span> <span class="s1">&#39;total_volume&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This example gives you an intuition on how the rvesimulator works by integrating all the modulus, <code class="xref py py-attr docutils literal notranslate"><span class="pre">rvesimulator.abaqus2py</span></code>,
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">rvesimulator.microstructure</span></code>, and some default made abaqus scripts which is in the <strong>scriptbase</strong> folder.</p>
+</div>
+</section>
+<section id="other-cases-based-on-the-same-microstructure">
+<h2>2. Other cases based on the same microstructure<a class="headerlink" href="#other-cases-based-on-the-same-microstructure" title="Permalink to this heading">¶</a></h2>
+<p>As we know the, we can change the material properties and loading conditions to create other RVE simulations. Here more
+examples are given based on the same hollow plate microstructure:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>RVE benchmarks</p></th>
+<th class="head"><p>API of the benchmarks</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>VonMisesPlasticRegularLoads</p></td>
+<td><p><a class="reference internal" href="rvesimulator.benchmarks.html#rvesimulator.benchmarks.hollow_plate_sve.VonMisesPlasticRegularLoads" title="rvesimulator.benchmarks.hollow_plate_sve.VonMisesPlasticRegularLoads"><code class="xref py py-class docutils literal notranslate"><span class="pre">rvesimulator.benchmarks.hollow_plate_sve.VonMisesPlasticRegularLoads</span></code></a></p></td>
+</tr>
+<tr class="row-odd"><td><p>ElasticRegularLoads</p></td>
+<td><p><a class="reference internal" href="rvesimulator.benchmarks.html#rvesimulator.benchmarks.hollow_plate_sve.ElasticRegularLoads" title="rvesimulator.benchmarks.hollow_plate_sve.ElasticRegularLoads"><code class="xref py py-class docutils literal notranslate"><span class="pre">rvesimulator.benchmarks.hollow_plate_sve.ElasticRegularLoads</span></code></a></p></td>
+</tr>
+<tr class="row-even"><td><p>VonMisesPlasticPathLoads</p></td>
+<td><p><a class="reference internal" href="rvesimulator.benchmarks.html#rvesimulator.benchmarks.hollow_plate_sve.VonMisesPlasticPathLoads" title="rvesimulator.benchmarks.hollow_plate_sve.VonMisesPlasticPathLoads"><code class="xref py py-class docutils literal notranslate"><span class="pre">rvesimulator.benchmarks.hollow_plate_sve.VonMisesPlasticPathLoads</span></code></a></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="microstructure.html" class="btn btn-neutral float-left" title="microstructure" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="rvesimulator.html" class="btn btn-neutral float-right" title="rvesimulator" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Jiaxiang Yi.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

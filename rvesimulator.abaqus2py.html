@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>rvesimulator.abaqus2py &mdash; rvesimulator 0.0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/readthedocs-custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="rvesimulator.additions" href="rvesimulator.additions.html" />
+    <link rel="prev" title="rvesimulator" href="rvesimulator.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            rvesimulator
+          </a>
+              <div class="version">
+                0.0.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Overview:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Summary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html#statement-of-need">Statement of need</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html#authorship">Authorship</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html#community-support">Community Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html#license">License</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Get started:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="get_started.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">abaqus to python:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="abaqus2py.html">abaqus2py</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">microstructure:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="microstructure.html">microstructure</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">benchmarks:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="hollow_plate_sve.html">hollow_plate_sve</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="rvesimulator.html">rvesimulator</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">rvesimulator.abaqus2py</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-rvesimulator.abaqus2py.abaqus_simulator">rvesimulator.abaqus2py.abaqus_simulator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-rvesimulator.abaqus2py.simulator_interface">rvesimulator.abaqus2py.simulator_interface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-rvesimulator.abaqus2py.utils">rvesimulator.abaqus2py.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="rvesimulator.additions.html">rvesimulator.additions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rvesimulator.benchmarks.html">rvesimulator.benchmarks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rvesimulator.microstructure.html">rvesimulator.microstructure</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">rvesimulator</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="rvesimulator.html">rvesimulator</a></li>
+      <li class="breadcrumb-item active">rvesimulator.abaqus2py</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="rvesimulator-abaqus2py">
+<h1>rvesimulator.abaqus2py<a class="headerlink" href="#rvesimulator-abaqus2py" title="Permalink to this heading">¶</a></h1>
+<section id="module-rvesimulator.abaqus2py.abaqus_simulator">
+<span id="rvesimulator-abaqus2py-abaqus-simulator"></span><h2>rvesimulator.abaqus2py.abaqus_simulator<a class="headerlink" href="#module-rvesimulator.abaqus2py.abaqus_simulator" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="rvesimulator.abaqus2py.abaqus_simulator.AbaqusSimulator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">AbaqusSimulator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sim_info</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder_info</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/abaqus2py/abaqus_simulator.html#AbaqusSimulator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.abaqus2py.abaqus_simulator.AbaqusSimulator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#rvesimulator.abaqus2py.simulator_interface.Simulator" title="rvesimulator.abaqus2py.simulator_interface.Simulator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Simulator</span></code></a>, <a class="reference internal" href="#rvesimulator.abaqus2py.simulator_interface.AssertInputs" title="rvesimulator.abaqus2py.simulator_interface.AssertInputs"><code class="xref py py-class docutils literal notranslate"><span class="pre">AssertInputs</span></code></a></p>
+<p>Abaqus simulator</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Simulator</strong> (<em>class</em>) – simulator interface</p></li>
+<li><p><strong>AssertInputs</strong> (<em>class</em>) – assert inputs</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">rvesimulator.abaqus2py.simulator_interface</span> <span class="kn">import</span> <span class="n">AbaqusSimulator</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sim_info</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">folder_info</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simulator</span> <span class="o">=</span> <span class="n">AbaqusSimulator</span><span class="p">(</span><span class="n">sim_info</span><span class="o">=</span><span class="n">sim_info</span><span class="p">,</span> <span class="n">folder_info</span><span class="o">=</span><span class="n">folder_info</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simulator</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simulator</span><span class="o">.</span><span class="n">read_back_results</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>initialization of abaqus simulator class</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sim_info</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><em>dict</em></a>) – dict for defining abaqus simulation</p></li>
+<li><p><strong>folder_info</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><em>dict</em></a>) – dict indicating abaqus scripts and working folders</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.abaqus2py.abaqus_simulator.AbaqusSimulator.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sim_info</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder_info</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/abaqus2py/abaqus_simulator.html#AbaqusSimulator.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.abaqus2py.abaqus_simulator.AbaqusSimulator.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>initialization of abaqus simulator class</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sim_info</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><em>dict</em></a>) – dict for defining abaqus simulation</p></li>
+<li><p><strong>folder_info</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><em>dict</em></a>) – dict indicating abaqus scripts and working folders</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.abaqus2py.abaqus_simulator.AbaqusSimulator._run_abaqus_simulation">
+<span class="sig-name descname"><span class="pre">_run_abaqus_simulation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">command</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sleep_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refresh_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/abaqus2py/abaqus_simulator.html#AbaqusSimulator._run_abaqus_simulation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.abaqus2py.abaqus_simulator.AbaqusSimulator._run_abaqus_simulation" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.abaqus2py.abaqus_simulator.AbaqusSimulator.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sleep_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refresh_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/abaqus2py/abaqus_simulator.html#AbaqusSimulator.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.abaqus2py.abaqus_simulator.AbaqusSimulator.execute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that calls the FEM simulator the pre-processing</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.abaqus2py.abaqus_simulator.AbaqusSimulator.kill_abaqus_process">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">kill_abaqus_process</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/abaqus2py/abaqus_simulator.html#AbaqusSimulator.kill_abaqus_process"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.abaqus2py.abaqus_simulator.AbaqusSimulator.kill_abaqus_process" title="Permalink to this definition">¶</a></dt>
+<dd><p>kill abaqus simulation process</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.abaqus2py.abaqus_simulator.AbaqusSimulator.make_new_script">
+<span class="sig-name descname"><span class="pre">make_new_script</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'simulation'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/abaqus2py/abaqus_simulator.html#AbaqusSimulator.make_new_script"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.abaqus2py.abaqus_simulator.AbaqusSimulator.make_new_script" title="Permalink to this definition">¶</a></dt>
+<dd><p>make a small python script for running abaqus</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – file name</p></li>
+<li><p><strong>status</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>, </em><em>optional</em>) – status of  simulation, by default “simulation”</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.abaqus2py.abaqus_simulator.AbaqusSimulator.post_process">
+<span class="sig-name descname"><span class="pre">post_process</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">delete_odb</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/abaqus2py/abaqus_simulator.html#AbaqusSimulator.post_process"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.abaqus2py.abaqus_simulator.AbaqusSimulator.post_process" title="Permalink to this definition">¶</a></dt>
+<dd><p>post process</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>delete_odb</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a><em>, </em><em>optional</em>) – delete odb file to save memory, by default True</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.abaqus2py.abaqus_simulator.AbaqusSimulator.read_back_results">
+<span class="sig-name descname"><span class="pre">read_back_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'results.p'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/abaqus2py/abaqus_simulator.html#AbaqusSimulator.read_back_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.abaqus2py.abaqus_simulator.AbaqusSimulator.read_back_results" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.abaqus2py.abaqus_simulator.AbaqusSimulator.remove_files">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">remove_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_types</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['.log',</span> <span class="pre">'.lck',</span> <span class="pre">'.SMABulk',</span> <span class="pre">'.rec',</span> <span class="pre">'.SMAFocus',</span> <span class="pre">'.exception',</span> <span class="pre">'.simlog',</span> <span class="pre">'.023',</span> <span class="pre">'.exception']</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/abaqus2py/abaqus_simulator.html#AbaqusSimulator.remove_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.abaqus2py.abaqus_simulator.AbaqusSimulator.remove_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>remove file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>directory</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – target folder</p></li>
+<li><p><strong>file_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – file name</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-rvesimulator.abaqus2py.simulator_interface">
+<span id="rvesimulator-abaqus2py-simulator-interface"></span><h2>rvesimulator.abaqus2py.simulator_interface<a class="headerlink" href="#module-rvesimulator.abaqus2py.simulator_interface" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="rvesimulator.abaqus2py.simulator_interface.AssertInputs">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">AssertInputs</span></span><a class="reference internal" href="_modules/rvesimulator/abaqus2py/simulator_interface.html#AssertInputs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.abaqus2py.simulator_interface.AssertInputs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.abaqus2py.simulator_interface.AssertInputs.is_cwd_in_folder_info">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_cwd_in_folder_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder_info</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/abaqus2py/simulator_interface.html#AssertInputs.is_cwd_in_folder_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.abaqus2py.simulator_interface.AssertInputs.is_cwd_in_folder_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>assert current_work_directory in folder_info dict</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>folder_info</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><em>dict</em></a>) – dict that contains all folder information</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.abaqus2py.simulator_interface.AssertInputs.is_inputs_proper_defined">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_inputs_proper_defined</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder_info</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sim_info</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/abaqus2py/simulator_interface.html#AssertInputs.is_inputs_proper_defined"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.abaqus2py.simulator_interface.AssertInputs.is_inputs_proper_defined" title="Permalink to this definition">¶</a></dt>
+<dd><p>assert inputs are properly defined</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.abaqus2py.simulator_interface.AssertInputs.is_job_name_in_sim_info">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_job_name_in_sim_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sim_info</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/abaqus2py/simulator_interface.html#AssertInputs.is_job_name_in_sim_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.abaqus2py.simulator_interface.AssertInputs.is_job_name_in_sim_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>assert job name in the folder dict</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sim_info</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><em>dict</em></a>) – dict that contains all folder information</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.abaqus2py.simulator_interface.AssertInputs.is_mwd_in_folder_info">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_mwd_in_folder_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder_info</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/abaqus2py/simulator_interface.html#AssertInputs.is_mwd_in_folder_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.abaqus2py.simulator_interface.AssertInputs.is_mwd_in_folder_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>assert main_work_directory in folder_info dict</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>folder_info</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><em>dict</em></a>) – dict that contains all folder information</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.abaqus2py.simulator_interface.AssertInputs.is_platform_in_sim_info">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_platform_in_sim_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sim_info</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/abaqus2py/simulator_interface.html#AssertInputs.is_platform_in_sim_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.abaqus2py.simulator_interface.AssertInputs.is_platform_in_sim_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>assert platform in the folder dict</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sim_info</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><em>dict</em></a>) – dict that contains all folder information</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.abaqus2py.simulator_interface.AssertInputs.is_post_path_in_folder_info">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_post_path_in_folder_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder_info</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/abaqus2py/simulator_interface.html#AssertInputs.is_post_path_in_folder_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.abaqus2py.simulator_interface.AssertInputs.is_post_path_in_folder_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>assert post_path in folder_info dict</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>folder_info</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><em>dict</em></a>) – dict that contains all folder information</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.abaqus2py.simulator_interface.AssertInputs.is_post_script_in_folder_info">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_post_script_in_folder_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder_info</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/abaqus2py/simulator_interface.html#AssertInputs.is_post_script_in_folder_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.abaqus2py.simulator_interface.AssertInputs.is_post_script_in_folder_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>assert post script in the folder_info dict</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>folder_info</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><em>dict</em></a>) – dict that contains all folder information</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.abaqus2py.simulator_interface.AssertInputs.is_script_path_in_folder_info">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_script_path_in_folder_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder_info</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/abaqus2py/simulator_interface.html#AssertInputs.is_script_path_in_folder_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.abaqus2py.simulator_interface.AssertInputs.is_script_path_in_folder_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>assert script_path in folder_info dict</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>folder_info</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><em>dict</em></a>) – dict that contains all folder information</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.abaqus2py.simulator_interface.AssertInputs.is_sim_path_in_folder_info">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_sim_path_in_folder_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder_info</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/abaqus2py/simulator_interface.html#AssertInputs.is_sim_path_in_folder_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.abaqus2py.simulator_interface.AssertInputs.is_sim_path_in_folder_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>assert sim_path in folder_info dict</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>folder_info</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><em>dict</em></a>) – dict that contains all folder information</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.abaqus2py.simulator_interface.AssertInputs.is_sim_script_in_folder_info">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_sim_script_in_folder_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder_info</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/abaqus2py/simulator_interface.html#AssertInputs.is_sim_script_in_folder_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.abaqus2py.simulator_interface.AssertInputs.is_sim_script_in_folder_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>assert sim_script in folder_info dict</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>folder_info</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><em>dict</em></a>) – dict that contains all folder information</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="rvesimulator.abaqus2py.simulator_interface.Simulator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Simulator</span></span><a class="reference internal" href="_modules/rvesimulator/abaqus2py/simulator_interface.html#Simulator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.abaqus2py.simulator_interface.Simulator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Base class for a FEM simulator</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.abaqus2py.simulator_interface.Simulator.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/abaqus2py/simulator_interface.html#Simulator.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.abaqus2py.simulator_interface.Simulator.execute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that calls the FEM simulator the pre-processing</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.abaqus2py.simulator_interface.Simulator.post_process">
+<span class="sig-name descname"><span class="pre">post_process</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/abaqus2py/simulator_interface.html#Simulator.post_process"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.abaqus2py.simulator_interface.Simulator.post_process" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that handles the post-processing</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.abaqus2py.simulator_interface.Simulator.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/abaqus2py/simulator_interface.html#Simulator.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.abaqus2py.simulator_interface.Simulator.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>run the simulation in one shot</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-rvesimulator.abaqus2py.utils">
+<span id="rvesimulator-abaqus2py-utils"></span><h2>rvesimulator.abaqus2py.utils<a class="headerlink" href="#module-rvesimulator.abaqus2py.utils" title="Permalink to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="rvesimulator.abaqus2py.utils.create_dir">
+<span class="sig-name descname"><span class="pre">create_dir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dir_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/abaqus2py/utils.html#create_dir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.abaqus2py.utils.create_dir" title="Permalink to this definition">¶</a></dt>
+<dd><p>create new directory</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>current_folder</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – current working folder</p></li>
+<li><p><strong>dirname</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – new folder name</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>path of created folder</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="rvesimulator.abaqus2py.utils.print_banner">
+<span class="sig-name descname"><span class="pre">print_banner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sign</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'#'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/abaqus2py/utils.html#print_banner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.abaqus2py.utils.print_banner" title="Permalink to this definition">¶</a></dt>
+<dd><p>print banner</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – string output to the screen</p></li>
+<li><p><strong>sign</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>, </em><em>optional</em>) – pattern, by default “#”</p></li>
+<li><p><strong>length</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a><em>, </em><em>optional</em>) – length of output, by default 50</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="rvesimulator.abaqus2py.utils.write_json">
+<span class="sig-name descname"><span class="pre">write_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sim_info</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/abaqus2py/utils.html#write_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.abaqus2py.utils.write_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>write json file for abaqus</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sim_info</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><em>dict</em></a>) – dict that contains all simulation information</p></li>
+<li><p><strong>file_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – file name of json file</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="rvesimulator.html" class="btn btn-neutral float-left" title="rvesimulator" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="rvesimulator.additions.html" class="btn btn-neutral float-right" title="rvesimulator.additions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Jiaxiang Yi.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>rvesimulator.microstructure &mdash; rvesimulator 0.0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/readthedocs-custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="rvesimulator.benchmarks" href="rvesimulator.benchmarks.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            rvesimulator
+          </a>
+              <div class="version">
+                0.0.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Overview:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Summary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html#statement-of-need">Statement of need</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html#authorship">Authorship</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html#community-support">Community Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html#license">License</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Get started:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="get_started.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">abaqus to python:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="abaqus2py.html">abaqus2py</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">microstructure:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="microstructure.html">microstructure</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">benchmarks:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="hollow_plate_sve.html">hollow_plate_sve</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="rvesimulator.html">rvesimulator</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="rvesimulator.abaqus2py.html">rvesimulator.abaqus2py</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rvesimulator.additions.html">rvesimulator.additions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rvesimulator.benchmarks.html">rvesimulator.benchmarks</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">rvesimulator.microstructure</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-rvesimulator.microstructure.base">rvesimulator.microstructure.base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-rvesimulator.microstructure.circle_particles">rvesimulator.microstructure.circle_particles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-rvesimulator.microstructure.shpere_particles">rvesimulator.microstructure.shpere_particles</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">rvesimulator</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="rvesimulator.html">rvesimulator</a></li>
+      <li class="breadcrumb-item active">rvesimulator.microstructure</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="rvesimulator-microstructure">
+<h1>rvesimulator.microstructure<a class="headerlink" href="#rvesimulator-microstructure" title="Permalink to this heading">¶</a></h1>
+<section id="module-rvesimulator.microstructure.base">
+<span id="rvesimulator-microstructure-base"></span><h2>rvesimulator.microstructure.base<a class="headerlink" href="#module-rvesimulator.microstructure.base" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="rvesimulator.microstructure.base.MicrosctuctureGenerator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MicrosctuctureGenerator</span></span><a class="reference internal" href="_modules/rvesimulator/microstructure/base.html#MicrosctuctureGenerator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.microstructure.base.MicrosctuctureGenerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>base class of mirostructure generator</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.microstructure.base.MicrosctuctureGenerator.circle_plot">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">circle_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fibers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vol_frac</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_figure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'microstrcuture.png'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/microstructure/base.html#MicrosctuctureGenerator.circle_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.microstructure.base.MicrosctuctureGenerator.circle_plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>2d rve plot for circle inclusion</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fibers</strong> (<em>np.ndarray</em>) – fiber locations/positions</p></li>
+<li><p><strong>length</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – length of the rve</p></li>
+<li><p><strong>width</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – with of the rve</p></li>
+<li><p><strong>vol_frac</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – reached volume fraction</p></li>
+<li><p><strong>save_figure</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a><em>, </em><em>optional</em>) – save figure , by default False</p></li>
+<li><p><strong>fig_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>, </em><em>optional</em>) – figure name , by default “microstrcuture.png”</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.microstructure.base.MicrosctuctureGenerator.generate_microstructure">
+<span class="sig-name descname"><span class="pre">generate_microstructure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/microstructure/base.html#MicrosctuctureGenerator.generate_microstructure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.microstructure.base.MicrosctuctureGenerator.generate_microstructure" title="Permalink to this definition">¶</a></dt>
+<dd><p>generating micro-structure</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>seed</strong> (<em>any</em><em>, </em><em>optional</em>) – seed generator or number , by default None</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.microstructure.base.MicrosctuctureGenerator.plot_microstructure">
+<span class="sig-name descname"><span class="pre">plot_microstructure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_figure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'RVE.png'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/microstructure/base.html#MicrosctuctureGenerator.plot_microstructure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.microstructure.base.MicrosctuctureGenerator.plot_microstructure" title="Permalink to this definition">¶</a></dt>
+<dd><p>plot figure for RVE</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_figure</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a><em>, </em><em>optional</em>) – save figure or not , by default False</p></li>
+<li><p><strong>fig_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>, </em><em>optional</em>) – figure name, by default “RVE.png”</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NotImplementedError" title="(in Python v3.11)"><strong>NotImplementedError</strong></a> – error report</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.microstructure.base.MicrosctuctureGenerator.rgmsh_plot">
+<span class="sig-name descname"><span class="pre">rgmsh_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rgmsh.png'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwarg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/microstructure/base.html#MicrosctuctureGenerator.rgmsh_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.microstructure.base.MicrosctuctureGenerator.rgmsh_plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>contour or voxel plot of the discrete microstructure</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_fig</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a><em>, </em><em>optional</em>) – save figure, by default False</p></li>
+<li><p><strong>fig_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>, </em><em>optional</em>) – figure name, by default “rgmsh.png”</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.microstructure.base.MicrosctuctureGenerator.sphere_coordinate">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sphere_coordinate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">location_information</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/microstructure/base.html#MicrosctuctureGenerator.sphere_coordinate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.microstructure.base.MicrosctuctureGenerator.sphere_coordinate" title="Permalink to this definition">¶</a></dt>
+<dd><p>generate coordinate of sphere</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>location_information</strong> (<em>np.ndarray</em>) – a numpy array contains center and radius info of
+a sphere [x, y, z, r]</p></li>
+<li><p><strong>Returns</strong> – </p></li>
+<li><p><strong>-------ss</strong> – </p></li>
+<li><p><strong>tuple</strong> – coordinate of x, y, z</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.microstructure.base.MicrosctuctureGenerator.sphere_plot">
+<span class="sig-name descname"><span class="pre">sphere_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fibers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vol_frac</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_figure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cubic.png'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/microstructure/base.html#MicrosctuctureGenerator.sphere_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.microstructure.base.MicrosctuctureGenerator.sphere_plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>plot 3d rve with sphere inclusion</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>location_information</strong> (<em>np.ndarray</em>) – location information</p></li>
+<li><p><strong>length</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – length of cubic</p></li>
+<li><p><strong>width</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – width of cubic</p></li>
+<li><p><strong>height</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – height of cubic</p></li>
+<li><p><strong>vol_frac</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – volume fraction</p></li>
+<li><p><strong>save_figure</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a><em>, </em><em>optional</em>) – a flag to indicate if we want save the figure or not,
+by default False</p></li>
+<li><p><strong>fig_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>, </em><em>optional</em>) – fig name, by default “cubic_rve.png”</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.microstructure.base.MicrosctuctureGenerator.to_abaqus_format">
+<span class="sig-name descname"><span class="pre">to_abaqus_format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'micro_structure_info.json'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/microstructure/base.html#MicrosctuctureGenerator.to_abaqus_format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.microstructure.base.MicrosctuctureGenerator.to_abaqus_format" title="Permalink to this definition">¶</a></dt>
+<dd><p>convert microstructure to abaqus format</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>, </em><em>optional</em>) – file name, by default “micro_structure_info.json”</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NotImplementedError" title="(in Python v3.11)"><strong>NotImplementedError</strong></a> – error report</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.microstructure.base.MicrosctuctureGenerator.to_crate_format">
+<span class="sig-name descname"><span class="pre">to_crate_format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'microstructure.rgmsh'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/microstructure/base.html#MicrosctuctureGenerator.to_crate_format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.microstructure.base.MicrosctuctureGenerator.to_crate_format" title="Permalink to this definition">¶</a></dt>
+<dd><p>convert microstructure to crate format</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>, </em><em>optional</em>) – _description_, by default “microstructure.rgmsh”</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-rvesimulator.microstructure.circle_particles">
+<span id="rvesimulator-microstructure-circle-particles"></span><h2>rvesimulator.microstructure.circle_particles<a class="headerlink" href="#module-rvesimulator.microstructure.circle_particles" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="rvesimulator.microstructure.circle_particles.CircleParticles">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CircleParticles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius_mu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius_std</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vol_req</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_guess_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_fiber_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">750</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_cycle_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">15</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_min_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/microstructure/circle_particles.html#CircleParticles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.microstructure.circle_particles.CircleParticles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#rvesimulator.microstructure.base.MicrosctuctureGenerator" title="rvesimulator.microstructure.base.MicrosctuctureGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">MicrosctuctureGenerator</span></code></a></p>
+<p>2D RVE with different size of disks/circles</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>MicrosctuctureGenerator</strong> (<em>class</em>) – parent class of microstructure generator</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">rvesimulator.microstructure</span> <span class="kn">import</span> <span class="n">CircleParticles</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">circle_particles</span> <span class="o">=</span> <span class="n">CircleParticles</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">width</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">radius_mu</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">radius_std</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">vol_req</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">circle_particles</span><span class="o">.</span><span class="n">generate_microstructure</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">circle_particles</span><span class="o">.</span><span class="n">plot_microstructure</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">circle_particles</span><span class="o">.</span><span class="n">to_abaqus_format</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">circle_particles</span><span class="o">.</span><span class="n">crate_rgmsh</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Initialization</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>length</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – length of RVE</p></li>
+<li><p><strong>width</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – width of RVE</p></li>
+<li><p><strong>radius_mu</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – mean of circle’s radius</p></li>
+<li><p><strong>radius_std</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – std of circle’s radius</p></li>
+<li><p><strong>vol_req</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – required volume fraction</p></li>
+<li><p><strong>num_guess_max</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a><em>, </em><em>optional</em>) – maximum guess for fibers, by default 50000</p></li>
+<li><p><strong>num_fiber_max</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a><em>, </em><em>optional</em>) – maximum fiber inside RVE, by default 750</p></li>
+<li><p><strong>num_cycle_max</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a><em>, </em><em>optional</em>) – iteration cycles, by default 15</p></li>
+<li><p><strong>dist_min_factor</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a><em>, </em><em>optional</em>) – distance factor, by default 2.07</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.microstructure.circle_particles.CircleParticles.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius_mu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius_std</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vol_req</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_guess_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_fiber_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">750</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_cycle_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">15</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_min_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/microstructure/circle_particles.html#CircleParticles.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.microstructure.circle_particles.CircleParticles.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialization</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>length</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – length of RVE</p></li>
+<li><p><strong>width</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – width of RVE</p></li>
+<li><p><strong>radius_mu</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – mean of circle’s radius</p></li>
+<li><p><strong>radius_std</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – std of circle’s radius</p></li>
+<li><p><strong>vol_req</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – required volume fraction</p></li>
+<li><p><strong>num_guess_max</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a><em>, </em><em>optional</em>) – maximum guess for fibers, by default 50000</p></li>
+<li><p><strong>num_fiber_max</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a><em>, </em><em>optional</em>) – maximum fiber inside RVE, by default 750</p></li>
+<li><p><strong>num_cycle_max</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a><em>, </em><em>optional</em>) – iteration cycles, by default 15</p></li>
+<li><p><strong>dist_min_factor</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a><em>, </em><em>optional</em>) – distance factor, by default 2.07</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.microstructure.circle_particles.CircleParticles._core_iteration">
+<span class="sig-name descname"><span class="pre">_core_iteration</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/microstructure/circle_particles.html#CircleParticles._core_iteration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.microstructure.circle_particles.CircleParticles._core_iteration" title="Permalink to this definition">¶</a></dt>
+<dd><p>core iteration part of the micro-structure generation method</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.microstructure.circle_particles.CircleParticles._first_new_fiber">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_first_new_fiber</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">portion</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/microstructure/circle_particles.html#CircleParticles._first_new_fiber"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.microstructure.circle_particles.CircleParticles._first_new_fiber" title="Permalink to this definition">¶</a></dt>
+<dd><p>generate the first new fiber</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – x center</p></li>
+<li><p><strong>y</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – y center</p></li>
+<li><p><strong>r</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – radius</p></li>
+<li><p><strong>portion</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – portion of the fiber(1, 2, 4)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>new fiber</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.microstructure.circle_particles.CircleParticles._parameter_initialization">
+<span class="sig-name descname"><span class="pre">_parameter_initialization</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/microstructure/circle_particles.html#CircleParticles._parameter_initialization"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.microstructure.circle_particles.CircleParticles._parameter_initialization" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the parameters</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.microstructure.circle_particles.CircleParticles._procedure_initialization">
+<span class="sig-name descname"><span class="pre">_procedure_initialization</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/microstructure/circle_particles.html#CircleParticles._procedure_initialization"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.microstructure.circle_particles.CircleParticles._procedure_initialization" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is used to generate the first disk and
+assign the initial values of the algorithm</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.microstructure.circle_particles.CircleParticles._update_fiber_position">
+<span class="sig-name descname"><span class="pre">_update_fiber_position</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_fiber</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iter</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/microstructure/circle_particles.html#CircleParticles._update_fiber_position"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.microstructure.circle_particles.CircleParticles._update_fiber_position" title="Permalink to this definition">¶</a></dt>
+<dd><p>update the fiber position</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>new_fiber</strong> (<em>np.ndarray</em>) – the generated new fiber</p></li>
+<li><p><strong>iter</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – determine the nex fiber should be analysis</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>iter</strong> – he updated number of index</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.microstructure.circle_particles.CircleParticles.crate_rgmsh">
+<span class="sig-name descname"><span class="pre">crate_rgmsh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_discrete</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/microstructure/circle_particles.html#CircleParticles.crate_rgmsh"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.microstructure.circle_particles.CircleParticles.crate_rgmsh" title="Permalink to this definition">¶</a></dt>
+<dd><p>create rgmsh numpy array for crate</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>num_discrete</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a><em>, </em><em>optional</em>) – number of discrete partition, by default 10</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>2d numpy array that contains the micro-structure information</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.microstructure.circle_particles.CircleParticles.fiber_volume">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fiber_volume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radius</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/microstructure/circle_particles.html#CircleParticles.fiber_volume"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.microstructure.circle_particles.CircleParticles.fiber_volume" title="Permalink to this definition">¶</a></dt>
+<dd><p>calculate the fiber volume of the current fiber</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>radius</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – radius</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>vol</strong> – volume of current fiber(disk)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.microstructure.circle_particles.CircleParticles.generate_first_heuristic_fibers">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">generate_first_heuristic_fibers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ref_point</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fiber_temp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_factor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/microstructure/circle_particles.html#CircleParticles.generate_first_heuristic_fibers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.microstructure.circle_particles.CircleParticles.generate_first_heuristic_fibers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Move fiber to its reference point</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ref_point</strong> (<em>np.ndarray</em>) – Reference point that the fiber should move to</p></li>
+<li><p><strong>fiber_temp</strong> (<em>np.ndarray</em>) – The considering fiber</p></li>
+<li><p><strong>dist_factor</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – the minimum distance factor between two fibers</p></li>
+<li><p><strong>rng</strong> (<em>Any</em>) – random generator</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The updated location of the considering fiber</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.microstructure.circle_particles.CircleParticles.generate_microstructure">
+<span class="sig-name descname"><span class="pre">generate_microstructure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/microstructure/circle_particles.html#CircleParticles.generate_microstructure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.microstructure.circle_particles.CircleParticles.generate_microstructure" title="Permalink to this definition">¶</a></dt>
+<dd><p>generate microstructure</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>seed</strong> (<em>Any</em><em>, </em><em>optional</em>) – seed number, by default None</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.microstructure.circle_particles.CircleParticles.generate_random_fibers">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">generate_random_fibers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">len_start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">len_end</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wid_start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wid_end</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius_mu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius_std</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/microstructure/circle_particles.html#CircleParticles.generate_random_fibers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.microstructure.circle_particles.CircleParticles.generate_random_fibers" title="Permalink to this definition">¶</a></dt>
+<dd><p>generate random fibers with different radiis</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>len_start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – the start location of length</p></li>
+<li><p><strong>len_end</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – the end location of length</p></li>
+<li><p><strong>wid_start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – the start location of width</p></li>
+<li><p><strong>wid_end</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – the end location of width</p></li>
+<li><p><strong>radius_mu</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – mean of radius</p></li>
+<li><p><strong>radius_std</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – standard deviation of radius</p></li>
+<li><p><strong>rng</strong> (<em>any</em>) – random seed or generator</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>location information of generated fiber</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.microstructure.circle_particles.CircleParticles.min_dis_index">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">min_dis_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">temp_fiber</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fiber_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fiber_min_dis_vector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ii</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cycle</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/microstructure/circle_particles.html#CircleParticles.min_dis_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.microstructure.circle_particles.CircleParticles.min_dis_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is used to identify the index of closest fiber
+of every fiber, which is very import for the first heuristic
+stirring to get more space placing the new disks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>temp_fiber</strong> (<em>np.ndarray</em>) – the fiber been processed</p></li>
+<li><p><strong>fiber_pos</strong> (<em>np.ndarray</em>) – fiber position</p></li>
+<li><p><strong>fiber_min_dis_vector</strong> (<em>np.ndarray</em>) – the first column is the index of the closed point,
+the second column contains the minimum distance between
+those two points</p></li>
+<li><p><strong>ii</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – the index of the being processed point</p></li>
+<li><p><strong>cycle</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – the cycle of the algorithm. At different cycles, the
+criteria of identifying the closed point are  different.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.25)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><strong>fiber_min_dis_vector</strong> (<em>np.ndarray</em>) – The updated minimum distance array</p></li>
+<li><p><strong>min_index</strong> (<em>int</em>) – The index of the minimum distance point</p></li>
+<li><p><strong>min_dist</strong> (<em>float</em>) – The minimum distance to the minimum distance point</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.microstructure.circle_particles.CircleParticles.new_positions">
+<span class="sig-name descname"><span class="pre">new_positions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_center</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_center</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/microstructure/circle_particles.html#CircleParticles.new_positions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.microstructure.circle_particles.CircleParticles.new_positions" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is the function used to determine the locations of disks
+considering the boundary of RVE. To be specific, the disk should
+be divided into two parts or four parts if it is located in the
+outskirt area</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x_center</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – new center of X axis</p></li>
+<li><p><strong>y_center</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – new center of Y axis</p></li>
+<li><p><strong>radius</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – radius of the disk</p></li>
+<li><p><strong>width</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – width of RVE</p></li>
+<li><p><strong>length</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – length of RVE</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.25)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><em>np.ndarray</em> – XC, YC, split  which is the new locations of this fiber
+(because in some locations, the circles need to be split)</p></li>
+<li><p><em>####################################</em></p></li>
+<li><p><em>#     #          2_2       #       #</em></p></li>
+<li><p><em># 4_1 #                    #4_2    #</em></p></li>
+<li><p><em>####################################</em></p></li>
+<li><p><em>#     #                    #       #</em></p></li>
+<li><p><em># 2_3 #          1         #   2_4 #</em></p></li>
+<li><p><em>#     #                    #       #</em></p></li>
+<li><p><em>#     #                    #       #</em></p></li>
+<li><p><em>####################################</em></p></li>
+<li><p><em># 4_3 #         2_1        # 4_4   #</em></p></li>
+<li><p><em>#     #                    #       #</em></p></li>
+<li><p><em>####################################</em></p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.microstructure.circle_particles.CircleParticles.overlap_check">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">overlap_check</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_fiber</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fiber_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_factor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fiber_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stage</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'step_one'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/microstructure/circle_particles.html#CircleParticles.overlap_check"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.microstructure.circle_particles.CircleParticles.overlap_check" title="Permalink to this definition">¶</a></dt>
+<dd><p>overlap check between new fiber and the original ones</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>new_fiber</strong> (<em>np.ndarray</em>) – new fiber location</p></li>
+<li><p><strong>fiber_pos</strong> (<em>np.ndarray</em>) – original fibers</p></li>
+<li><p><strong>dist_factor</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – distance factor which used to control the minimum distance
+between to fibers</p></li>
+<li><p><strong>fiber_index</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a><em>, </em><em>optional</em>) – fiber index , by default 0</p></li>
+<li><p><strong>stage</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>, </em><em>optional</em>) – stage of the algorithm, by default “step_one”</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a flag number (1: overlap, 0: non-overlap)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.microstructure.circle_particles.CircleParticles.plot_microstructure">
+<span class="sig-name descname"><span class="pre">plot_microstructure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_figure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mircostructure.png'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/microstructure/circle_particles.html#CircleParticles.plot_microstructure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.microstructure.circle_particles.CircleParticles.plot_microstructure" title="Permalink to this definition">¶</a></dt>
+<dd><p>plot microstructure</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_figure</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a><em>, </em><em>optional</em>) – save figure or not, by default False</p></li>
+<li><p><strong>fig_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>, </em><em>optional</em>) – name of figure, by default “mircostructure.png”</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.microstructure.circle_particles.CircleParticles.proper_edge_mesh_location">
+<span class="sig-name descname"><span class="pre">proper_edge_mesh_location</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fiber</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/microstructure/circle_particles.html#CircleParticles.proper_edge_mesh_location"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.microstructure.circle_particles.CircleParticles.proper_edge_mesh_location" title="Permalink to this definition">¶</a></dt>
+<dd><p>identify proper edge location for meshing</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>fiber</strong> (<em>np.ndarray</em>) – temp fiber</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>status of the fiber(0: improper, 1: proper)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.microstructure.circle_particles.CircleParticles.proper_vertices_mesh_location">
+<span class="sig-name descname"><span class="pre">proper_vertices_mesh_location</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fiber</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/microstructure/circle_particles.html#CircleParticles.proper_vertices_mesh_location"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.microstructure.circle_particles.CircleParticles.proper_vertices_mesh_location" title="Permalink to this definition">¶</a></dt>
+<dd><p>identify proper vertices location for meshing</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>fiber</strong> (<em>np.ndarray</em>) – temp fiber</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>status of the fiber(0: improper, 1: proper)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.microstructure.circle_particles.CircleParticles.to_abaqus_format">
+<span class="sig-name descname"><span class="pre">to_abaqus_format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'micro_structure_info.json'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/microstructure/circle_particles.html#CircleParticles.to_abaqus_format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.microstructure.circle_particles.CircleParticles.to_abaqus_format" title="Permalink to this definition">¶</a></dt>
+<dd><p>save rve microstructure to abaqus format</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>, </em><em>optional</em>) – name of saved file, by default “micro_structure_info.json”</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a dict contains all info of rve microstructure</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-rvesimulator.microstructure.shpere_particles">
+<span id="rvesimulator-microstructure-shpere-particles"></span><h2>rvesimulator.microstructure.shpere_particles<a class="headerlink" href="#module-rvesimulator.microstructure.shpere_particles" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="rvesimulator.microstructure.shpere_particles.SphereParticles">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SphereParticles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius_mu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius_std</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vol_req</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_guess_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_fiber_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">750</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_cycle_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">15</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_min_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/microstructure/shpere_particles.html#SphereParticles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.microstructure.shpere_particles.SphereParticles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#rvesimulator.microstructure.base.MicrosctuctureGenerator" title="rvesimulator.microstructure.base.MicrosctuctureGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">MicrosctuctureGenerator</span></code></a></p>
+<p>Generate the 3D RVE with different size of sphere</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>MicrosctucturaGenerator</strong> (<em>class</em>) – parent class of microstructure generator</p>
+</dd>
+</dl>
+<p>Initialization</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>length</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – length of RVE</p></li>
+<li><p><strong>width</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – width of RVE</p></li>
+<li><p><strong>height</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – height of RVE</p></li>
+<li><p><strong>radius_mu</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – mean of circle’s radius</p></li>
+<li><p><strong>radius_std</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – std of circle’s radius</p></li>
+<li><p><strong>vol_req</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – required volume fraction</p></li>
+<li><p><strong>num_guess_max</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a><em>, </em><em>optional</em>) – maximum guess for fibers, by default 50000</p></li>
+<li><p><strong>num_fiber_max</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a><em>, </em><em>optional</em>) – maximum fiber inside RVE, by default 750</p></li>
+<li><p><strong>num_cycle_max</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a><em>, </em><em>optional</em>) – iteration cycles, by default 15</p></li>
+<li><p><strong>dist_min_factor</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a><em>, </em><em>optional</em>) – distance factor, by default 2.07</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.microstructure.shpere_particles.SphereParticles.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius_mu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius_std</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vol_req</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_guess_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_fiber_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">750</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_cycle_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">15</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_min_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/microstructure/shpere_particles.html#SphereParticles.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.microstructure.shpere_particles.SphereParticles.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialization</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>length</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – length of RVE</p></li>
+<li><p><strong>width</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – width of RVE</p></li>
+<li><p><strong>height</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – height of RVE</p></li>
+<li><p><strong>radius_mu</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – mean of circle’s radius</p></li>
+<li><p><strong>radius_std</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – std of circle’s radius</p></li>
+<li><p><strong>vol_req</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – required volume fraction</p></li>
+<li><p><strong>num_guess_max</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a><em>, </em><em>optional</em>) – maximum guess for fibers, by default 50000</p></li>
+<li><p><strong>num_fiber_max</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a><em>, </em><em>optional</em>) – maximum fiber inside RVE, by default 750</p></li>
+<li><p><strong>num_cycle_max</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a><em>, </em><em>optional</em>) – iteration cycles, by default 15</p></li>
+<li><p><strong>dist_min_factor</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a><em>, </em><em>optional</em>) – distance factor, by default 2.07</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.microstructure.shpere_particles.SphereParticles._core_iteration">
+<span class="sig-name descname"><span class="pre">_core_iteration</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/microstructure/shpere_particles.html#SphereParticles._core_iteration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.microstructure.shpere_particles.SphereParticles._core_iteration" title="Permalink to this definition">¶</a></dt>
+<dd><p>core iteration part of the micro-structure generation method</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.microstructure.shpere_particles.SphereParticles._first_new_fiber">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_first_new_fiber</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">portion</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/microstructure/shpere_particles.html#SphereParticles._first_new_fiber"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.microstructure.shpere_particles.SphereParticles._first_new_fiber" title="Permalink to this definition">¶</a></dt>
+<dd><p>generate the first new fiber</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – x center</p></li>
+<li><p><strong>y</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – y center</p></li>
+<li><p><strong>z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – z center</p></li>
+<li><p><strong>r</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – radius</p></li>
+<li><p><strong>portion</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – portion of the fiber(1, 2, 4)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>new fiber</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.microstructure.shpere_particles.SphereParticles._parameter_initialization">
+<span class="sig-name descname"><span class="pre">_parameter_initialization</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/microstructure/shpere_particles.html#SphereParticles._parameter_initialization"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.microstructure.shpere_particles.SphereParticles._parameter_initialization" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the parameters</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.microstructure.shpere_particles.SphereParticles._procedure_initialization">
+<span class="sig-name descname"><span class="pre">_procedure_initialization</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/microstructure/shpere_particles.html#SphereParticles._procedure_initialization"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.microstructure.shpere_particles.SphereParticles._procedure_initialization" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is used to generate the first sphere and
+assign the initial values of the algorithm</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.microstructure.shpere_particles.SphereParticles._update_fiber_position">
+<span class="sig-name descname"><span class="pre">_update_fiber_position</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_fiber</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iter</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/microstructure/shpere_particles.html#SphereParticles._update_fiber_position"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.microstructure.shpere_particles.SphereParticles._update_fiber_position" title="Permalink to this definition">¶</a></dt>
+<dd><p>update the fiber position</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>new_fiber</strong> (<em>np.ndarray</em>) – the generated new fiber</p></li>
+<li><p><strong>iter</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – determine the nex fiber should be analysis</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>iter</strong> – he updated number of index</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.microstructure.shpere_particles.SphereParticles.crate_rgmsh">
+<span class="sig-name descname"><span class="pre">crate_rgmsh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_discrete</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/microstructure/shpere_particles.html#SphereParticles.crate_rgmsh"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.microstructure.shpere_particles.SphereParticles.crate_rgmsh" title="Permalink to this definition">¶</a></dt>
+<dd><p>create rgmsh numpy array for crate</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>num_discrete</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a><em>, </em><em>optional</em>) – number of discrete partition, by default 10</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>3d numpy array that contains the micro-structure information</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.microstructure.shpere_particles.SphereParticles.fiber_volume">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fiber_volume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radius</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/microstructure/shpere_particles.html#SphereParticles.fiber_volume"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.microstructure.shpere_particles.SphereParticles.fiber_volume" title="Permalink to this definition">¶</a></dt>
+<dd><p>calculate the fiber volume of the current fiber</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>radius</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – radius</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>vol</strong> – volume of current fiber(disk)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.microstructure.shpere_particles.SphereParticles.generate_first_heuristic_fibers">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">generate_first_heuristic_fibers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ref_point</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fiber_temp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_factor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/microstructure/shpere_particles.html#SphereParticles.generate_first_heuristic_fibers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.microstructure.shpere_particles.SphereParticles.generate_first_heuristic_fibers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Move fiber to its reference point</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ref_point</strong> (<em>np.ndarray</em>) – Reference point that the fiber should move to</p></li>
+<li><p><strong>fiber_temp</strong> (<em>np.ndarray</em>) – The considering fiber</p></li>
+<li><p><strong>dist_factor</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – the minimum distance factor between two fibers</p></li>
+<li><p><strong>ang</strong> (<em>any</em>) – a random generator</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The updated location of the considering fiber</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.microstructure.shpere_particles.SphereParticles.generate_microstructure">
+<span class="sig-name descname"><span class="pre">generate_microstructure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/microstructure/shpere_particles.html#SphereParticles.generate_microstructure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.microstructure.shpere_particles.SphereParticles.generate_microstructure" title="Permalink to this definition">¶</a></dt>
+<dd><p>generating micro-structure</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>seed</strong> (<em>any</em><em>, </em><em>optional</em>) – seed generator or number , by default None</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.microstructure.shpere_particles.SphereParticles.generate_random_fibers">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">generate_random_fibers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">len_start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">len_end</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wid_start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wid_end</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hei_start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hei_end</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius_mu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius_std</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/microstructure/shpere_particles.html#SphereParticles.generate_random_fibers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.microstructure.shpere_particles.SphereParticles.generate_random_fibers" title="Permalink to this definition">¶</a></dt>
+<dd><p>generate random fibers with different radiis</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>len_start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – the start location of length</p></li>
+<li><p><strong>len_end</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – the end location of length</p></li>
+<li><p><strong>wid_start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – the start location of width</p></li>
+<li><p><strong>wid_end</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – the end location of width</p></li>
+<li><p><strong>hei_start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – the start height of length</p></li>
+<li><p><strong>hei_end</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – the end height of height</p></li>
+<li><p><strong>radius_mu</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – mean of radius</p></li>
+<li><p><strong>radius_std</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – standard deviation of radius</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>location information of generated fiber</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.microstructure.shpere_particles.SphereParticles.min_dis_index">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">min_dis_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">temp_fiber</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fiber_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fiber_min_dis_vector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ii</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cycle</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/microstructure/shpere_particles.html#SphereParticles.min_dis_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.microstructure.shpere_particles.SphereParticles.min_dis_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is used to identify the index of closest fiber
+of every fiber, which is very import for the first heuristic
+stirring to get more space placing the new disks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>temp_fiber</strong> (<em>np.ndarray</em>) – the fiber been processed</p></li>
+<li><p><strong>fiber_pos</strong> (<em>np.ndarray</em>) – fiber position</p></li>
+<li><p><strong>fiber_min_dis_vector</strong> (<em>np.ndarray</em>) – the first column is the index of the closed point,
+the second column contains the minimum distance between
+those two points</p></li>
+<li><p><strong>ii</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – the index of the being processed point</p></li>
+<li><p><strong>cycle</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – the cycle of the algorithm. At different cycles, the
+criteria of identifying the closed point are  different.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.25)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><strong>fiber_min_dis_vector</strong> (<em>np.ndarray</em>) – The updated minimum distance array</p></li>
+<li><p><strong>two</strong> (<em>int</em>) – The index of the minimum distance point</p></li>
+<li><p><strong>three</strong> (<em>float</em>) – The minimum distance to the minimum distance point</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.microstructure.shpere_particles.SphereParticles.new_positions">
+<span class="sig-name descname"><span class="pre">new_positions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_center</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_center</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_center</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/microstructure/shpere_particles.html#SphereParticles.new_positions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.microstructure.shpere_particles.SphereParticles.new_positions" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is the function used to determine the locations of disks
+considering the boundary of RVE. To be specific, the disk should
+be divided into two parts or four parts if it is located in the
+outskirt area</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x_center</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – new center of X axis</p></li>
+<li><p><strong>y_center</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – new center of Y axis</p></li>
+<li><p><strong>z_center</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – new center of Z axis</p></li>
+<li><p><strong>radius</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – radius of the disk</p></li>
+<li><p><strong>width</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – width of RVE</p></li>
+<li><p><strong>length</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – length of RVE</p></li>
+<li><p><strong>height</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – height of RVE</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>XC, YC, ZC, radius, and split  which are the new locations of
+this fiber(because in some locations, the circles need to be split)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.microstructure.shpere_particles.SphereParticles.overlap_check">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">overlap_check</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_fiber</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fiber_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_factor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fiber_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stage</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'step_one'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/microstructure/shpere_particles.html#SphereParticles.overlap_check"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.microstructure.shpere_particles.SphereParticles.overlap_check" title="Permalink to this definition">¶</a></dt>
+<dd><p>overlap check of the new fiber and the orginal ones</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>new_fiber</strong> (<em>np.ndarray</em>) – new fiber location</p></li>
+<li><p><strong>fiber_pos</strong> (<em>np.ndarray</em>) – original fiber locations</p></li>
+<li><p><strong>dist_factor</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – distance factor</p></li>
+<li><p><strong>fiber_index</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a><em>, </em><em>optional</em>) – fiber index, by default 0</p></li>
+<li><p><strong>stage</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>, </em><em>optional</em>) – stage of the algorithm, by default “step_one”</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a flag to indicate overlap status</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.microstructure.shpere_particles.SphereParticles.plot_microstructure">
+<span class="sig-name descname"><span class="pre">plot_microstructure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_figure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'RVE.png'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/microstructure/shpere_particles.html#SphereParticles.plot_microstructure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.microstructure.shpere_particles.SphereParticles.plot_microstructure" title="Permalink to this definition">¶</a></dt>
+<dd><p>plot figure for RVE</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_figure</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a><em>, </em><em>optional</em>) – save figure or not , by default False</p></li>
+<li><p><strong>fig_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>, </em><em>optional</em>) – figure name, by default “RVE.png”</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NotImplementedError" title="(in Python v3.11)"><strong>NotImplementedError</strong></a> – error report</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.microstructure.shpere_particles.SphereParticles.to_abaqus_format">
+<span class="sig-name descname"><span class="pre">to_abaqus_format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'micro_structure_info.json'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/microstructure/shpere_particles.html#SphereParticles.to_abaqus_format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.microstructure.shpere_particles.SphereParticles.to_abaqus_format" title="Permalink to this definition">¶</a></dt>
+<dd><p>convert microstructure to abaqus format</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>, </em><em>optional</em>) – file name, by default “micro_structure_info.json”</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NotImplementedError" title="(in Python v3.11)"><strong>NotImplementedError</strong></a> – error report</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="rvesimulator.benchmarks.html" class="btn btn-neutral float-left" title="rvesimulator.benchmarks" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Jiaxiang Yi.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
