@@ -132,7 +132,7 @@ class AbaqusSimulator(Simulator, AssertInputs):
         """
 
         if self.platform == "ubuntu":
-            if self.flag == "error": 
+            if self.flag == "error":
                 self.job_name = "error"
             print_banner("abaqus post analysis")
             # path with the python-script
@@ -202,7 +202,7 @@ class AbaqusSimulator(Simulator, AssertInputs):
                         print("overtime kill")
                         self.flag = "killed"
                         break
-                # kill the process if error in mesh 
+                # kill the process if error in mesh
                 try:
                     file = open(self.job_name + ".dat")
                     word1 = "ERROR"

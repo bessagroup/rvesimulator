@@ -25,7 +25,7 @@ class Simulator:
         raise NotImplementedError("should be implemented in subclass")
 
     def run(self) -> None:
-        """run the simulation in one shot  
+        """run the simulation in one shot
         """
         self.execute()
         self.post_process()
