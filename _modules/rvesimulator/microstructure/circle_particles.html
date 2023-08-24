@@ -11,9 +11,9 @@
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
+        <script src="../../../_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -121,7 +121,9 @@
 <span class="c1"># =============================================================================</span>
 
 
-<div class="viewcode-block" id="CircleParticles"><a class="viewcode-back" href="../../../rvesimulator.microstructure.html#rvesimulator.microstructure.circle_particles.CircleParticles">[docs]</a><span class="k">class</span> <span class="nc">CircleParticles</span><span class="p">(</span><span class="n">MicrosctuctureGenerator</span><span class="p">):</span>
+<div class="viewcode-block" id="CircleParticles">
+<a class="viewcode-back" href="../../../rvesimulator.microstructure.html#rvesimulator.microstructure.circle_particles.CircleParticles">[docs]</a>
+<span class="k">class</span> <span class="nc">CircleParticles</span><span class="p">(</span><span class="n">MicrosctuctureGenerator</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;2D RVE with different size of disks/circles</span>
 
 <span class="sd">    Parameters</span>
@@ -145,7 +147,9 @@
 <span class="sd">    &gt;&gt;&gt; circle_particles.crate_rgmsh()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="CircleParticles.__init__"><a class="viewcode-back" href="../../../rvesimulator.microstructure.html#rvesimulator.microstructure.circle_particles.CircleParticles.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="CircleParticles.__init__">
+<a class="viewcode-back" href="../../../rvesimulator.microstructure.html#rvesimulator.microstructure.circle_particles.CircleParticles.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">length</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">width</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
@@ -193,7 +197,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">num_fibers_max</span> <span class="o">=</span> <span class="n">num_fiber_max</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_cycles_max</span> <span class="o">=</span> <span class="n">num_cycle_max</span></div>
 
-<div class="viewcode-block" id="CircleParticles._parameter_initialization"><a class="viewcode-back" href="../../../rvesimulator.microstructure.html#rvesimulator.microstructure.circle_particles.CircleParticles._parameter_initialization">[docs]</a>    <span class="k">def</span> <span class="nf">_parameter_initialization</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+<div class="viewcode-block" id="CircleParticles._parameter_initialization">
+<a class="viewcode-back" href="../../../rvesimulator.microstructure.html#rvesimulator.microstructure.circle_particles.CircleParticles._parameter_initialization">[docs]</a>
+    <span class="k">def</span> <span class="nf">_parameter_initialization</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the parameters&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_change</span> <span class="o">=</span> <span class="mi">3</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_cycle</span> <span class="o">=</span> <span class="mi">0</span>
@@ -209,7 +216,10 @@
         <span class="c1"># fiber location is a nx4 numpy array x, y, r, p (partition)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fiber_positions</span> <span class="o">=</span> <span class="kc">None</span></div>
 
-<div class="viewcode-block" id="CircleParticles.generate_microstructure"><a class="viewcode-back" href="../../../rvesimulator.microstructure.html#rvesimulator.microstructure.circle_particles.CircleParticles.generate_microstructure">[docs]</a>    <span class="k">def</span> <span class="nf">generate_microstructure</span><span class="p">(</span>
+
+<div class="viewcode-block" id="CircleParticles.generate_microstructure">
+<a class="viewcode-back" href="../../../rvesimulator.microstructure.html#rvesimulator.microstructure.circle_particles.CircleParticles.generate_microstructure">[docs]</a>
+    <span class="k">def</span> <span class="nf">generate_microstructure</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">seed</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -231,7 +241,10 @@
         <span class="n">end_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">time_usage</span> <span class="o">=</span> <span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span></div>
 
-<div class="viewcode-block" id="CircleParticles.to_abaqus_format"><a class="viewcode-back" href="../../../rvesimulator.microstructure.html#rvesimulator.microstructure.circle_particles.CircleParticles.to_abaqus_format">[docs]</a>    <span class="k">def</span> <span class="nf">to_abaqus_format</span><span class="p">(</span>
+
+<div class="viewcode-block" id="CircleParticles.to_abaqus_format">
+<a class="viewcode-back" href="../../../rvesimulator.microstructure.html#rvesimulator.microstructure.circle_particles.CircleParticles.to_abaqus_format">[docs]</a>
+    <span class="k">def</span> <span class="nf">to_abaqus_format</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;micro_structure_info.json&quot;</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;save rve microstructure to abaqus format</span>
@@ -260,7 +273,10 @@
 
         <span class="k">return</span> <span class="n">microstructure_info</span></div>
 
-<div class="viewcode-block" id="CircleParticles.plot_microstructure"><a class="viewcode-back" href="../../../rvesimulator.microstructure.html#rvesimulator.microstructure.circle_particles.CircleParticles.plot_microstructure">[docs]</a>    <span class="k">def</span> <span class="nf">plot_microstructure</span><span class="p">(</span>
+
+<div class="viewcode-block" id="CircleParticles.plot_microstructure">
+<a class="viewcode-back" href="../../../rvesimulator.microstructure.html#rvesimulator.microstructure.circle_particles.CircleParticles.plot_microstructure">[docs]</a>
+    <span class="k">def</span> <span class="nf">plot_microstructure</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">save_figure</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">fig_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;mircostructure.png&quot;</span><span class="p">,</span>
@@ -285,7 +301,10 @@
             <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="CircleParticles._procedure_initialization"><a class="viewcode-back" href="../../../rvesimulator.microstructure.html#rvesimulator.microstructure.circle_particles.CircleParticles._procedure_initialization">[docs]</a>    <span class="k">def</span> <span class="nf">_procedure_initialization</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+<div class="viewcode-block" id="CircleParticles._procedure_initialization">
+<a class="viewcode-back" href="../../../rvesimulator.microstructure.html#rvesimulator.microstructure.circle_particles.CircleParticles._procedure_initialization">[docs]</a>
+    <span class="k">def</span> <span class="nf">_procedure_initialization</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;This function is used to generate the first disk and</span>
 <span class="sd">        assign the initial values of the algorithm</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -312,7 +331,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">fiber_positions</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">fiber_temp</span><span class="o">.</span><span class="n">T</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fiber_positions</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span></div>
 
-<div class="viewcode-block" id="CircleParticles._core_iteration"><a class="viewcode-back" href="../../../rvesimulator.microstructure.html#rvesimulator.microstructure.circle_particles.CircleParticles._core_iteration">[docs]</a>    <span class="k">def</span> <span class="nf">_core_iteration</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+<div class="viewcode-block" id="CircleParticles._core_iteration">
+<a class="viewcode-back" href="../../../rvesimulator.microstructure.html#rvesimulator.microstructure.circle_particles.CircleParticles._core_iteration">[docs]</a>
+    <span class="k">def</span> <span class="nf">_core_iteration</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;core iteration part of the micro-structure generation method&quot;&quot;&quot;</span>
 
         <span class="c1"># the main loop of the algorithm</span>
@@ -465,7 +487,10 @@
             <span class="c1"># end of one cycle</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">num_cycle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_cycle</span> <span class="o">+</span> <span class="mi">1</span></div>
 
-<div class="viewcode-block" id="CircleParticles._update_fiber_position"><a class="viewcode-back" href="../../../rvesimulator.microstructure.html#rvesimulator.microstructure.circle_particles.CircleParticles._update_fiber_position">[docs]</a>    <span class="k">def</span> <span class="nf">_update_fiber_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_fiber</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">iter</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+
+<div class="viewcode-block" id="CircleParticles._update_fiber_position">
+<a class="viewcode-back" href="../../../rvesimulator.microstructure.html#rvesimulator.microstructure.circle_particles.CircleParticles._update_fiber_position">[docs]</a>
+    <span class="k">def</span> <span class="nf">_update_fiber_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_fiber</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">iter</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;update the fiber position</span>
 
 <span class="sd">        Parameters</span>
@@ -497,7 +522,10 @@
 
         <span class="k">return</span> <span class="nb">iter</span></div>
 
-<div class="viewcode-block" id="CircleParticles.crate_rgmsh"><a class="viewcode-back" href="../../../rvesimulator.microstructure.html#rvesimulator.microstructure.circle_particles.CircleParticles.crate_rgmsh">[docs]</a>    <span class="k">def</span> <span class="nf">crate_rgmsh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_discrete</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+
+<div class="viewcode-block" id="CircleParticles.crate_rgmsh">
+<a class="viewcode-back" href="../../../rvesimulator.microstructure.html#rvesimulator.microstructure.circle_particles.CircleParticles.crate_rgmsh">[docs]</a>
+    <span class="k">def</span> <span class="nf">crate_rgmsh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_discrete</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;create rgmsh numpy array for crate</span>
 
 <span class="sd">        Parameters</span>
@@ -536,7 +564,10 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rgmsh</span><span class="o">.</span><span class="n">T</span></div>
 
-<div class="viewcode-block" id="CircleParticles.proper_vertices_mesh_location"><a class="viewcode-back" href="../../../rvesimulator.microstructure.html#rvesimulator.microstructure.circle_particles.CircleParticles.proper_vertices_mesh_location">[docs]</a>    <span class="k">def</span> <span class="nf">proper_vertices_mesh_location</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fiber</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+
+<div class="viewcode-block" id="CircleParticles.proper_vertices_mesh_location">
+<a class="viewcode-back" href="../../../rvesimulator.microstructure.html#rvesimulator.microstructure.circle_particles.CircleParticles.proper_vertices_mesh_location">[docs]</a>
+    <span class="k">def</span> <span class="nf">proper_vertices_mesh_location</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fiber</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;identify proper vertices location for meshing</span>
 
 <span class="sd">        Parameters</span>
@@ -566,7 +597,10 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="mi">1</span></div>
 
-<div class="viewcode-block" id="CircleParticles.proper_edge_mesh_location"><a class="viewcode-back" href="../../../rvesimulator.microstructure.html#rvesimulator.microstructure.circle_particles.CircleParticles.proper_edge_mesh_location">[docs]</a>    <span class="k">def</span> <span class="nf">proper_edge_mesh_location</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fiber</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+
+<div class="viewcode-block" id="CircleParticles.proper_edge_mesh_location">
+<a class="viewcode-back" href="../../../rvesimulator.microstructure.html#rvesimulator.microstructure.circle_particles.CircleParticles.proper_edge_mesh_location">[docs]</a>
+    <span class="k">def</span> <span class="nf">proper_edge_mesh_location</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fiber</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;identify proper edge location for meshing</span>
 
 <span class="sd">        Parameters</span>
@@ -596,7 +630,10 @@
 
         <span class="k">return</span> <span class="mi">1</span></div>
 
-<div class="viewcode-block" id="CircleParticles.new_positions"><a class="viewcode-back" href="../../../rvesimulator.microstructure.html#rvesimulator.microstructure.circle_particles.CircleParticles.new_positions">[docs]</a>    <span class="k">def</span> <span class="nf">new_positions</span><span class="p">(</span>
+
+<div class="viewcode-block" id="CircleParticles.new_positions">
+<a class="viewcode-back" href="../../../rvesimulator.microstructure.html#rvesimulator.microstructure.circle_particles.CircleParticles.new_positions">[docs]</a>
+    <span class="k">def</span> <span class="nf">new_positions</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">x_center</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">y_center</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
@@ -817,7 +854,10 @@
 
         <span class="k">return</span> <span class="n">new_fiber</span></div>
 
-<div class="viewcode-block" id="CircleParticles.overlap_check"><a class="viewcode-back" href="../../../rvesimulator.microstructure.html#rvesimulator.microstructure.circle_particles.CircleParticles.overlap_check">[docs]</a>    <span class="nd">@staticmethod</span>
+
+<div class="viewcode-block" id="CircleParticles.overlap_check">
+<a class="viewcode-back" href="../../../rvesimulator.microstructure.html#rvesimulator.microstructure.circle_particles.CircleParticles.overlap_check">[docs]</a>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">overlap_check</span><span class="p">(</span>
         <span class="n">new_fiber</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
         <span class="n">fiber_pos</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
@@ -884,7 +924,10 @@
 
         <span class="k">return</span> <span class="n">status</span></div>
 
-<div class="viewcode-block" id="CircleParticles.min_dis_index"><a class="viewcode-back" href="../../../rvesimulator.microstructure.html#rvesimulator.microstructure.circle_particles.CircleParticles.min_dis_index">[docs]</a>    <span class="nd">@staticmethod</span>
+
+<div class="viewcode-block" id="CircleParticles.min_dis_index">
+<a class="viewcode-back" href="../../../rvesimulator.microstructure.html#rvesimulator.microstructure.circle_particles.CircleParticles.min_dis_index">[docs]</a>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">min_dis_index</span><span class="p">(</span>
         <span class="n">temp_fiber</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
         <span class="n">fiber_pos</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
@@ -960,7 +1003,10 @@
 
         <span class="k">return</span> <span class="n">fiber_min_dis_vector</span><span class="p">,</span> <span class="n">min_index</span><span class="p">,</span> <span class="n">min_dis</span></div>
 
-<div class="viewcode-block" id="CircleParticles.generate_first_heuristic_fibers"><a class="viewcode-back" href="../../../rvesimulator.microstructure.html#rvesimulator.microstructure.circle_particles.CircleParticles.generate_first_heuristic_fibers">[docs]</a>    <span class="nd">@staticmethod</span>
+
+<div class="viewcode-block" id="CircleParticles.generate_first_heuristic_fibers">
+<a class="viewcode-back" href="../../../rvesimulator.microstructure.html#rvesimulator.microstructure.circle_particles.CircleParticles.generate_first_heuristic_fibers">[docs]</a>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">generate_first_heuristic_fibers</span><span class="p">(</span>
         <span class="n">ref_point</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
         <span class="n">fiber_temp</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
@@ -999,7 +1045,10 @@
 
         <span class="k">return</span> <span class="n">fiber_temp</span></div>
 
-<div class="viewcode-block" id="CircleParticles._first_new_fiber"><a class="viewcode-back" href="../../../rvesimulator.microstructure.html#rvesimulator.microstructure.circle_particles.CircleParticles._first_new_fiber">[docs]</a>    <span class="nd">@staticmethod</span>
+
+<div class="viewcode-block" id="CircleParticles._first_new_fiber">
+<a class="viewcode-back" href="../../../rvesimulator.microstructure.html#rvesimulator.microstructure.circle_particles.CircleParticles._first_new_fiber">[docs]</a>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_first_new_fiber</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
                          <span class="n">y</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
                          <span class="n">r</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
@@ -1025,7 +1074,10 @@
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">portion</span><span class="p">]])</span></div>
 
 
-<div class="viewcode-block" id="CircleParticles.fiber_volume"><a class="viewcode-back" href="../../../rvesimulator.microstructure.html#rvesimulator.microstructure.circle_particles.CircleParticles.fiber_volume">[docs]</a>    <span class="nd">@staticmethod</span>
+
+<div class="viewcode-block" id="CircleParticles.fiber_volume">
+<a class="viewcode-back" href="../../../rvesimulator.microstructure.html#rvesimulator.microstructure.circle_particles.CircleParticles.fiber_volume">[docs]</a>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">fiber_volume</span><span class="p">(</span><span class="n">radius</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;calculate the fiber volume of the current fiber</span>
 
@@ -1041,7 +1093,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">radius</span><span class="o">**</span><span class="mi">2</span></div>
 
-<div class="viewcode-block" id="CircleParticles.generate_random_fibers"><a class="viewcode-back" href="../../../rvesimulator.microstructure.html#rvesimulator.microstructure.circle_particles.CircleParticles.generate_random_fibers">[docs]</a>    <span class="nd">@staticmethod</span>
+
+<div class="viewcode-block" id="CircleParticles.generate_random_fibers">
+<a class="viewcode-back" href="../../../rvesimulator.microstructure.html#rvesimulator.microstructure.circle_particles.CircleParticles.generate_random_fibers">[docs]</a>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">generate_random_fibers</span><span class="p">(</span>
         <span class="n">len_start</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">len_end</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
@@ -1083,7 +1138,9 @@
         <span class="k">while</span> <span class="n">r</span> <span class="o">&lt;=</span> <span class="mf">0.02</span><span class="o">*</span><span class="p">(</span><span class="n">len_end</span> <span class="o">-</span> <span class="n">len_start</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="n">radius_mu</span><span class="p">):</span>
             <span class="n">r</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">radius_mu</span><span class="p">,</span> <span class="n">radius_std</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         <span class="n">fiber</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">r</span><span class="p">])</span>
-        <span class="k">return</span> <span class="n">fiber</span></div></div>
+        <span class="k">return</span> <span class="n">fiber</span></div>
+</div>
+
 </pre></div>
 
            </div>

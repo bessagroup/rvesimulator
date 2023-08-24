@@ -11,9 +11,9 @@
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
+        <script src="../../../_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -116,8 +116,12 @@
 
 
 <span class="c1"># =============================================================================</span>
-<div class="viewcode-block" id="VonMisesPlasticElasticRegularLoads"><a class="viewcode-back" href="../../../rvesimulator.benchmarks.html#rvesimulator.benchmarks.two_materials_rve.VonMisesPlasticElasticRegularLoads">[docs]</a><span class="k">class</span> <span class="nc">VonMisesPlasticElasticRegularLoads</span><span class="p">(</span><span class="n">SimulationBase</span><span class="p">):</span>
-<div class="viewcode-block" id="VonMisesPlasticElasticRegularLoads.__init__"><a class="viewcode-back" href="../../../rvesimulator.benchmarks.html#rvesimulator.benchmarks.two_materials_rve.VonMisesPlasticElasticRegularLoads.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="VonMisesPlasticElasticRegularLoads">
+<a class="viewcode-back" href="../../../rvesimulator.benchmarks.html#rvesimulator.benchmarks.two_materials_rve.VonMisesPlasticElasticRegularLoads">[docs]</a>
+<span class="k">class</span> <span class="nc">VonMisesPlasticElasticRegularLoads</span><span class="p">(</span><span class="n">SimulationBase</span><span class="p">):</span>
+<div class="viewcode-block" id="VonMisesPlasticElasticRegularLoads.__init__">
+<a class="viewcode-back" href="../../../rvesimulator.benchmarks.html#rvesimulator.benchmarks.two_materials_rve.VonMisesPlasticElasticRegularLoads.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Interface between python and abaqus of the Hollow plate case&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">main_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">folder_info</span> <span class="o">=</span> <span class="p">{</span>
@@ -133,7 +137,10 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">update_sim_info</span><span class="p">(</span><span class="n">yield_stress</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="VonMisesPlasticElasticRegularLoads.update_sim_info"><a class="viewcode-back" href="../../../rvesimulator.benchmarks.html#rvesimulator.benchmarks.two_materials_rve.VonMisesPlasticElasticRegularLoads.update_sim_info">[docs]</a>    <span class="k">def</span> <span class="nf">update_sim_info</span><span class="p">(</span>
+
+<div class="viewcode-block" id="VonMisesPlasticElasticRegularLoads.update_sim_info">
+<a class="viewcode-back" href="../../../rvesimulator.benchmarks.html#rvesimulator.benchmarks.two_materials_rve.VonMisesPlasticElasticRegularLoads.update_sim_info">[docs]</a>
+    <span class="k">def</span> <span class="nf">update_sim_info</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">size</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.048</span><span class="p">,</span>
         <span class="n">radius_mu</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.003</span><span class="p">,</span>
@@ -213,13 +220,19 @@
 
         <span class="c1"># print simulation information to screen</span>
         <span class="k">if</span> <span class="n">print_info</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_print_sim_info</span><span class="p">(</span><span class="n">info</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sim_paras</span><span class="p">)</span></div></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_print_sim_info</span><span class="p">(</span><span class="n">info</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sim_paras</span><span class="p">)</span></div>
+</div>
+
 
 <span class="c1"># =============================================================================</span>
 
 
-<div class="viewcode-block" id="VonMisesPlasticElasticPathLoads"><a class="viewcode-back" href="../../../rvesimulator.benchmarks.html#rvesimulator.benchmarks.two_materials_rve.VonMisesPlasticElasticPathLoads">[docs]</a><span class="k">class</span> <span class="nc">VonMisesPlasticElasticPathLoads</span><span class="p">(</span><span class="n">SimulationBase</span><span class="p">):</span>
-<div class="viewcode-block" id="VonMisesPlasticElasticPathLoads.__init__"><a class="viewcode-back" href="../../../rvesimulator.benchmarks.html#rvesimulator.benchmarks.two_materials_rve.VonMisesPlasticElasticPathLoads.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="VonMisesPlasticElasticPathLoads">
+<a class="viewcode-back" href="../../../rvesimulator.benchmarks.html#rvesimulator.benchmarks.two_materials_rve.VonMisesPlasticElasticPathLoads">[docs]</a>
+<span class="k">class</span> <span class="nc">VonMisesPlasticElasticPathLoads</span><span class="p">(</span><span class="n">SimulationBase</span><span class="p">):</span>
+<div class="viewcode-block" id="VonMisesPlasticElasticPathLoads.__init__">
+<a class="viewcode-back" href="../../../rvesimulator.benchmarks.html#rvesimulator.benchmarks.two_materials_rve.VonMisesPlasticElasticPathLoads.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Interface between python and abaqus of the Hollow plate case&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">main_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">folder_info</span> <span class="o">=</span> <span class="p">{</span>
@@ -235,7 +248,10 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">update_sim_info</span><span class="p">(</span><span class="n">yield_stress</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="VonMisesPlasticElasticPathLoads.update_sim_info"><a class="viewcode-back" href="../../../rvesimulator.benchmarks.html#rvesimulator.benchmarks.two_materials_rve.VonMisesPlasticElasticPathLoads.update_sim_info">[docs]</a>    <span class="k">def</span> <span class="nf">update_sim_info</span><span class="p">(</span>
+
+<div class="viewcode-block" id="VonMisesPlasticElasticPathLoads.update_sim_info">
+<a class="viewcode-back" href="../../../rvesimulator.benchmarks.html#rvesimulator.benchmarks.two_materials_rve.VonMisesPlasticElasticPathLoads.update_sim_info">[docs]</a>
+    <span class="k">def</span> <span class="nf">update_sim_info</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">size</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.048</span><span class="p">,</span>
         <span class="n">radius_mu</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.003</span><span class="p">,</span>
@@ -320,7 +336,9 @@
 
         <span class="c1"># print simulation information to screen</span>
         <span class="k">if</span> <span class="n">print_info</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_print_sim_info</span><span class="p">(</span><span class="n">info</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sim_paras</span><span class="p">)</span></div></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_print_sim_info</span><span class="p">(</span><span class="n">info</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sim_paras</span><span class="p">)</span></div>
+</div>
+
 </pre></div>
 
            </div>

@@ -11,9 +11,9 @@
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
+        <script src="../../../_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -102,13 +102,17 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 
-<div class="viewcode-block" id="HardeningLaw"><a class="viewcode-back" href="../../../rvesimulator.additions.html#rvesimulator.additions.hardening_law.HardeningLaw">[docs]</a><span class="nd">@dataclass</span>
+<div class="viewcode-block" id="HardeningLaw">
+<a class="viewcode-back" href="../../../rvesimulator.additions.html#rvesimulator.additions.hardening_law.HardeningLaw">[docs]</a>
+<span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">HardeningLaw</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;hardening law&quot;&quot;&quot;</span>
 
     <span class="n">hardening_law_table</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span>
 
-<div class="viewcode-block" id="HardeningLaw.linear"><a class="viewcode-back" href="../../../rvesimulator.additions.html#rvesimulator.additions.hardening_law.HardeningLaw.linear">[docs]</a>    <span class="k">def</span> <span class="nf">linear</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<div class="viewcode-block" id="HardeningLaw.linear">
+<a class="viewcode-back" href="../../../rvesimulator.additions.html#rvesimulator.additions.hardening_law.HardeningLaw.linear">[docs]</a>
+    <span class="k">def</span> <span class="nf">linear</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;linear hardening law</span>
 
 <span class="sd">        Returns</span>
@@ -139,7 +143,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">hardening_law_table</span> <span class="o">=</span> <span class="n">hardening_law_table</span>
         <span class="k">return</span> <span class="n">hardening_law_table</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="HardeningLaw.swift"><a class="viewcode-back" href="../../../rvesimulator.additions.html#rvesimulator.additions.hardening_law.HardeningLaw.swift">[docs]</a>    <span class="k">def</span> <span class="nf">swift</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+
+<div class="viewcode-block" id="HardeningLaw.swift">
+<a class="viewcode-back" href="../../../rvesimulator.additions.html#rvesimulator.additions.hardening_law.HardeningLaw.swift">[docs]</a>
+    <span class="k">def</span> <span class="nf">swift</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;swift hardening law</span>
 
 <span class="sd">        Returns</span>
@@ -170,7 +177,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">hardening_law_table</span> <span class="o">=</span> <span class="n">hardening_law_table</span>
         <span class="k">return</span> <span class="n">hardening_law_table</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="HardeningLaw.ramberg"><a class="viewcode-back" href="../../../rvesimulator.additions.html#rvesimulator.additions.hardening_law.HardeningLaw.ramberg">[docs]</a>    <span class="k">def</span> <span class="nf">ramberg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+
+<div class="viewcode-block" id="HardeningLaw.ramberg">
+<a class="viewcode-back" href="../../../rvesimulator.additions.html#rvesimulator.additions.hardening_law.HardeningLaw.ramberg">[docs]</a>
+    <span class="k">def</span> <span class="nf">ramberg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;ramberg hardening law</span>
 
 <span class="sd">        Returns</span>
@@ -204,7 +214,10 @@
 
         <span class="k">return</span> <span class="n">hardening_law_table</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="HardeningLaw.hardening_law_plot"><a class="viewcode-back" href="../../../rvesimulator.additions.html#rvesimulator.additions.hardening_law.HardeningLaw.hardening_law_plot">[docs]</a>    <span class="k">def</span> <span class="nf">hardening_law_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+<div class="viewcode-block" id="HardeningLaw.hardening_law_plot">
+<a class="viewcode-back" href="../../../rvesimulator.additions.html#rvesimulator.additions.hardening_law.HardeningLaw.hardening_law_plot">[docs]</a>
+    <span class="k">def</span> <span class="nf">hardening_law_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="s2">&quot;plot the hardening law&quot;</span>
         <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
@@ -217,7 +230,9 @@
         <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$\sigma$&quot;</span><span class="p">)</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="s2">&quot;-.&quot;</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div></div>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+</div>
+
 </pre></div>
 
            </div>

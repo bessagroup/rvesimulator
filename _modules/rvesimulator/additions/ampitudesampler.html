@@ -11,9 +11,9 @@
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
+        <script src="../../../_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -114,17 +114,24 @@
 <span class="n">__status__</span> <span class="o">=</span> <span class="s1">&#39;Stable&#39;</span>
 <span class="c1"># =============================================================================</span>
 
-<div class="viewcode-block" id="AmplitudeGenerator"><a class="viewcode-back" href="../../../rvesimulator.additions.html#rvesimulator.additions.ampitudesampler.AmplitudeGenerator">[docs]</a><span class="k">class</span> <span class="nc">AmplitudeGenerator</span><span class="p">:</span>
+<div class="viewcode-block" id="AmplitudeGenerator">
+<a class="viewcode-back" href="../../../rvesimulator.additions.html#rvesimulator.additions.ampitudesampler.AmplitudeGenerator">[docs]</a>
+<span class="k">class</span> <span class="nc">AmplitudeGenerator</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;amplitude generator&quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="AmplitudeGenerator.__init__"><a class="viewcode-back" href="../../../rvesimulator.additions.html#rvesimulator.additions.ampitudesampler.AmplitudeGenerator.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="AmplitudeGenerator.__init__">
+<a class="viewcode-back" href="../../../rvesimulator.additions.html#rvesimulator.additions.ampitudesampler.AmplitudeGenerator.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialization&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_dim</span> <span class="o">=</span> <span class="n">num_dim</span>
 
         <span class="c1"># assert dimension</span>
         <span class="k">assert</span> <span class="n">num_dim</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">or</span> <span class="n">num_dim</span> <span class="o">==</span> <span class="mi">6</span><span class="p">,</span> <span class="s2">&quot;dimension should be 3 or 6&quot;</span></div>
 
-<div class="viewcode-block" id="AmplitudeGenerator.get_amplitude"><a class="viewcode-back" href="../../../rvesimulator.additions.html#rvesimulator.additions.ampitudesampler.AmplitudeGenerator.get_amplitude">[docs]</a>    <span class="k">def</span> <span class="nf">get_amplitude</span><span class="p">(</span>
+
+<div class="viewcode-block" id="AmplitudeGenerator.get_amplitude">
+<a class="viewcode-back" href="../../../rvesimulator.additions.html#rvesimulator.additions.ampitudesampler.AmplitudeGenerator.get_amplitude">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_amplitude</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">num_amplitude</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">num_control</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -195,7 +202,10 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">amplitude_to_abaqus</span></div>
 
-<div class="viewcode-block" id="AmplitudeGenerator.generate_control_points"><a class="viewcode-back" href="../../../rvesimulator.additions.html#rvesimulator.additions.ampitudesampler.AmplitudeGenerator.generate_control_points">[docs]</a>    <span class="nd">@staticmethod</span>
+
+<div class="viewcode-block" id="AmplitudeGenerator.generate_control_points">
+<a class="viewcode-back" href="../../../rvesimulator.additions.html#rvesimulator.additions.ampitudesampler.AmplitudeGenerator.generate_control_points">[docs]</a>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">generate_control_points</span><span class="p">(</span>
         <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">num_control</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">num_steps</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">num_dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span>
@@ -235,7 +245,10 @@
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">x_control</span><span class="p">,</span> <span class="n">y_control</span></div>
 
-<div class="viewcode-block" id="AmplitudeGenerator.interpolation"><a class="viewcode-back" href="../../../rvesimulator.additions.html#rvesimulator.additions.ampitudesampler.AmplitudeGenerator.interpolation">[docs]</a>    <span class="nd">@staticmethod</span>
+
+<div class="viewcode-block" id="AmplitudeGenerator.interpolation">
+<a class="viewcode-back" href="../../../rvesimulator.additions.html#rvesimulator.additions.ampitudesampler.AmplitudeGenerator.interpolation">[docs]</a>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">interpolation</span><span class="p">(</span>
         <span class="n">x_control</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
         <span class="n">y_control</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
@@ -279,7 +292,10 @@
 
         <span class="k">return</span> <span class="n">path</span></div>
 
-<div class="viewcode-block" id="AmplitudeGenerator.plot_amplitude"><a class="viewcode-back" href="../../../rvesimulator.additions.html#rvesimulator.additions.ampitudesampler.AmplitudeGenerator.plot_amplitude">[docs]</a>    <span class="k">def</span> <span class="nf">plot_amplitude</span><span class="p">(</span>
+
+<div class="viewcode-block" id="AmplitudeGenerator.plot_amplitude">
+<a class="viewcode-back" href="../../../rvesimulator.additions.html#rvesimulator.additions.ampitudesampler.AmplitudeGenerator.plot_amplitude">[docs]</a>
+    <span class="k">def</span> <span class="nf">plot_amplitude</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">fig_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;amplitude_path.png&quot;</span><span class="p">,</span>
         <span class="n">save_fig</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -367,7 +383,9 @@
             <span class="k">if</span> <span class="n">save_fig</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
                 <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">fname</span><span class="o">=</span><span class="n">fig_name</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div></div>
+                <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+</div>
+
 </pre></div>
 
            </div>

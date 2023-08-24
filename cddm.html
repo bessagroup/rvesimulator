@@ -12,9 +12,9 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -103,9 +103,9 @@
            <div itemprop="articleBody">
              
   <section id="cddm-rve">
-<h1>cddm_rve<a class="headerlink" href="#cddm-rve" title="Permalink to this heading">¶</a></h1>
+<h1>cddm_rve<a class="headerlink" href="#cddm-rve" title="Link to this heading">¶</a></h1>
 <section id="problem-description">
-<h2>1. problem description<a class="headerlink" href="#problem-description" title="Permalink to this heading">¶</a></h2>
+<h2>1. problem description<a class="headerlink" href="#problem-description" title="Link to this heading">¶</a></h2>
 <p>RVE simulation is an effective approach to explore constitutive laws of composites.
 Generally, An RVE has two material Phases which are matrix phase and fiber phase.
 The following figure gives an illustration of micro-structure of a 2D RVE.</p>
@@ -117,7 +117,7 @@ In detail, different tasks have different microstructures and material propertie
 paths to generate the learning dataset</p>
 </section>
 <section id="tasks-set-up">
-<h2>2. tasks set up<a class="headerlink" href="#tasks-set-up" title="Permalink to this heading">¶</a></h2>
+<h2>2. tasks set up<a class="headerlink" href="#tasks-set-up" title="Link to this heading">¶</a></h2>
 <p>From the above figure, it can be seen that the microstructure of an RVE is controlled by four factors
 which are size of the square, volume fraction of fiber phase, and distribution parameters for generating
 fibers. Meanwhile, the material properties of fiber and matrix phases also influence the performance of
@@ -129,7 +129,7 @@ for generating different tasks. The details of for different tasks are summarize
 <a class="reference internal image-reference" href="_images/tasks_microstructures.svg"><img alt="tasks_microstructures" class="align-center" src="_images/tasks_microstructures.svg" width="100%" /></a>
 </section>
 <section id="implementation">
-<h2>3. implementation<a class="headerlink" href="#implementation" title="Permalink to this heading">¶</a></h2>
+<h2>3. implementation<a class="headerlink" href="#implementation" title="Link to this heading">¶</a></h2>
 <p>The implementation of task A is based on the following steps:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># import the function</span>
 <span class="kn">from</span> <span class="nn">rvesimulator.benchmarks.cddm_rve</span> <span class="kn">import</span> <span class="n">CDDM_RVE</span>
