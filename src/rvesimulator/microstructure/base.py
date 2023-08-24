@@ -108,8 +108,7 @@ class MicrosctuctureGenerator:
             ax.set_yticks([])
             ax.set_xticks([])
             if save_fig is True:
-                plt.savefig(fig_name, dpi=300)
-                plt.close()
+                plt.savefig(fig_name, dpi=300, bbox_inches="tight")
             plt.show()
         elif self.fiber_positions.shape[1] == 5:
             fig = plt.figure(**kwarg)
@@ -118,8 +117,7 @@ class MicrosctuctureGenerator:
             ax.set_yticks([])
             ax.set_xticks([])
             if save_fig is True:
-                plt.savefig(fig_name, dpi=300)
-                plt.close()
+                plt.savefig(fig_name, dpi=300, bbox_inches="tight")
             plt.show()
 
     @staticmethod
@@ -165,7 +163,7 @@ class MicrosctuctureGenerator:
         axes.set_yticks([])
         axes.set_xticks([])
         if save_figure is True:
-            plt.savefig(fig_name, dpi=300)
+            plt.savefig(fig_name, dpi=300, bbox_inches="tight")
             plt.close()
         plt.show()
 

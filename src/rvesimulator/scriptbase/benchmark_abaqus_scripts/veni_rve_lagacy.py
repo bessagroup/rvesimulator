@@ -603,7 +603,8 @@ class BothVEVPLeonovPathLoads(HistoryDependentDisplacement2D,
 
 
 # =============================================================================
-class VEVP_VPLeonovRegularLoads(NormalDisplacementLoading, TwoMaterialsRVEBase):
+class VEVP_VPLeonovRegularLoads(NormalDisplacementLoading,
+                                TwoMaterialsRVEBase):
 
     def __init__(
         self,

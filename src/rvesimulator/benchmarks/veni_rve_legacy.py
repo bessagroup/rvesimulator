@@ -26,7 +26,7 @@ class BothVPLeonovRegularLoads(SimulationBase):
             "script_path": os.path.dirname(rvesimulator.__file__) + \
                 "/scriptbase",
             "current_work_directory": "point_1",
-            "sim_path": "benchmark_abaqus_scripts.veni_rve",
+            "sim_path": "benchmark_abaqus_scripts.veni_rve_legacy",
             "sim_script": "BothVPLeonovRegularLoads",
             "post_path": "basic_analysis_scripts.post_process",
             "post_script": "PostProcess2D",
@@ -137,7 +137,7 @@ class BothVPLeonovPathLoads(SimulationBase):
             "script_path": os.path.dirname(rvesimulator.__file__) + \
             "/scriptbase",
             "current_work_directory": "point_1",
-            "sim_path": "benchmark_abaqus_scripts.veni_rve",
+            "sim_path": "benchmark_abaqus_scripts.veni_rve_legacy",
             "sim_script": "BothVPLeonovPathLoads",
             "post_path": "basic_analysis_scripts.post_process",
             "post_script": "PostProcess2D",
@@ -252,14 +252,14 @@ class BothVEVPLeonovRegularLoads(SimulationBase):
             "script_path": os.path.dirname(rvesimulator.__file__) + \
             "/scriptbase",
             "current_work_directory": "point_1",
-            "sim_path": "benchmark_abaqus_scripts.veni_rve",
+            "sim_path": "benchmark_abaqus_scripts.veni_rve_legacy",
             "sim_script": "BothVEVPLeonovRegularLoads",
             "post_path": "basic_analysis_scripts.post_process",
             "post_script": "PostProcess2D",
         }
         self.subroutine_path = self.folder_info["script_path"] + \
             "/benchmark_abaqus_scripts/vevp_leonov_model.f"
-        self.update_sim_info()
+        self.update_sim_info(seed=1)
 
     def update_sim_info(
         self,
@@ -368,7 +368,7 @@ class BothVEVPLeonovPathLoads(SimulationBase):
             "script_path": os.path.dirname(rvesimulator.__file__) + \
                 "/scriptbase",
             "current_work_directory": "point_1",
-            "sim_path": "benchmark_abaqus_scripts.veni_rve",
+            "sim_path": "benchmark_abaqus_scripts.veni_rve_legacy",
             "sim_script": "BothVEVPLeonovPathLoads",
             "post_path": "basic_analysis_scripts.post_process",
             "post_script": "PostProcess2D",
@@ -489,7 +489,7 @@ class VEVP_VPLeonovRegularLoads(SimulationBase):
             "script_path": os.path.dirname(rvesimulator.__file__) + \
                 "/scriptbase",
             "current_work_directory": "point_1",
-            "sim_path": "benchmark_abaqus_scripts.veni_rve",
+            "sim_path": "benchmark_abaqus_scripts.veni_rve_legacy",
             "sim_script": "VEVP_VPLeonovRegularLoads",
             "post_path": "basic_analysis_scripts.post_process",
             "post_script": "PostProcess2D",
@@ -603,7 +603,7 @@ class VEVP_VPLeonovPathLoads(SimulationBase):
             "script_path": os.path.dirname(rvesimulator.__file__) + \
                         "scriptbase",
             "current_work_directory": "point_1",
-            "sim_path": "benchmark_abaqus_scripts.veni_rve",
+            "sim_path": "benchmark_abaqus_scripts.veni_rve_legacy",
             "sim_script": "VEVP_VPLeonovPathLoads",
             "post_path": "basic_analysis_scripts.post_process",
             "post_script": "PostProcess2D",

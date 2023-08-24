@@ -96,16 +96,17 @@ class SimulationBase:
         sub_folder_index: int = None,
         third_folder_index: int = None,
     ) -> None:
-        """create folders for excuting abaqus simulations
+        """create folders for executing abaqus simulations, it's a third 
+        layer folder structure, you have to provide at least one folder index
 
         Parameters
         ----------
         folder_index : int, optional
             first folder index , by default None
-        sub_folder_index : _type_, optional
+        sub_folder_index : int, optional
             second folder index , by default None
-        third_folder_index : _type_, optional
-            third forlder index, by default None
+        third_folder_index : int, optional
+            third folder index, by default None
 
         Raises
         ------
@@ -133,9 +134,18 @@ class SimulationBase:
                     )
         else:
             if sub_folder_index is None:
-                raise ValueError("provide sub_folder_index")
+                if third_folder_index is None:
+                    self.folder_info[
+                        "current_work_directory"
+                    ] = "point_" + str(folder_index)
+                else:
+                    self.folder_info["current_work_directory"] = (
+                        "gen_" + str(folder_index) 
+                        + "/case_" + str(third_folder_index))
             elif third_folder_index is None:
-                raise ValueError("provide third_folder_index")
+                self.folder_info["current_work_directory"] = (
+                    "gen_" + str(folder_index) 
+                    + "/point_" + str(sub_folder_index))
             else:
                 self.folder_info["current_work_directory"] = (
                     "gen_"
@@ -153,7 +163,13 @@ class SimulationBase:
         os.chdir(new_path)
 
     def _print_sim_info(self, info: dict) -> None:
-        "print simulation information to screen"
+        """print simulation information to screen
+        
+        Parameters
+        ----------
+        info : dict
+            a dict contains simulation information
+        """
 
         print("Simulation information: \n")
         print(json.dumps(info, indent=4))
