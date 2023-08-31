@@ -28,7 +28,7 @@ class VeniNoCohRVE(SimulationBase):
         """Interface between python and abaqus of the Hollow plate case"""
         self.main_folder = os.getcwd()
         self.folder_info = {
-            "main_work_directory": os.path.join(os.getcwd(), "Data"),
+            "main_work_directory": os.path.join(self.main_folder, "Data"),
             "script_path": os.path.dirname(rvesimulator.__file__) + \
                 "/scriptbase/",
             "current_work_directory": "point_1",

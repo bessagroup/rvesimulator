@@ -53,6 +53,9 @@ class SimulationBase:
         # get the simulation results back
         results = simulator.read_back_results()
 
+        # back to main folder
+        os.chdir(self.main_folder)
+
         return results
 
     def run_batch_simulation(self) -> any:
