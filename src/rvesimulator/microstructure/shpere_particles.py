@@ -251,7 +251,7 @@ class SphereParticles(MicrosctuctureGenerator):
                         ii,
                         self.num_cycle,
                     )
-                    new_fiber_temp = self.generate_first_heuristic_fibers(
+                    new_fiber_temp = self.gen_heuristic_fibers(
                         ref_point=self.fiber_positions[min_index, 0:4].copy(),
                         fiber_temp=self.fiber_positions[ii, 0:4].copy(),
                         dist_factor=self.dist_min_factor,
@@ -2013,7 +2013,7 @@ class SphereParticles(MicrosctuctureGenerator):
         return fiber_min_dis_vector, min_index, min_dis
 
     @staticmethod
-    def generate_first_heuristic_fibers(
+    def gen_heuristic_fibers(
         ref_point: np.ndarray,
         fiber_temp: np.ndarray,
         dist_factor: float,

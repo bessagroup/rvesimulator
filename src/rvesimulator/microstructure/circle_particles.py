@@ -2,6 +2,7 @@
 # =============================================================================
 # standard
 import json
+import logging
 import math
 import time
 from typing import Any
@@ -58,6 +59,8 @@ class CircleParticles(MicrosctuctureGenerator):
         num_fiber_max: int = 750,
         num_cycle_max: int = 15,
         dist_min_factor: float = 1.1,
+        stirring_iters: int = 100,
+        print_log: bool = False,
     ) -> None:
         """Initialization
 
@@ -88,12 +91,15 @@ class CircleParticles(MicrosctuctureGenerator):
         self.radius_mu = radius_mu
         self.radius_std = radius_std
         self.vol_req = vol_req
+        self.print_log = print_log
 
         # Initialization of the algorithm
         self.dist_min_factor = dist_min_factor
         self.num_guess_max = num_guess_max
         self.num_fibers_max = num_fiber_max
         self.num_cycles_max = num_cycle_max
+        self.stirring_iters = stirring_iters
+
 
     def _parameter_initialization(self) -> None:
         """Initialize the parameters"""
@@ -124,14 +130,52 @@ class CircleParticles(MicrosctuctureGenerator):
         """
 
         # decide to use seed or not
+
         self.rng = np.random.default_rng(seed=seed)
         # counting time generating an RVE
+        logging.basicConfig(level=logging.INFO,
+                            filename='rve_simulation.log', filemode='w')
+        self.logger = logging.getLogger("microstructure")
+        # Create a buffer handler
+        self.logger.info("==================================================")
+        self.logger.info("Start generating microstructure")
+        self.logger.info(f"seed: {seed}")
+        self.logger.info(f"length: {self.length}")
+        self.logger.info(f"width: {self.width}")
+        self.logger.info(f"radius_mu: {self.radius_mu}")
+        self.logger.info(f"radius_std: {self.radius_std}")
+        self.logger.info(f"vol_req: {self.vol_req}")
         start_time = time.time()
         self._parameter_initialization()
         self._procedure_initialization()
         self._core_iteration()
         end_time = time.time()
         self.time_usage = end_time - start_time
+        self.logger.info(f"time usage: {self.time_usage}")
+        self.logger.info("End generating microstructure")
+        self.logger.info("==================================================")
+        if self.print_log:
+            file_handler = logging.FileHandler("microstructure.log")
+            file_handler.setLevel(logging.INFO)
+            # Create a logging format
+            formatter = logging.Formatter(
+                "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+            )
+            file_handler.setFormatter(formatter)
+            # Add the handlers to the logger
+            self.logger.addHandler(file_handler)
+
+        # get microstructure info
+        self.microstructure_info = {
+            "location_information": self.fiber_positions.tolist(),
+            "radius_mu": self.radius_mu,
+            "radius_std": self.radius_std,
+            "len_start": self.len_start,
+            "wid_start": self.wid_start,
+            "len_end": self.len_end,
+            "wid_end": self.wid_end,
+        }
+
 
     def to_abaqus_format(
         self, file_name: str = "micro_structure_info.json"
@@ -148,19 +192,9 @@ class CircleParticles(MicrosctuctureGenerator):
         dict
             a dict contains all info of rve microstructure
         """
-        microstructure_info = {
-            "location_information": self.fiber_positions.tolist(),
-            "radius_mu": self.radius_mu,
-            "radius_std": self.radius_std,
-            "len_start": self.len_start,
-            "wid_start": self.wid_start,
-            "len_end": self.len_end,
-            "wid_end": self.wid_end,
-        }
         with open(file_name, "w") as fp:
-            json.dump(microstructure_info, fp)
+            json.dump(self.microstructure_info, fp)
 
-        return microstructure_info
 
     def plot_microstructure(
         self,
@@ -242,28 +276,6 @@ class CircleParticles(MicrosctuctureGenerator):
                     radius_std=self.radius_std,
                     rng=self.rng,
                 )
-                # if the temp fiber locates at un-proper location for mesh
-                while self.proper_vertices_mesh_location(fiber_temp) == 0:
-                    fiber_temp = self.generate_random_fibers(
-                        len_start=0,
-                        len_end=self.length,
-                        wid_start=0,
-                        wid_end=self.width,
-                        radius_mu=self.radius_mu,
-                        radius_std=self.radius_std,
-                        rng=self.rng,
-                    )
-                # if the temp fiber locates at un-proper location for mesh
-                while self.proper_edge_mesh_location(fiber_temp) == 0:
-                    fiber_temp = self.generate_random_fibers(
-                        len_start=0,
-                        len_end=self.length,
-                        wid_start=0,
-                        wid_end=self.width,
-                        radius_mu=self.radius_mu,
-                        radius_std=self.radius_std,
-                        rng=self.rng,
-                    )
                 # check the location of the fiber and
                 new_fiber = self.new_positions(
                     x_center=fiber_temp[0, 0],
@@ -272,6 +284,48 @@ class CircleParticles(MicrosctuctureGenerator):
                     length=self.length,
                     width=self.width,
                 )
+                if new_fiber[0, 3] == 4:
+                    self.logger.info("generate fiber, vertex check ...")
+                    # if the temp fiber locates at un-proper location for mesh
+                    while self.vertices_mesh_loc(new_fiber) == "fail":
+                        fiber_temp = self.generate_random_fibers(
+                            len_start=0,
+                            len_end=self.length,
+                            wid_start=0,
+                            wid_end=self.width,
+                            radius_mu=self.radius_mu,
+                            radius_std=self.radius_std,
+                            rng=self.rng,
+                        )
+                        new_fiber = self.new_positions(
+                            x_center=fiber_temp[0, 0],
+                            y_center=fiber_temp[1, 0],
+                            radius=fiber_temp[2, 0],
+                            length=self.length,
+                            width=self.width,
+                        )
+                    self.logger.info("generate fiber, vertex check pass")
+                elif new_fiber[0, 3] == 2:
+                    self.logger.info("generate fiber, edge check ...")
+                    # if the temp fiber locates at un-proper location for mesh
+                    while self.proper_edge_mesh_location(new_fiber) == "fail":
+                        fiber_temp = self.generate_random_fibers(
+                            len_start=0,
+                            len_end=self.length,
+                            wid_start=0,
+                            wid_end=self.width,
+                            radius_mu=self.radius_mu,
+                            radius_std=self.radius_std,
+                            rng=self.rng,
+                        )
+                        new_fiber = self.new_positions(
+                            x_center=fiber_temp[0, 0],
+                            y_center=fiber_temp[1, 0],
+                            radius=fiber_temp[2, 0],
+                            length=self.length,
+                            width=self.width,
+                        )
+                    self.logger.info("generate fiber, edge check pass")
                 # check the overlap of new fiber
                 overlap_status = self.overlap_check(
                     new_fiber=new_fiber,
@@ -308,36 +362,12 @@ class CircleParticles(MicrosctuctureGenerator):
                         self.num_cycle,
                     )
                     # generate the new fiber location
-                    new_fiber_temp = self.generate_first_heuristic_fibers(
+                    new_fiber_temp = self.gen_heuristic_fibers(
                         ref_point=self.fiber_positions[min_index, 0:3].copy(),
                         fiber_temp=self.fiber_positions[ii, 0:3].copy(),
                         dist_factor=self.dist_min_factor,
                         rng=self.rng,
                     )
-                    # check proper location for mesh
-                    while self.proper_vertices_mesh_location(
-                        new_fiber_temp
-                    ) == 0:
-                        new_fiber_temp = self.generate_first_heuristic_fibers(
-                            ref_point=self.fiber_positions[
-                                min_index, 0:3
-                            ].copy(),
-                            fiber_temp=self.fiber_positions[ii, 0:3].copy(),
-                            dist_factor=self.dist_min_factor,
-                            rng=self.rng,
-                        )
-                    # check proper location for mesh
-                    while self.proper_edge_mesh_location(
-                        new_fiber_temp
-                    ) == 0:
-                        new_fiber_temp = self.generate_first_heuristic_fibers(
-                            ref_point=self.fiber_positions[
-                                min_index, 0:3
-                            ].copy(),
-                            fiber_temp=self.fiber_positions[ii, 0:3].copy(),
-                            dist_factor=self.dist_min_factor,
-                            rng=self.rng,
-                        )
                     # check the overlap of new fiber
                     new_fiber = self.new_positions(
                         x_center=new_fiber_temp[0, 0],
@@ -346,6 +376,70 @@ class CircleParticles(MicrosctuctureGenerator):
                         length=self.length,
                         width=self.width,
                     )
+                    # check proper location for mesh
+                    # max stirring iteration
+                    stirring_iter = 0
+                    if new_fiber[0, 3] == 4:
+                        self.logger.info("stirring fiber,vertex check ...")
+                        while (
+                            self.vertices_mesh_loc(new_fiber) == "fail"
+                            and stirring_iter < self.stirring_iters
+                        ):
+                            # generate new fiber
+                            self.logger.info(f"iter: {stirring_iter}")
+                            new_fiber_temp = self.gen_heuristic_fibers(
+                                ref_point=self.fiber_positions[
+                                    min_index, 0:3
+                                ].copy(),
+                                fiber_temp=self.fiber_positions[
+                                    ii, 0:3].copy(),
+                                dist_factor=self.dist_min_factor,
+                                rng=self.rng,
+                            )
+                            # check the overlap of new fiber
+                            new_fiber = self.new_positions(
+                                x_center=new_fiber_temp[0, 0],
+                                y_center=new_fiber_temp[0, 1],
+                                radius=new_fiber_temp[0, 2],
+                                length=self.length,
+                                width=self.width,
+                            )
+                            stirring_iter += 1
+                        if stirring_iter == self.stirring_iters:
+                            self.logger.error(
+                                "stirring vertex check failed")
+                        else:
+                            self.logger.info("stirring vertex check pass")
+                    elif new_fiber[0, 3] == 2:
+                        self.logger.info("stirring fiber, edge check ...")
+                        # check proper location for mesh
+                        while self.proper_edge_mesh_location(
+                            new_fiber
+                        ) == "fail" and stirring_iter < self.stirring_iters:
+                            # logger
+                            self.logger.info(f"iter: {stirring_iter}")
+                            new_fiber_temp = self.gen_heuristic_fibers(
+                                ref_point=self.fiber_positions[
+                                    min_index, 0:3
+                                ].copy(),
+                                fiber_temp=self.fiber_positions[
+                                    ii, 0:3].copy(),
+                                dist_factor=self.dist_min_factor,
+                                rng=self.rng,
+                            )
+                            # check the overlap of new fiber
+                            new_fiber = self.new_positions(
+                                x_center=new_fiber_temp[0, 0],
+                                y_center=new_fiber_temp[0, 1],
+                                radius=new_fiber_temp[0, 2],
+                                length=self.length,
+                                width=self.width,
+                            )
+                            stirring_iter += 1
+                        if stirring_iter == self.stirring_iters:
+                            self.logger.error("stirring edge check failed")
+                        else:
+                            self.logger.info("stirring edge check pass")
                     overlap_status = self.overlap_check(
                         new_fiber=new_fiber,
                         fiber_pos=self.fiber_positions.copy(),
@@ -438,7 +532,7 @@ class CircleParticles(MicrosctuctureGenerator):
 
         return self.rgmsh.T
 
-    def proper_vertices_mesh_location(self, fiber: np.ndarray) -> int:
+    def vertices_mesh_loc(self, fiber: np.ndarray) -> int:
         """identify proper vertices location for meshing
 
         Parameters
@@ -452,7 +546,7 @@ class CircleParticles(MicrosctuctureGenerator):
             status of the fiber(0: improper, 1: proper)
         """
         # reformat the fiber location
-        fiber = fiber.reshape((1, 3))
+        fiber = fiber.reshape((-1, 4))
         vertices = np.array([[0, 0],
                              [0, self.width],
                              [self.length, self.width],
@@ -462,11 +556,11 @@ class CircleParticles(MicrosctuctureGenerator):
             vertices,
             fiber[:, 0:2],
         )
-        min_points_dis = points_dis_temp.min(0)
-        if 0.9*fiber[0, 2] < min_points_dis < np.sqrt(2)*fiber[0, 2]:
-            return 0
+        min_points_dis = points_dis_temp.min()
+        if 0.95*fiber[0, 2] < min_points_dis < np.sqrt(2)*fiber[0, 2]:
+            return "fail"
         else:
-            return 1
+            return "pass"
 
     def proper_edge_mesh_location(self, fiber: np.ndarray) -> int:
         """identify proper edge location for meshing
@@ -482,21 +576,21 @@ class CircleParticles(MicrosctuctureGenerator):
             status of the fiber(0: improper, 1: proper)
         """
         # reformat the fiber location
-        fiber = fiber.reshape((1, 3))
+        fiber = fiber.reshape((-1, 4))
         # for x edges
-        dis_x = np.abs(np.array([fiber[0, 0], self.width - fiber[0, 0]]))
-        if 0.8*fiber[0, 2] < min(dis_x) < fiber[0, 2]:
-            return 0
-        elif fiber[0, 2] < min(dis_x) < 1.1*fiber[0, 2]:
-            return 0
+        dis_x = np.abs(np.array([fiber[:, 0], self.width - fiber[:, 0]]))
+        if 0.95*fiber[0, 2] < dis_x.min() < fiber[0, 2]:
+            return "fail"
+        elif fiber[0, 2] < dis_x.min() < 1.05*fiber[0, 2]:
+            return "fail"
         # for y edges
-        dis_y = np.abs(np.array([fiber[0, 1], self.length - fiber[0, 1]]))
-        if 0.8*fiber[0, 2] < min(dis_y) < fiber[0, 2]:
-            return 0
-        elif fiber[0, 2] < min(dis_y) < 1.1*fiber[0, 2]:
+        dis_y = np.abs(np.array([fiber[:, 1], self.length - fiber[:, 1]]))
+        if 0.95*fiber[0, 2] < dis_y.min() < fiber[0, 2]:
+            return "fail"
+        elif fiber[0, 2] < dis_y.min() < 1.05*fiber[0, 2]:
             return 0
 
-        return 1
+        return "pass"
 
     def new_positions(
         self,
@@ -863,7 +957,7 @@ class CircleParticles(MicrosctuctureGenerator):
         return fiber_min_dis_vector, min_index, min_dis
 
     @staticmethod
-    def generate_first_heuristic_fibers(
+    def gen_heuristic_fibers(
         ref_point: np.ndarray,
         fiber_temp: np.ndarray,
         dist_factor: float,
@@ -891,7 +985,7 @@ class CircleParticles(MicrosctuctureGenerator):
         fiber_temp = fiber_temp.reshape((1, 3))
         ref_point = ref_point.reshape((1, 3))
         # generate the random factor for fiber stirring
-        delta = rng.uniform(0, 1, 1)
+        delta = np.random.uniform(0, 1, 1)
         dist_min = dist_factor * (fiber_temp[0, 2] + ref_point[0, 2])
         fiber_loc = fiber_temp[0, 0:2].reshape((1, 2)).copy()
         ref_loc = ref_point[0, 0:2].reshape((1, 2)).copy()

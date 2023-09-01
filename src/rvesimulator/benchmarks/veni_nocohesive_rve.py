@@ -1,12 +1,11 @@
 #                                                                       Modules
 # =============================================================================
 # Standard
-import json
+import logging
 import os
 from typing import Any
 
 import rvesimulator
-from rvesimulator.additions.microstructure_wrapper import CircleMircoStructure
 
 from .shared_functionalities import SimulationBase
 
@@ -25,7 +24,10 @@ class VeniNoCohRVE(SimulationBase):
     between fiber and matrix material phases"""
 
     def __init__(self) -> None:
-        """Interface between python and abaqus of the Hollow plate case"""
+
+        logging.basicConfig(level=logging.INFO,
+                            filename='rve_simulation.log', filemode='w')
+        self.logger = logging.getLogger("abaqus_simulation")
         self.main_folder = os.getcwd()
         self.folder_info = {
             "main_work_directory": os.path.join(self.main_folder, "Data"),
@@ -39,7 +41,6 @@ class VeniNoCohRVE(SimulationBase):
         }
         self.subroutine_path = self.folder_info["script_path"] + \
             "benchmark_abaqus_scripts/vevp_leonov_model.f"
-        self.update_sim_info()
 
     def update_sim_info(
         self,
@@ -88,22 +89,46 @@ class VeniNoCohRVE(SimulationBase):
         seed: Any = None,
         print_info: bool = False,
     ) -> None:
+        # micro_structure information
+        self.seed = seed
+        self.size = size
+        self.radius_mu = radius_mu
+        self.radius_std = radius_std
+        self.vol_req = vol_req
+        # material properties
+        self.paras_pp = paras_pp
+        self.paras_pe = paras_pe
+        # simulation information
+        self.mesh_partition = mesh_partition
+        self.strain = strain
+        self.num_steps = num_steps
+        self.simulation_time = simulation_time
+        # parallel information and platform
+        self.num_cpu = num_cpu
+        self.platform = platform
         # get the micro_structure information
-        mirco_structure_generator = CircleMircoStructure()
-        microstructure_info, vol_frac = mirco_structure_generator(
-            size=size,
-            radius_mu=radius_mu,
-            radius_std=radius_std,
-            vol_req=vol_req,
-            seed=seed,
-        )
+        self.seed = seed
+
+        # update simulation information to logger
+        self.logger.info("=============== simulation information ============")
+        self.logger.info("size: {}".format(size))
+        self.logger.info("radius_mu: {}".format(radius_mu))
+        self.logger.info("radius_std: {}".format(radius_std))
+        self.logger.info("vol_req: {}".format(vol_req))
+        self.logger.info("paras_pp: {}".format(paras_pp))
+        self.logger.info("paras_pe: {}".format(paras_pe))
+        self.logger.info("mesh_partition: {}".format(mesh_partition))
+        self.logger.info("strain: {}".format(strain))
+        self.logger.info("num_steps: {}".format(num_steps))
+        self.logger.info("simulation_time: {}".format(simulation_time))
+        self.logger.info("num_cpu: {}".format(num_cpu))
+        self.logger.info("platform: {}".format(platform))
 
         self.sim_paras = {
             "size": size,
             "radius_mu": radius_mu,
             "radius_std": radius_std,
             "vol_req": vol_req,
-            "vol_frac": vol_frac,
             "paras_pp": paras_pp,
             "paras_pe": paras_pe,
             "mesh_partition": mesh_partition,
@@ -113,28 +138,31 @@ class VeniNoCohRVE(SimulationBase):
             "num_cpu": num_cpu,
             "platform": platform, }
 
-        self.sim_info = {
-            "job_name": "veni_nocoh_rve",
-            "location_information": microstructure_info[
-                "location_information"
-            ],
-            "radius_mu": microstructure_info["radius_mu"],
-            "radius_std": microstructure_info["radius_std"],
-            "len_start": microstructure_info["len_start"],
-            "len_end": microstructure_info["len_end"],
-            "wid_start": microstructure_info["wid_start"],
-            "wid_end": microstructure_info["wid_end"],
-            "paras_pp": paras_pp,
-            "paras_pe": paras_pe,
-            "mesh_partition": mesh_partition,
-            "num_steps": num_steps,
-            "simulation_time": simulation_time,
-            "strain": strain,
-            "num_cpu": num_cpu,
-            "platform": platform,
-            "subroutine_path": self.subroutine_path
-        }
-
         # print simulation information to screen
         if print_info:
             self._print_sim_info(info=self.sim_paras)
+
+    def _get_sim_info(self) -> None:
+        """get simulation information"""
+        self.sim_info = {
+            "job_name": "veni_nocoh_rve",
+            "location_information": self.microstructure.microstructure_info[
+                "location_information"
+            ],
+            "radius_mu": self.microstructure.microstructure_info["radius_mu"],
+            "radius_std": self.microstructure.microstructure_info[
+                "radius_std"],
+            "len_start": self.microstructure.microstructure_info["len_start"],
+            "len_end": self.microstructure.microstructure_info["len_end"],
+            "wid_start": self.microstructure.microstructure_info["wid_start"],
+            "wid_end": self.microstructure.microstructure_info["wid_end"],
+            "paras_pp": self.paras_pp,
+            "paras_pe": self.paras_pe,
+            "mesh_partition": self.mesh_partition,
+            "num_steps": self.num_steps,
+            "simulation_time": self.simulation_time,
+            "strain": self.strain,
+            "num_cpu": self.num_cpu,
+            "platform": self.platform,
+            "subroutine_path": self.subroutine_path
+        }

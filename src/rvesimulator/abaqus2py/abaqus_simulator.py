@@ -9,7 +9,7 @@ from math import inf
 
 # local
 from .simulator_interface import AssertInputs, Simulator
-from .utils import create_dir, print_banner, write_json
+from .utils import print_banner, write_json
 
 #                                                          Authorship & Credits
 # =============================================================================
@@ -88,15 +88,6 @@ class AbaqusSimulator(Simulator, AssertInputs):
 
         # hidden name information
         abaqus_py_script = "abaScript.py"
-        # folder operations
-        new_path = create_dir(
-            current_folder=self.main_work_directory,
-            dir_name=self.current_work_directory,
-        )
-        # change work directory
-        os.chdir(new_path)
-        # print the current working folder to the screen
-        print(new_path)
 
         # write sim_info dict to a json file
         write_json(sim_info=self.sim_info, file_name=self.abaqus_input_file)
@@ -155,8 +146,6 @@ class AbaqusSimulator(Simulator, AssertInputs):
 
         with open(file_name, "rb") as fd:
             results = pickle.load(fd, fix_imports=True, encoding="latin1")
-
-        os.chdir(self.main_work_directory)
 
         return results
 

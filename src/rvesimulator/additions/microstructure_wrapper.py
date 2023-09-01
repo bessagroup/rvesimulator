@@ -45,7 +45,7 @@ class CircleMircoStructure:
             radius_mu=radius_mu,
             radius_std=radius_std,
             vol_req=vol_req,
-            dist_min_factor=1.2,
+            dist_min_factor=1.1,
         )
         self.rve_geo.generate_microstructure(seed=seed)
         if seed is None:
@@ -53,13 +53,14 @@ class CircleMircoStructure:
                 file_name="micro_structure.json"
             )
             self.rve_geo.plot_microstructure(save_figure=True,
-                                            fig_name="rve.png")
+                                             fig_name="rve.png")
         else:
             microstrcutrue_info = self.rve_geo.to_abaqus_format(
                 file_name="micro_structure_{}.json".format(seed)
             )
             self.rve_geo.plot_microstructure(save_figure=True,
-                                            fig_name="rve_{}.png".format(seed))
+                                             fig_name="rve_{}.png".
+                                             format(seed))
 
         return microstrcutrue_info, self.rve_geo.vol_frac
 
