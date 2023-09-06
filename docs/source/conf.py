@@ -23,7 +23,7 @@ for path in src_dir:
 project = 'rvesimulator'
 author = 'Jiaxiang Yi'
 copyright = '2023, Jiaxiang Yi'
-version = '0.0.1'
+version = '1.0.0'
 release = '0.0.1'
 
 
