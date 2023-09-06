@@ -1,30 +1,73 @@
-from dataclasses import dataclass
 
+"""
+Material module for the simulation
+"""
+
+#                                                                       Modules
+# =============================================================================
+
+# Standard
+from abc import ABC
+from typing import List
+
+# Third party
 import matplotlib.pyplot as plt
 import numpy as np
 
+#                                                        Authorship and Credits
+# =============================================================================
+__author__ = 'Jiaxiang Yi (J.Yi@tudelft.nl)'
+__credits__ = ['Jiaxiang Yi']
+__status__ = 'Stable'
+# =============================================================================
+#
+# =============================================================================
 
-@dataclass
-class HardeningLaw:
-    """hardening law"""
 
-    hardening_law_table: np.ndarray = None
-
-    def linear(self, **kwargs) -> list:
-        """linear hardening law
-
-        Returns
-        -------
-        hardening_law_table : list
-            hardening law table
+#                                                                  Base Classes
+# =============================================================================
+class HardeningLaw(ABC):
+    def __init__(self) -> None:
+        """Abstract class for the hardening law. The hardening law is defined
+        by the hardening law table. The hardening law table is a 2D array
+        with the first row being the strain and the second row being the
+        stress.
         """
-        # assert the needed constants
-        assert "a" in kwargs.keys(), "provide 'a' value "
-        assert "yield_stress" in kwargs.keys(), "provide 'yield_stress' value"
-        # get the arguements
-        yield_stress = kwargs["yield_stress"]
-        a = kwargs["a"]
-        # dfine the table for hardening law
+
+    def calculate_hardening_table(self) -> List[float]:
+        ...
+
+    def plot_hardening_law(self, **kwargs):
+        "plot the hardening law"
+
+        fig, ax = plt.subplots(**kwargs)
+        ax.plot(
+            self.hardening_law_table[1, :],
+            self.hardening_law_table[0, :],
+            label="hardening_law",
+        )
+        plt.legend()
+        plt.xlabel(r"$\varepsilon$")
+        plt.ylabel(r"$\sigma$")
+        plt.grid("-.")
+        plt.show()
+
+#                                                                Hardening laws
+# =============================================================================
+
+
+class LinearHardeningLaw(HardeningLaw):
+    def __init__(self,
+                 a: float = 0.2,
+                 yield_stress: float = 0.5) -> None:
+        self.a = a
+        self.yield_stress = yield_stress
+
+    def calculate_hardening_table(self) -> List[float]:
+        # get the arguments
+        yield_stress = self.yield_stress
+        a = self.a
+        # define the table for hardening law
         hardening_law_table = np.zeros((101, 2))
         hardening_law_table[:, 1] = np.linspace(0, 1, 101)
 
@@ -37,27 +80,25 @@ class HardeningLaw:
             yield_stress + a * hardening_law_table[-1, 1]
         )
 
-        hardening_law_table = hardening_law_table.T
-        self.hardening_law_table = hardening_law_table
-        return hardening_law_table.tolist()
+        self.hardening_law_table = hardening_law_table.T
+        return self.hardening_law_table.tolist()
 
-    def swift(self, **kwargs) -> list:
-        """swift hardening law
 
-        Returns
-        -------
-        hardening_law_table : list
-            hardening law table
-        """
-        # assert the needed constants
-        assert "a" in kwargs.keys(), "provide 'a' value "
-        assert "b" in kwargs.keys(), "provide 'b' value "
-        assert "yield_stress" in kwargs.keys(), "provide 'yield_stress' value"
-        # get the arguements
-        yield_stress = kwargs["yield_stress"]
-        a = kwargs["a"]
-        b = kwargs["b"]
-        # dfine the table for hardening law
+class SwiftHardeningLaw(HardeningLaw):
+    def __init__(self,
+                 a: float = 0.2,
+                 b: float = 0.2,
+                 yield_stress: float = 0.5) -> None:
+        self.a = a
+        self.b = b
+        self.yield_stress = yield_stress
+
+    def calculate_hardening_table(self) -> List[float]:
+        # get the arguments
+        yield_stress = self.yield_stress
+        a = self.a
+        b = self.b
+        # define the table for hardening law
         hardening_law_table = np.zeros((101, 2))
         hardening_law_table[:, 1] = np.linspace(0, 1, 101)
         # generate the hardening law
@@ -68,26 +109,25 @@ class HardeningLaw:
         hardening_law_table[-1, 0] = (
             yield_stress + a * (hardening_law_table[-1, 1]) ** b
         )
-        hardening_law_table = hardening_law_table.T
-        self.hardening_law_table = hardening_law_table
-        return hardening_law_table.tolist()
+        self.hardening_law_table = hardening_law_table.T
+        return self.hardening_law_table.tolist()
 
-    def ramberg(self, **kwargs) -> list:
-        """ramberg hardening law
 
-        Returns
-        -------
-        hardening_law_table : list
-            hardening law table
-        """
-        # assert the needed constants
-        assert "a" in kwargs.keys(), "provide 'a' value "
-        assert "b" in kwargs.keys(), "provide 'b' value "
-        assert "yield_stress" in kwargs.keys(), "provide 'yield_stress' value"
+class RambergHardeningLaw(HardeningLaw):
+
+    def __init__(self,
+                 a: float = 0.2,
+                 b: float = 0.2,
+                 yield_stress: float = 0.5) -> None:
+        self.a = a
+        self.b = b
+        self.yield_stress = yield_stress
+
+    def calculate_hardening_table(self) -> List[float]:
         # get the arguments
-        yield_stress = kwargs["yield_stress"]
-        a = kwargs["a"]
-        b = kwargs["b"]
+        yield_stress = self.yield_stress
+        a = self.a
+        b = self.b
         # define the table for hardening law
         hardening_law_table = np.zeros((101, 2))
         hardening_law_table[:, 1] = np.linspace(0, 1, 101)
@@ -101,22 +141,5 @@ class HardeningLaw:
             1 + a * (hardening_law_table[-1, 1])
         ) ** (1 / b)
 
-        hardening_law_table = hardening_law_table.T
-        self.hardening_law_table = hardening_law_table
-
-        return hardening_law_table.tolist()
-
-    def hardening_law_plot(self, **kwargs) -> None:
-        "plot the hardening law"
-        fig, ax = plt.subplots(**kwargs)
-        ax.plot(
-            self.hardening_law_table[1, :],
-            self.hardening_law_table[0, :],
-            label="hardening_law",
-        )
-        plt.legend()
-        plt.xlabel(r"$\varepsilon$")
-        plt.ylabel(r"$\sigma$")
-        plt.xlim([0, 1])
-        plt.grid("-.")
-        plt.show()
+        self.hardening_law_table = hardening_law_table.T
+        return self.hardening_law_table.tolist()

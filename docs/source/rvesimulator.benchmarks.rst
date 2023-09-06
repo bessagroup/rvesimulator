@@ -26,26 +26,10 @@ rvesimulator.benchmarks.hollow\_plate\_sve
    :show-inheritance:
 
 
-rvesimulator.benchmarks.single\_material\_sve
----------------------------------------------------------------
+rvesimulator.benchmarks.veni\_nocohesive\_rve
+---------------------------------------------------
 
-.. automodule:: rvesimulator.benchmarks.single_material_sve
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-rvesimulator.benchmarks.two\_materials\_rve
--------------------------------------------------------------
-
-.. automodule:: rvesimulator.benchmarks.two_materials_rve
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-rvesimulator.benchmarks.two\_materials\_sve
--------------------------------------------------------------
-
-.. automodule:: rvesimulator.benchmarks.two_materials_sve
+.. automodule:: rvesimulator.benchmarks.veni_nocohesive_rve
    :members:
    :undoc-members:
    :show-inheritance:
@@ -57,12 +41,3 @@ rvesimulator.benchmarks.utils
    :members:
    :undoc-members:
    :show-inheritance:
-
-rvesimulator.benchmarks.veni\_rve
----------------------------------------------------
-
-.. automodule:: rvesimulator.benchmarks.veni_rve
-   :members:
-   :undoc-members:
-   :show-inheritance:
-

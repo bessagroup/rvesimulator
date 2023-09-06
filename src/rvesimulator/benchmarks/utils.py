@@ -4,6 +4,9 @@
 import json
 import os
 
+import matplotlib.pyplot as plt
+import numpy as np
+
 #                                                          Authorship & Credits
 # =============================================================================
 __author__ = "Jiaxiang Yi (J.Yi@tudelft.nl)"
@@ -56,10 +59,22 @@ def write_json(sim_info: dict, file_name: str) -> None:
 
 def create_working_folder(
     self,
-    folder_index,
-    sub_folder_index,
-    third_folder_index,
+    folder_index: int = None,
+    sub_folder_index: int = None,
+    third_folder_index: int = None,
 ) -> None:
+    """create working folder
+
+    Parameters
+    ----------
+    folder_index : int, optional
+        folder index, by default None
+    sub_folder_index : int, optional
+        second folder index , by default None
+    third_folder_index : int, optional
+        third folder index, by default None
+
+    """
     if folder_index is None:
         if sub_folder_index is None:
             self.folder_info["current_work_directory"] = "rate_" + str(
@@ -97,3 +112,43 @@ def create_working_folder(
     )
     self.working_folder = new_path
     os.chdir(new_path)
+
+
+def rve_microstructure_plot(
+    fibers: np.ndarray,
+    size: float,
+    save_fig: bool = False,
+    fig_name: str = "rve.png",
+    **kwargs,
+) -> None:
+    """plot the microstructure if needed
+
+    Parameters
+    ----------
+    fibers : np.ndarray
+        fiber locations
+    size : float
+        size of rve
+    save_fig : bool, optional
+        save figure, by default False
+    fig_name : str, optional
+        figure name, by default "rve.png"
+    """
+
+    fig, axes = plt.subplots(**kwargs)
+    for ii in range(fibers.shape[0]):
+        cc = plt.Circle(
+            (fibers[ii, 0], fibers[ii, 1]),
+            fibers[ii, 2],
+            color="#77AADD",
+        )
+        axes.add_artist(cc)
+    axes.set_aspect(1)
+    plt.xlim((0.0, size))
+    plt.ylim((0.0, size))
+    axes.set_yticks([])
+    axes.set_xticks([])
+    if save_fig is True:
+        plt.savefig(fig_name, dpi=300, bbox_inches="tight")
+        plt.close()
+    plt.show()

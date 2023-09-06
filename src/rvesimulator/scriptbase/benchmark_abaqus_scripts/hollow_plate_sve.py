@@ -1,12 +1,13 @@
 # abaqus modulus 
+# system and standard python packages 
+import sys
+
+import numpy
 from abaqus import *
 from abaqusConstants import *
 from caeModules import *
 from odbAccess import *
 
-# system and standard python packages 
-import sys
-import numpy
 try:
     import cPickle as pickle
 
@@ -20,8 +21,8 @@ except ValueError:
 from basic_analysis_scripts.common_procedure import CommonProcedure
 from basic_analysis_scripts.geometry_modeling import HollowPlate
 from basic_analysis_scripts.jobs import Jobs
-from basic_analysis_scripts.loading_condition import  \
-    NormalDisplacementLoading, HistoryDependentDisplacement2D
+from basic_analysis_scripts.loading_condition import (
+    HistoryDependentDisplacement2D, NormalDisplacementLoading)
 from basic_analysis_scripts.materials import MaterialLib
 from basic_analysis_scripts.mesh import Mesh2D
 from basic_analysis_scripts.periodical_boundary_condition import \
@@ -29,7 +30,6 @@ from basic_analysis_scripts.periodical_boundary_condition import \
 from basic_analysis_scripts.post_process import PostProcess2D
 from basic_analysis_scripts.steps import (LargeDeformationSteps,
                                           SmallDeformationSteps)
-
 
 
 # =============================================================================

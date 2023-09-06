@@ -18,10 +18,3 @@ rvesimulator.additions.hardening\_law
    :undoc-members:
    :show-inheritance:
 
-rvesimulator.additions.microstructure\_wrapper
------------------------------------------------------
-
-.. automodule:: rvesimulator.additions.microstructure_wrapper
-   :members:
-   :undoc-members:
-   :show-inheritance:
