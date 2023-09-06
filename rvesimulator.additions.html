@@ -76,7 +76,6 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#">rvesimulator.additions</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#module-rvesimulator.additions.ampitudesampler">rvesimulator.additions.ampitudesampler</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-rvesimulator.additions.hardening_law">rvesimulator.additions.hardening_law</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-rvesimulator.additions.microstructure_wrapper">rvesimulator.additions.microstructure_wrapper</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="rvesimulator.benchmarks.html">rvesimulator.benchmarks</a></li>
@@ -217,124 +216,66 @@ x_location of control points, y_location of control points</p>
 </section>
 <section id="module-rvesimulator.additions.hardening_law">
 <span id="rvesimulator-additions-hardening-law"></span><h2>rvesimulator.additions.hardening_law<a class="headerlink" href="#module-rvesimulator.additions.hardening_law" title="Link to this heading">¶</a></h2>
+<p>Material module for the simulation</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="rvesimulator.additions.hardening_law.HardeningLaw">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">HardeningLaw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hardening_law_table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/additions/hardening_law.html#HardeningLaw"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.additions.hardening_law.HardeningLaw" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>hardening law</p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">HardeningLaw</span></span><a class="reference internal" href="_modules/rvesimulator/additions/hardening_law.html#HardeningLaw"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.additions.hardening_law.HardeningLaw" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></a></p>
+<p>Abstract class for the hardening law. The hardening law is defined
+by the hardening law table. The hardening law table is a 2D array
+with the first row being the strain and the second row being the
+stress.</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="rvesimulator.additions.hardening_law.HardeningLaw.hardening_law_plot">
-<span class="sig-name descname"><span class="pre">hardening_law_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/additions/hardening_law.html#HardeningLaw.hardening_law_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.additions.hardening_law.HardeningLaw.hardening_law_plot" title="Link to this definition">¶</a></dt>
-<dd><p>plot the hardening law</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
-</dd>
-</dl>
+<dt class="sig sig-object py" id="rvesimulator.additions.hardening_law.HardeningLaw.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/additions/hardening_law.html#HardeningLaw.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.additions.hardening_law.HardeningLaw.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Abstract class for the hardening law. The hardening law is defined
+by the hardening law table. The hardening law table is a 2D array
+with the first row being the strain and the second row being the
+stress.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="rvesimulator.additions.hardening_law.HardeningLaw.hardening_law_table">
-<span class="sig-name descname"><span class="pre">hardening_law_table</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.25)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#rvesimulator.additions.hardening_law.HardeningLaw.hardening_law_table" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="rvesimulator.additions.hardening_law.HardeningLaw._abc_impl">
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#rvesimulator.additions.hardening_law.HardeningLaw._abc_impl" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="rvesimulator.additions.hardening_law.HardeningLaw.linear">
-<span class="sig-name descname"><span class="pre">linear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/additions/hardening_law.html#HardeningLaw.linear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.additions.hardening_law.HardeningLaw.linear" title="Link to this definition">¶</a></dt>
-<dd><p>linear hardening law</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>hardening_law_table</strong> – hardening law table</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)">list</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="rvesimulator.additions.hardening_law.HardeningLaw.ramberg">
-<span class="sig-name descname"><span class="pre">ramberg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/additions/hardening_law.html#HardeningLaw.ramberg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.additions.hardening_law.HardeningLaw.ramberg" title="Link to this definition">¶</a></dt>
-<dd><p>ramberg hardening law</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>hardening_law_table</strong> – hardening law table</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)">list</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="rvesimulator.additions.hardening_law.HardeningLaw.swift">
-<span class="sig-name descname"><span class="pre">swift</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/additions/hardening_law.html#HardeningLaw.swift"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.additions.hardening_law.HardeningLaw.swift" title="Link to this definition">¶</a></dt>
-<dd><p>swift hardening law</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>hardening_law_table</strong> – hardening law table</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)">list</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-</section>
-<section id="module-rvesimulator.additions.microstructure_wrapper">
-<span id="rvesimulator-additions-microstructure-wrapper"></span><h2>rvesimulator.additions.microstructure_wrapper<a class="headerlink" href="#module-rvesimulator.additions.microstructure_wrapper" title="Link to this heading">¶</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="rvesimulator.additions.microstructure_wrapper.CircleMircoStructure">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CircleMircoStructure</span></span><a class="reference internal" href="_modules/rvesimulator/additions/microstructure_wrapper.html#CircleMircoStructure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.additions.microstructure_wrapper.CircleMircoStructure" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="rvesimulator.additions.microstructure_wrapper.CircleSVEMicroStructure">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CircleSVEMicroStructure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/additions/microstructure_wrapper.html#CircleSVEMicroStructure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.additions.microstructure_wrapper.CircleSVEMicroStructure" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>circle SVE microstructure</p>
-<p>initialization</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a><em>, </em><em>optional</em>) – size of sve, by default 1.0</p></li>
-<li><p><strong>radius</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a><em>, </em><em>optional</em>) – radius of circle/disk, by default 0.2</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="rvesimulator.additions.microstructure_wrapper.CircleSVEMicroStructure.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/additions/microstructure_wrapper.html#CircleSVEMicroStructure.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.additions.microstructure_wrapper.CircleSVEMicroStructure.__init__" title="Link to this definition">¶</a></dt>
-<dd><p>initialization</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a><em>, </em><em>optional</em>) – size of sve, by default 1.0</p></li>
-<li><p><strong>radius</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a><em>, </em><em>optional</em>) – radius of circle/disk, by default 0.2</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="rvesimulator.additions.microstructure_wrapper.CircleSVEMicroStructure.location_information">
-<span class="sig-name descname"><span class="pre">location_information</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'task1'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/additions/microstructure_wrapper.html#CircleSVEMicroStructure.location_information"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.additions.microstructure_wrapper.CircleSVEMicroStructure.location_information" title="Link to this definition">¶</a></dt>
-<dd><p>get location information</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>task</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>, </em><em>optional</em>) – task number, by default “task1”</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>location_information</strong> – location information</p>
-</dd>
+<dt class="sig sig-object py" id="rvesimulator.additions.hardening_law.HardeningLaw.calculate_hardening_table">
+<span class="sig-name descname"><span class="pre">calculate_hardening_table</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/additions/hardening_law.html#HardeningLaw.calculate_hardening_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.additions.hardening_law.HardeningLaw.calculate_hardening_table" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>np.ndarray</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]</p>
 </dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.11)"><strong>Exception</strong></a> – radius check</p>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.additions.hardening_law.HardeningLaw.plot_hardening_law">
+<span class="sig-name descname"><span class="pre">plot_hardening_law</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/additions/hardening_law.html#HardeningLaw.plot_hardening_law"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.additions.hardening_law.HardeningLaw.plot_hardening_law" title="Link to this definition">¶</a></dt>
+<dd><p>plot the hardening law</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="rvesimulator.additions.hardening_law.LinearHardeningLaw">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">LinearHardeningLaw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yield_stress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/additions/hardening_law.html#LinearHardeningLaw"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.additions.hardening_law.LinearHardeningLaw" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#rvesimulator.additions.hardening_law.HardeningLaw" title="rvesimulator.additions.hardening_law.HardeningLaw"><code class="xref py py-class docutils literal notranslate"><span class="pre">HardeningLaw</span></code></a></p>
+<p>Abstract class for the hardening law. The hardening law is defined
+by the hardening law table. The hardening law table is a 2D array
+with the first row being the strain and the second row being the
+stress.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="rvesimulator.additions.hardening_law.LinearHardeningLaw._abc_impl">
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#rvesimulator.additions.hardening_law.LinearHardeningLaw._abc_impl" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.additions.hardening_law.LinearHardeningLaw.calculate_hardening_table">
+<span class="sig-name descname"><span class="pre">calculate_hardening_table</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/additions/hardening_law.html#LinearHardeningLaw.calculate_hardening_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.additions.hardening_law.LinearHardeningLaw.calculate_hardening_table" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -342,27 +283,53 @@ x_location of control points, y_location of control points</p>
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="rvesimulator.additions.microstructure_wrapper.SphereMicroStructrue">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SphereMicroStructrue</span></span><a class="reference internal" href="_modules/rvesimulator/additions/microstructure_wrapper.html#SphereMicroStructrue"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.additions.microstructure_wrapper.SphereMicroStructrue" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-</dd></dl>
+<dt class="sig sig-object py" id="rvesimulator.additions.hardening_law.RambergHardeningLaw">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">RambergHardeningLaw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yield_stress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/additions/hardening_law.html#RambergHardeningLaw"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.additions.hardening_law.RambergHardeningLaw" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#rvesimulator.additions.hardening_law.HardeningLaw" title="rvesimulator.additions.hardening_law.HardeningLaw"><code class="xref py py-class docutils literal notranslate"><span class="pre">HardeningLaw</span></code></a></p>
+<p>Abstract class for the hardening law. The hardening law is defined
+by the hardening law table. The hardening law table is a 2D array
+with the first row being the strain and the second row being the
+stress.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="rvesimulator.additions.hardening_law.RambergHardeningLaw._abc_impl">
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#rvesimulator.additions.hardening_law.RambergHardeningLaw._abc_impl" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="rvesimulator.additions.microstructure_wrapper.cricle_plot">
-<span class="sig-name descname"><span class="pre">cricle_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fibers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/additions/microstructure_wrapper.html#cricle_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.additions.microstructure_wrapper.cricle_plot" title="Link to this definition">¶</a></dt>
-<dd><p>microstructure plot</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>fibers</strong> (<em>np.ndarray</em>) – fiber location</p></li>
-<li><p><strong>length</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – length</p></li>
-<li><p><strong>width</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – width</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.additions.hardening_law.RambergHardeningLaw.calculate_hardening_table">
+<span class="sig-name descname"><span class="pre">calculate_hardening_table</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/additions/hardening_law.html#RambergHardeningLaw.calculate_hardening_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.additions.hardening_law.RambergHardeningLaw.calculate_hardening_table" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]</p>
 </dd>
 </dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="rvesimulator.additions.hardening_law.SwiftHardeningLaw">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SwiftHardeningLaw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yield_stress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/additions/hardening_law.html#SwiftHardeningLaw"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.additions.hardening_law.SwiftHardeningLaw" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#rvesimulator.additions.hardening_law.HardeningLaw" title="rvesimulator.additions.hardening_law.HardeningLaw"><code class="xref py py-class docutils literal notranslate"><span class="pre">HardeningLaw</span></code></a></p>
+<p>Abstract class for the hardening law. The hardening law is defined
+by the hardening law table. The hardening law table is a 2D array
+with the first row being the strain and the second row being the
+stress.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="rvesimulator.additions.hardening_law.SwiftHardeningLaw._abc_impl">
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#rvesimulator.additions.hardening_law.SwiftHardeningLaw._abc_impl" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rvesimulator.additions.hardening_law.SwiftHardeningLaw.calculate_hardening_table">
+<span class="sig-name descname"><span class="pre">calculate_hardening_table</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/additions/hardening_law.html#SwiftHardeningLaw.calculate_hardening_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.additions.hardening_law.SwiftHardeningLaw.calculate_hardening_table" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </section>

@@ -54,7 +54,7 @@ The implementation of task A is based on the following steps:
     # import the function
     from rvesimulator.benchmarks.cddm_rve import CDDM_RVE
     from rvesimulator.additions.ampitudesampler import AmplitudeGenerator
-
+    from rvesimulator.additions.hardening_law import LinearHardeningLaw
     # generate amplitude path as the design variable
     # number of path
     num_amplitude = 2
@@ -73,23 +73,21 @@ The implementation of task A is based on the following steps:
     # initialization for task A
     task_A = CDDM_RVE()
     # update simulation info
-    task_A.update_sim_info(mesh_partition=100,
-                        strain=[0.02, 0.02, 0.02],
-                        vol_req=0.45,
-                        radius_mu=0.01,
-                        radius_std=0.003,
-                        E_fiber=10,
-                        E_matrix=100,
-                        hardening_law='linear',
-                        yield_stress=0.5,
-                        a=0.5,
-                        num_cpu=6,
-                        seed=23,
-                        print_info=True)
+    taskA.update_sim_info(mesh_partition=100,
+                          strain=[0.02, 0.02, 0.02],
+                          vol_req=0.45,
+                          radius_mu=0.01,
+                          radius_std=0.003,
+                          youngs_modulus_fiber=10,
+                          youngs_modulus_matrix=100,
+                          hardening_law=SwiftHardeningLaw(a=0.5, b=0.5, yield_stress=0.5),
+                          num_cpu=8,
+                          seed=2,
+                          print_info=False)
     task_A_results = {}
     # calculate responses of simulation
     for ii in range(len(samples_dict)):
-        task_A_results[ii] = task1.run_simulation(
+        task_A_results[ii] = taskA.run_simulation(
             sample=samples_dict[ii], third_folder_index=ii
         )
 

@@ -134,7 +134,7 @@ for generating different tasks. The details of for different tasks are summarize
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># import the function</span>
 <span class="kn">from</span> <span class="nn">rvesimulator.benchmarks.cddm_rve</span> <span class="kn">import</span> <span class="n">CDDM_RVE</span>
 <span class="kn">from</span> <span class="nn">rvesimulator.additions.ampitudesampler</span> <span class="kn">import</span> <span class="n">AmplitudeGenerator</span>
-
+<span class="kn">from</span> <span class="nn">rvesimulator.additions.hardening_law</span> <span class="kn">import</span> <span class="n">LinearHardeningLaw</span>
 <span class="c1"># generate amplitude path as the design variable</span>
 <span class="c1"># number of path</span>
 <span class="n">num_amplitude</span> <span class="o">=</span> <span class="mi">2</span>
@@ -153,23 +153,21 @@ for generating different tasks. The details of for different tasks are summarize
 <span class="c1"># initialization for task A</span>
 <span class="n">task_A</span> <span class="o">=</span> <span class="n">CDDM_RVE</span><span class="p">()</span>
 <span class="c1"># update simulation info</span>
-<span class="n">task_A</span><span class="o">.</span><span class="n">update_sim_info</span><span class="p">(</span><span class="n">mesh_partition</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-                    <span class="n">strain</span><span class="o">=</span><span class="p">[</span><span class="mf">0.02</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">],</span>
-                    <span class="n">vol_req</span><span class="o">=</span><span class="mf">0.45</span><span class="p">,</span>
-                    <span class="n">radius_mu</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
-                    <span class="n">radius_std</span><span class="o">=</span><span class="mf">0.003</span><span class="p">,</span>
-                    <span class="n">E_fiber</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
-                    <span class="n">E_matrix</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-                    <span class="n">hardening_law</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span>
-                    <span class="n">yield_stress</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-                    <span class="n">a</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-                    <span class="n">num_cpu</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
-                    <span class="n">seed</span><span class="o">=</span><span class="mi">23</span><span class="p">,</span>
-                    <span class="n">print_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">taskA</span><span class="o">.</span><span class="n">update_sim_info</span><span class="p">(</span><span class="n">mesh_partition</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                      <span class="n">strain</span><span class="o">=</span><span class="p">[</span><span class="mf">0.02</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">],</span>
+                      <span class="n">vol_req</span><span class="o">=</span><span class="mf">0.45</span><span class="p">,</span>
+                      <span class="n">radius_mu</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+                      <span class="n">radius_std</span><span class="o">=</span><span class="mf">0.003</span><span class="p">,</span>
+                      <span class="n">youngs_modulus_fiber</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                      <span class="n">youngs_modulus_matrix</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                      <span class="n">hardening_law</span><span class="o">=</span><span class="n">SwiftHardeningLaw</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">yield_stress</span><span class="o">=</span><span class="mf">0.5</span><span class="p">),</span>
+                      <span class="n">num_cpu</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+                      <span class="n">seed</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                      <span class="n">print_info</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">task_A_results</span> <span class="o">=</span> <span class="p">{}</span>
 <span class="c1"># calculate responses of simulation</span>
 <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">samples_dict</span><span class="p">)):</span>
-    <span class="n">task_A_results</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">task1</span><span class="o">.</span><span class="n">run_simulation</span><span class="p">(</span>
+    <span class="n">task_A_results</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">taskA</span><span class="o">.</span><span class="n">run_simulation</span><span class="p">(</span>
         <span class="n">sample</span><span class="o">=</span><span class="n">samples_dict</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span> <span class="n">third_folder_index</span><span class="o">=</span><span class="n">ii</span>
     <span class="p">)</span>
 </pre></div>
