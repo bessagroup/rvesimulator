@@ -56,7 +56,7 @@ class CircleParticles(MicrosctuctureGenerator):
         radius_std: float,
         vol_req: float,
         num_guess_max: int = 50000,
-        num_fiber_max: int = 750,
+        num_inclusion_max: int = 750,
         num_cycle_max: int = 15,
         dist_min_factor: float = 1.1,
         stirring_iters: int = 100,
@@ -77,9 +77,9 @@ class CircleParticles(MicrosctuctureGenerator):
         vol_req : float
             required volume fraction
         num_guess_max : int, optional
-            maximum guess for fibers, by default 50000
-        num_fiber_max : int, optional
-            maximum fiber inside RVE, by default 750
+            maximum guess for inclusions, by default 50000
+        num_inclusion_max : int, optional
+            maximum inclusion inside RVE, by default 750
         num_cycle_max : int, optional
             iteration cycles, by default 15
         dist_min_factor : float, optional
@@ -96,7 +96,7 @@ class CircleParticles(MicrosctuctureGenerator):
         # Initialization of the algorithm
         self.dist_min_factor = dist_min_factor
         self.num_guess_max = num_guess_max
-        self.num_fibers_max = num_fiber_max
+        self.num_inclusions_max = num_inclusion_max
         self.num_cycles_max = num_cycle_max
         self.stirring_iters = stirring_iters
 
@@ -108,14 +108,14 @@ class CircleParticles(MicrosctuctureGenerator):
         self.vol_frac = 0
         self.vol_total = self.length * self.width
 
-        # initial coordinate for position of fibre
+        # initial coordinate for position of inclusion
         self.len_start = -1 * self.radius_mu
         self.len_end = self.length + self.radius_mu
         self.wid_start = -1 * self.radius_mu
         self.wid_end = self.width + self.radius_mu
 
-        # fiber location is a nx4 numpy array x, y, r, p (partition)
-        self.fiber_positions = None
+        # inclusion location is a nx4 numpy array x, y, r, p (partition)
+        self.inclusion_positions = None
 
     def generate_microstructure(
         self,
@@ -167,13 +167,13 @@ class CircleParticles(MicrosctuctureGenerator):
 
         # get microstructure info
         self.microstructure_info = {
-            "location_information": self.fiber_positions.tolist(),
+            "inclusion_location_information": self.inclusion_positions.tolist(),
             "radius_mu": self.radius_mu,
             "radius_std": self.radius_std,
-            "len_start": self.len_start,
-            "wid_start": self.wid_start,
-            "len_end": self.len_end,
-            "wid_end": self.wid_end,
+            "length_start": self.len_start,
+            "width_start": self.wid_start,
+            "length_end": self.len_end,
+            "width_end": self.wid_end,
         }
 
 
@@ -212,7 +212,7 @@ class CircleParticles(MicrosctuctureGenerator):
             name of figure, by default "mircostructure.png"
         """
         self.circle_plot(
-            fibers=self.fiber_positions,
+            inclusions=self.inclusion_positions,
             length=self.length,
             width=self.width,
             vol_frac=self.vol_frac,
@@ -226,14 +226,14 @@ class CircleParticles(MicrosctuctureGenerator):
         assign the initial values of the algorithm
         """
 
-        # initialization(generate the first fiber randomly)
-        self.fiber_min_dis_vector = np.zeros(
-            (self.num_fibers_max, self.num_cycles_max + 1, 2)
+        # initialization(generate the first inclusion randomly)
+        self.inclusion_min_dis_vector = np.zeros(
+            (self.num_inclusions_max, self.num_cycles_max + 1, 2)
         )
-        self.num_fibers = 1
-        # generate the location of the first fiber
-        # the first fiber is generated with one partition
-        fiber_temp = self.generate_random_fibers(
+        self.num_inclusions = 1
+        # generate the location of the first inclusion
+        # the first inclusion is generated with one partition
+        inclusion_temp = self.generate_random_inclusions(
             len_start=self.radius_mu,
             len_end=self.length - self.radius_mu,
             wid_start=self.radius_mu,
@@ -243,10 +243,10 @@ class CircleParticles(MicrosctuctureGenerator):
             rng=self.rng,
         )
         # update the volume fraction information
-        self.vol_frac = self.fiber_volume(self.radius_mu) / self.vol_total
-        self.fiber_positions = np.zeros((1, 4))
-        self.fiber_positions[0, 0:3] = fiber_temp.T
-        self.fiber_positions[0, 3] = 1
+        self.vol_frac = self.inclusion_volume(self.radius_mu) / self.vol_total
+        self.inclusion_positions = np.zeros((1, 4))
+        self.inclusion_positions[0, 0:3] = inclusion_temp.T
+        self.inclusion_positions[0, 3] = 1
 
     def _core_iteration(self) -> None:
         """core iteration part of the micro-structure generation method"""
@@ -257,17 +257,17 @@ class CircleParticles(MicrosctuctureGenerator):
             and self.num_cycle < self.num_cycles_max
         ):
             # ================================================================#
-            #                   generate the fibers randomly                  #
+            #                   generate the inclusions randomly                  #
             # ================================================================#
             self.num_trial = 1
             while (
                 self.num_trial < self.num_guess_max
                 and self.vol_frac < self.vol_req
-                and self.num_fibers < self.num_fibers_max
+                and self.num_inclusions < self.num_inclusions_max
             ):
                 # update the info of number trial
                 self.num_trial = self.num_trial + 1
-                fiber_temp = self.generate_random_fibers(
+                inclusion_temp = self.generate_random_inclusions(
                     len_start=0,
                     len_end=self.length,
                     wid_start=0,
@@ -276,19 +276,19 @@ class CircleParticles(MicrosctuctureGenerator):
                     radius_std=self.radius_std,
                     rng=self.rng,
                 )
-                # check the location of the fiber and
-                new_fiber = self.new_positions(
-                    x_center=fiber_temp[0, 0],
-                    y_center=fiber_temp[1, 0],
-                    radius=fiber_temp[2, 0],
+                # check the location of the inclusion and
+                new_inclusion = self.new_positions(
+                    x_center=inclusion_temp[0, 0],
+                    y_center=inclusion_temp[1, 0],
+                    radius=inclusion_temp[2, 0],
                     length=self.length,
                     width=self.width,
                 )
-                if new_fiber[0, 3] == 4:
-                    self.logger.info("generate fiber, vertex check ...")
-                    # if the temp fiber locates at un-proper location for mesh
-                    while self.vertices_mesh_loc(new_fiber) == "fail":
-                        fiber_temp = self.generate_random_fibers(
+                if new_inclusion[0, 3] == 4:
+                    self.logger.info("generate inclusion, vertex check ...")
+                    # if the temp inclusion locates at un-proper location for mesh
+                    while self.vertices_mesh_loc(new_inclusion) == "fail":
+                        inclusion_temp = self.generate_random_inclusions(
                             len_start=0,
                             len_end=self.length,
                             wid_start=0,
@@ -297,19 +297,19 @@ class CircleParticles(MicrosctuctureGenerator):
                             radius_std=self.radius_std,
                             rng=self.rng,
                         )
-                        new_fiber = self.new_positions(
-                            x_center=fiber_temp[0, 0],
-                            y_center=fiber_temp[1, 0],
-                            radius=fiber_temp[2, 0],
+                        new_inclusion = self.new_positions(
+                            x_center=inclusion_temp[0, 0],
+                            y_center=inclusion_temp[1, 0],
+                            radius=inclusion_temp[2, 0],
                             length=self.length,
                             width=self.width,
                         )
-                    self.logger.info("generate fiber, vertex check pass")
-                elif new_fiber[0, 3] == 2:
-                    self.logger.info("generate fiber, edge check ...")
-                    # if the temp fiber locates at un-proper location for mesh
-                    while self.proper_edge_mesh_location(new_fiber) == "fail":
-                        fiber_temp = self.generate_random_fibers(
+                    self.logger.info("generate inclusion, vertex check pass")
+                elif new_inclusion[0, 3] == 2:
+                    self.logger.info("generate inclusion, edge check ...")
+                    # if the temp inclusion locates at un-proper location for mesh
+                    while self.proper_edge_mesh_location(new_inclusion) == "fail":
+                        inclusion_temp = self.generate_random_inclusions(
                             len_start=0,
                             len_end=self.length,
                             wid_start=0,
@@ -318,89 +318,89 @@ class CircleParticles(MicrosctuctureGenerator):
                             radius_std=self.radius_std,
                             rng=self.rng,
                         )
-                        new_fiber = self.new_positions(
-                            x_center=fiber_temp[0, 0],
-                            y_center=fiber_temp[1, 0],
-                            radius=fiber_temp[2, 0],
+                        new_inclusion = self.new_positions(
+                            x_center=inclusion_temp[0, 0],
+                            y_center=inclusion_temp[1, 0],
+                            radius=inclusion_temp[2, 0],
                             length=self.length,
                             width=self.width,
                         )
-                    self.logger.info("generate fiber, edge check pass")
-                # check the overlap of new fiber
+                    self.logger.info("generate inclusion, edge check pass")
+                # check the overlap of new inclusion
                 overlap_status = self.overlap_check(
-                    new_fiber=new_fiber,
-                    fiber_pos=self.fiber_positions.copy(),
+                    new_inclusion=new_inclusion,
+                    inclusion_pos=self.inclusion_positions.copy(),
                     dist_factor=self.dist_min_factor,
                 )
                 if overlap_status == 0:
-                    self.fiber_positions = np.vstack(
-                        (self.fiber_positions, new_fiber)
+                    self.inclusion_positions = np.vstack(
+                        (self.inclusion_positions, new_inclusion)
                     )
                     self.vol_frac = (
                         self.vol_frac
-                        + self.fiber_volume(new_fiber[0, 2]) / self.vol_total
+                        + self.inclusion_volume(new_inclusion[0, 2]) / self.vol_total
                     )
-                    self.num_fibers = self.num_fibers + new_fiber.shape[0]
-                del new_fiber
+                    self.num_inclusions = self.num_inclusions + new_inclusion.shape[0]
+                del new_inclusion
 
             # ================================================================#
-            #                   stirring the fibers (first stage)             #
+            #                   stirring the inclusions (first stage)             #
             # ================================================================#
             ii = 0
-            if self.fiber_positions.shape[0] < self.num_fibers_max:
+            if self.inclusion_positions.shape[0] < self.num_inclusions_max:
                 # for every point, stirring is needed!
-                while ii < self.fiber_positions.shape[0]:
+                while ii < self.inclusion_positions.shape[0]:
                     (
-                        self.fiber_min_dis_vector,
+                        self.inclusion_min_dis_vector,
                         min_index,
                         min_dis,
                     ) = self.min_dis_index(
-                        self.fiber_positions[ii, 0:2],
-                        self.fiber_positions.copy(),
-                        self.fiber_min_dis_vector,
+                        self.inclusion_positions[ii, 0:2],
+                        self.inclusion_positions.copy(),
+                        self.inclusion_min_dis_vector,
                         ii,
                         self.num_cycle,
                     )
-                    # generate the new fiber location
-                    new_fiber_temp = self.gen_heuristic_fibers(
-                        ref_point=self.fiber_positions[min_index, 0:3].copy(),
-                        fiber_temp=self.fiber_positions[ii, 0:3].copy(),
+                    # generate the new inclusion location
+                    new_inclusion_temp = self.gen_heuristic_inclusions(
+                        ref_point=self.inclusion_positions[min_index, 0:3].copy(),
+                        inclusion_temp=self.inclusion_positions[ii, 0:3].copy(),
                         dist_factor=self.dist_min_factor,
                         rng=self.rng,
                     )
-                    # check the overlap of new fiber
-                    new_fiber = self.new_positions(
-                        x_center=new_fiber_temp[0, 0],
-                        y_center=new_fiber_temp[0, 1],
-                        radius=new_fiber_temp[0, 2],
+                    # check the overlap of new inclusion
+                    new_inclusion = self.new_positions(
+                        x_center=new_inclusion_temp[0, 0],
+                        y_center=new_inclusion_temp[0, 1],
+                        radius=new_inclusion_temp[0, 2],
                         length=self.length,
                         width=self.width,
                     )
                     # check proper location for mesh
                     # max stirring iteration
                     stirring_iter = 0
-                    if new_fiber[0, 3] == 4:
-                        self.logger.info("stirring fiber,vertex check ...")
+                    if new_inclusion[0, 3] == 4:
+                        self.logger.info("stirring inclusion,vertex check ...")
                         while (
-                            self.vertices_mesh_loc(new_fiber) == "fail"
+                            self.vertices_mesh_loc(new_inclusion) == "fail"
                             and stirring_iter < self.stirring_iters
                         ):
-                            # generate new fiber
+                            # generate new inclusion
                             self.logger.info(f"iter: {stirring_iter}")
-                            new_fiber_temp = self.gen_heuristic_fibers(
-                                ref_point=self.fiber_positions[
+                            new_inclusion_temp = self.gen_heuristic_inclusions(
+                                ref_point=self.inclusion_positions[
                                     min_index, 0:3
                                 ].copy(),
-                                fiber_temp=self.fiber_positions[
+                                inclusion_temp=self.inclusion_positions[
                                     ii, 0:3].copy(),
                                 dist_factor=self.dist_min_factor,
                                 rng=self.rng,
                             )
-                            # check the overlap of new fiber
-                            new_fiber = self.new_positions(
-                                x_center=new_fiber_temp[0, 0],
-                                y_center=new_fiber_temp[0, 1],
-                                radius=new_fiber_temp[0, 2],
+                            # check the overlap of new inclusion
+                            new_inclusion = self.new_positions(
+                                x_center=new_inclusion_temp[0, 0],
+                                y_center=new_inclusion_temp[0, 1],
+                                radius=new_inclusion_temp[0, 2],
                                 length=self.length,
                                 width=self.width,
                             )
@@ -410,28 +410,28 @@ class CircleParticles(MicrosctuctureGenerator):
                                 "stirring vertex check failed")
                         else:
                             self.logger.info("stirring vertex check pass")
-                    elif new_fiber[0, 3] == 2:
-                        self.logger.info("stirring fiber, edge check ...")
+                    elif new_inclusion[0, 3] == 2:
+                        self.logger.info("stirring inclusion, edge check ...")
                         # check proper location for mesh
                         while self.proper_edge_mesh_location(
-                            new_fiber
+                            new_inclusion
                         ) == "fail" and stirring_iter < self.stirring_iters:
                             # logger
                             self.logger.info(f"iter: {stirring_iter}")
-                            new_fiber_temp = self.gen_heuristic_fibers(
-                                ref_point=self.fiber_positions[
+                            new_inclusion_temp = self.gen_heuristic_inclusions(
+                                ref_point=self.inclusion_positions[
                                     min_index, 0:3
                                 ].copy(),
-                                fiber_temp=self.fiber_positions[
+                                inclusion_temp=self.inclusion_positions[
                                     ii, 0:3].copy(),
                                 dist_factor=self.dist_min_factor,
                                 rng=self.rng,
                             )
-                            # check the overlap of new fiber
-                            new_fiber = self.new_positions(
-                                x_center=new_fiber_temp[0, 0],
-                                y_center=new_fiber_temp[0, 1],
-                                radius=new_fiber_temp[0, 2],
+                            # check the overlap of new inclusion
+                            new_inclusion = self.new_positions(
+                                x_center=new_inclusion_temp[0, 0],
+                                y_center=new_inclusion_temp[0, 1],
+                                radius=new_inclusion_temp[0, 2],
                                 length=self.length,
                                 width=self.width,
                             )
@@ -441,35 +441,35 @@ class CircleParticles(MicrosctuctureGenerator):
                         else:
                             self.logger.info("stirring edge check pass")
                     overlap_status = self.overlap_check(
-                        new_fiber=new_fiber,
-                        fiber_pos=self.fiber_positions.copy(),
+                        new_inclusion=new_inclusion,
+                        inclusion_pos=self.inclusion_positions.copy(),
                         dist_factor=self.dist_min_factor,
                         stage="step_two",
-                        fiber_index=ii,
+                        inclusion_index=ii,
                     )
-                    # check: if the new fibers(cause it maybe more than
-                    # 1 fiber centers) will overlap with the
+                    # check: if the new inclusions(cause it maybe more than
+                    # 1 inclusion centers) will overlap with the
                     # remaining ones or not
                     if overlap_status == 0:
-                        ii = self._update_fiber_position(
-                            new_fiber=new_fiber, iter=ii
+                        ii = self._update_inclusion_position(
+                            new_inclusion=new_inclusion, iter=ii
                         )
                     else:
-                        ii = ii + int(self.fiber_positions[ii, 3])
+                        ii = ii + int(self.inclusion_positions[ii, 3])
 
-                    del new_fiber, new_fiber_temp
+                    del new_inclusion, new_inclusion_temp
             # end of one cycle
             self.num_cycle = self.num_cycle + 1
 
-    def _update_fiber_position(self, new_fiber: np.ndarray, iter: int) -> int:
-        """update the fiber position
+    def _update_inclusion_position(self, new_inclusion: np.ndarray, iter: int) -> int:
+        """update the inclusion position
 
         Parameters
         ----------
-        new_fiber : np.ndarray
-            the generated new fiber
+        new_inclusion : np.ndarray
+            the generated new inclusion
         iter : int
-            determine the nex fiber should be analysis
+            determine the nex inclusion should be analysis
 
         Returns
         -------
@@ -477,18 +477,18 @@ class CircleParticles(MicrosctuctureGenerator):
             he updated number of index
         """
         # check the location compatibility
-        if new_fiber[0, 3] != new_fiber.shape[0]:
-            raise ValueError("fiber number compatibility issue")
-        fiber_portion = int(self.fiber_positions[iter, 3].copy())
-        self.fiber_positions = np.delete(
-            self.fiber_positions,
-            tuple(i + iter for i in range(fiber_portion)),
+        if new_inclusion[0, 3] != new_inclusion.shape[0]:
+            raise ValueError("inclusion number compatibility issue")
+        inclusion_portion = int(self.inclusion_positions[iter, 3].copy())
+        self.inclusion_positions = np.delete(
+            self.inclusion_positions,
+            tuple(i + iter for i in range(inclusion_portion)),
             axis=0,
         )
-        self.fiber_positions = np.insert(
-            self.fiber_positions, (iter), new_fiber, axis=0
+        self.inclusion_positions = np.insert(
+            self.inclusion_positions, (iter), new_inclusion, axis=0
         )
-        iter = iter + int(new_fiber[0, 3])
+        iter = iter + int(new_inclusion[0, 3])
         assert type(iter) == int
 
         return iter
@@ -510,7 +510,7 @@ class CircleParticles(MicrosctuctureGenerator):
         self.rgmsh = np.zeros((num_discrete, num_discrete))
         grid_len = self.length / num_discrete
         grid_wid = self.width / num_discrete
-        radius = self.fiber_positions[:, 2].reshape(-1, 1)
+        radius = self.inclusion_positions[:, 2].reshape(-1, 1)
         for ii in range(num_discrete):
             for jj in range(num_discrete):
                 loc_temp = np.array(
@@ -523,7 +523,7 @@ class CircleParticles(MicrosctuctureGenerator):
                 )
                 # distance measure
                 points_dis_temp = distance_matrix(
-                    self.fiber_positions[:, 0:2],
+                    self.inclusion_positions[:, 0:2],
                     loc_temp,
                 )
 
@@ -532,62 +532,62 @@ class CircleParticles(MicrosctuctureGenerator):
 
         return self.rgmsh.T
 
-    def vertices_mesh_loc(self, fiber: np.ndarray) -> int:
+    def vertices_mesh_loc(self, inclusion: np.ndarray) -> int:
         """identify proper vertices location for meshing
 
         Parameters
         ----------
-        fiber : np.ndarray
-            temp fiber
+        inclusion : np.ndarray
+            temp inclusion
 
         Returns
         -------
         int
-            status of the fiber(0: improper, 1: proper)
+            status of the inclusion(0: improper, 1: proper)
         """
-        # reformat the fiber location
-        fiber = fiber.reshape((-1, 4))
+        # reformat the inclusion location
+        inclusion = inclusion.reshape((-1, 4))
         vertices = np.array([[0, 0],
                              [0, self.width],
                              [self.length, self.width],
                              [self.length, 0]])
-        # calculate the distance between the fiber and the vertices
+        # calculate the distance between the inclusion and the vertices
         points_dis_temp = distance_matrix(
             vertices,
-            fiber[:, 0:2],
+            inclusion[:, 0:2],
         )
         min_points_dis = points_dis_temp.min()
-        if 0.95*fiber[0, 2] < min_points_dis < np.sqrt(2)*fiber[0, 2]:
+        if 0.95*inclusion[0, 2] < min_points_dis < np.sqrt(2)*inclusion[0, 2]:
             return "fail"
         else:
             return "pass"
 
-    def proper_edge_mesh_location(self, fiber: np.ndarray) -> int:
+    def proper_edge_mesh_location(self, inclusion: np.ndarray) -> int:
         """identify proper edge location for meshing
 
         Parameters
         ----------
-        fiber : np.ndarray
-            temp fiber
+        inclusion : np.ndarray
+            temp inclusion
 
         Returns
         -------
         int
-            status of the fiber(0: improper, 1: proper)
+            status of the inclusion(0: improper, 1: proper)
         """
-        # reformat the fiber location
-        fiber = fiber.reshape((-1, 4))
+        # reformat the inclusion location
+        inclusion = inclusion.reshape((-1, 4))
         # for x edges
-        dis_x = np.abs(np.array([fiber[:, 0], self.width - fiber[:, 0]]))
-        if 0.95*fiber[0, 2] < dis_x.min() < fiber[0, 2]:
+        dis_x = np.abs(np.array([inclusion[:, 0], self.width - inclusion[:, 0]]))
+        if 0.95*inclusion[0, 2] < dis_x.min() < inclusion[0, 2]:
             return "fail"
-        elif fiber[0, 2] < dis_x.min() < 1.05*fiber[0, 2]:
+        elif inclusion[0, 2] < dis_x.min() < 1.05*inclusion[0, 2]:
             return "fail"
         # for y edges
-        dis_y = np.abs(np.array([fiber[:, 1], self.length - fiber[:, 1]]))
-        if 0.95*fiber[0, 2] < dis_y.min() < fiber[0, 2]:
+        dis_y = np.abs(np.array([inclusion[:, 1], self.length - inclusion[:, 1]]))
+        if 0.95*inclusion[0, 2] < dis_y.min() < inclusion[0, 2]:
             return "fail"
-        elif fiber[0, 2] < dis_y.min() < 1.05*fiber[0, 2]:
+        elif inclusion[0, 2] < dis_y.min() < 1.05*inclusion[0, 2]:
             return 0
 
         return "pass"
@@ -621,7 +621,7 @@ class CircleParticles(MicrosctuctureGenerator):
         Returns
         -------
         np.ndarray
-            XC, YC, split  which is the new locations of this fiber
+            XC, YC, split  which is the new locations of this inclusion
             (because in some locations, the circles need to be split)
         ####################################
         #     #          2_2       #       #
@@ -638,20 +638,20 @@ class CircleParticles(MicrosctuctureGenerator):
 
         """
 
-        new_fiber = np.zeros((1, 4))
+        new_inclusion = np.zeros((1, 4))
         if (
             radius <= x_center <= length - radius
             and radius <= y_center <= width - radius
         ):
             # locate in center region and split = 1
-            new_fiber = self._first_new_fiber(x_center, y_center, radius, 1)
+            new_inclusion = self._first_new_inclusion(x_center, y_center, radius, 1)
 
         elif length - radius > x_center > radius > y_center:
             # location 2_1
-            new_fiber = self._first_new_fiber(x_center, y_center, radius, 2)
-            new_fiber = np.vstack(
+            new_inclusion = self._first_new_inclusion(x_center, y_center, radius, 2)
+            new_inclusion = np.vstack(
                 (
-                    new_fiber,
+                    new_inclusion,
                     np.array([x_center, y_center + width, radius, 2]).reshape(
                         (1, 4)
                     ),
@@ -660,10 +660,10 @@ class CircleParticles(MicrosctuctureGenerator):
 
         elif radius < x_center < length - radius and y_center > width - radius:
             # location 2_2
-            new_fiber = self._first_new_fiber(x_center, y_center, radius, 2)
-            new_fiber = np.vstack(
+            new_inclusion = self._first_new_inclusion(x_center, y_center, radius, 2)
+            new_inclusion = np.vstack(
                 (
-                    new_fiber,
+                    new_inclusion,
                     np.array([x_center, y_center - width, radius, 2]).reshape(
                         (1, 4)
                     ),
@@ -672,10 +672,10 @@ class CircleParticles(MicrosctuctureGenerator):
 
         elif width - radius > y_center > radius > x_center:
             # location 2_3
-            new_fiber = self._first_new_fiber(x_center, y_center, radius, 2)
-            new_fiber = np.vstack(
+            new_inclusion = self._first_new_inclusion(x_center, y_center, radius, 2)
+            new_inclusion = np.vstack(
                 (
-                    new_fiber,
+                    new_inclusion,
                     np.array([x_center + length, y_center, radius, 2]).reshape(
                         (1, 4)
                     ),
@@ -684,10 +684,10 @@ class CircleParticles(MicrosctuctureGenerator):
 
         elif radius < y_center < width - radius and x_center > length - radius:
             # location 2_4
-            new_fiber = self._first_new_fiber(x_center, y_center, radius, 2)
-            new_fiber = np.vstack(
+            new_inclusion = self._first_new_inclusion(x_center, y_center, radius, 2)
+            new_inclusion = np.vstack(
                 (
-                    new_fiber,
+                    new_inclusion,
                     np.array([x_center - length, y_center, radius, 2]).reshape(
                         (1, 4)
                     ),
@@ -696,26 +696,26 @@ class CircleParticles(MicrosctuctureGenerator):
 
         elif x_center < radius and y_center > width - radius:
             # location 4_1
-            new_fiber = self._first_new_fiber(x_center, y_center, radius, 4)
-            new_fiber = np.vstack(
+            new_inclusion = self._first_new_inclusion(x_center, y_center, radius, 4)
+            new_inclusion = np.vstack(
                 (
-                    new_fiber,
+                    new_inclusion,
                     np.array([x_center + length, y_center, radius, 4]).reshape(
                         (1, 4)
                     ),
                 )
             )
-            new_fiber = np.vstack(
+            new_inclusion = np.vstack(
                 (
-                    new_fiber,
+                    new_inclusion,
                     np.array(
                         [x_center + length, y_center - width, radius, 4]
                     ).reshape((1, 4)),
                 )
             )
-            new_fiber = np.vstack(
+            new_inclusion = np.vstack(
                 (
-                    new_fiber,
+                    new_inclusion,
                     np.array([x_center, y_center - width, radius, 4]).reshape(
                         (1, 4)
                     ),
@@ -724,26 +724,26 @@ class CircleParticles(MicrosctuctureGenerator):
 
         elif x_center > length - radius and y_center > width - radius:
             # location 4_2
-            new_fiber = self._first_new_fiber(x_center, y_center, radius, 4)
-            new_fiber = np.vstack(
+            new_inclusion = self._first_new_inclusion(x_center, y_center, radius, 4)
+            new_inclusion = np.vstack(
                 (
-                    new_fiber,
+                    new_inclusion,
                     np.array([x_center - length, y_center, radius, 4]).reshape(
                         (1, 4)
                     ),
                 )
             )
-            new_fiber = np.vstack(
+            new_inclusion = np.vstack(
                 (
-                    new_fiber,
+                    new_inclusion,
                     np.array(
                         [x_center - length, y_center - width, radius, 4]
                     ).reshape((1, 4)),
                 )
             )
-            new_fiber = np.vstack(
+            new_inclusion = np.vstack(
                 (
-                    new_fiber,
+                    new_inclusion,
                     np.array([x_center, y_center - width, radius, 4]).reshape(
                         (1, 4)
                     ),
@@ -752,26 +752,26 @@ class CircleParticles(MicrosctuctureGenerator):
 
         elif x_center < radius and y_center < radius:
             # location 4_3
-            new_fiber = self._first_new_fiber(x_center, y_center, radius, 4)
-            new_fiber = np.vstack(
+            new_inclusion = self._first_new_inclusion(x_center, y_center, radius, 4)
+            new_inclusion = np.vstack(
                 (
-                    new_fiber,
+                    new_inclusion,
                     np.array([x_center + length, y_center, radius, 4]).reshape(
                         (1, 4)
                     ),
                 )
             )
-            new_fiber = np.vstack(
+            new_inclusion = np.vstack(
                 (
-                    new_fiber,
+                    new_inclusion,
                     np.array(
                         [x_center + length, y_center + width, radius, 4]
                     ).reshape((1, 4)),
                 )
             )
-            new_fiber = np.vstack(
+            new_inclusion = np.vstack(
                 (
-                    new_fiber,
+                    new_inclusion,
                     np.array([x_center, y_center + width, radius, 4]).reshape(
                         (1, 4)
                     ),
@@ -780,26 +780,26 @@ class CircleParticles(MicrosctuctureGenerator):
 
         elif x_center > length - radius and y_center < radius:
             # location 4_4
-            new_fiber = self._first_new_fiber(x_center, y_center, radius, 4)
-            new_fiber = np.vstack(
+            new_inclusion = self._first_new_inclusion(x_center, y_center, radius, 4)
+            new_inclusion = np.vstack(
                 (
-                    new_fiber,
+                    new_inclusion,
                     np.array([x_center - length, y_center, radius, 4]).reshape(
                         (1, 4)
                     ),
                 )
             )
-            new_fiber = np.vstack(
+            new_inclusion = np.vstack(
                 (
-                    new_fiber,
+                    new_inclusion,
                     np.array(
                         [x_center - length, y_center + width, radius, 4]
                     ).reshape((1, 4)),
                 )
             )
-            new_fiber = np.vstack(
+            new_inclusion = np.vstack(
                 (
-                    new_fiber,
+                    new_inclusion,
                     np.array([x_center, y_center + width, radius, 4]).reshape(
                         (1, 4)
                     ),
@@ -811,29 +811,29 @@ class CircleParticles(MicrosctuctureGenerator):
                 "The location of the original point was wrong!!! \n"
             )
 
-        return new_fiber
+        return new_inclusion
 
     @staticmethod
     def overlap_check(
-        new_fiber: np.ndarray,
-        fiber_pos: np.ndarray,
+        new_inclusion: np.ndarray,
+        inclusion_pos: np.ndarray,
         dist_factor: float,
-        fiber_index: int = 0,
+        inclusion_index: int = 0,
         stage: str = "step_one",
     ) -> int:
-        """overlap check between new fiber and the original ones
+        """overlap check between new inclusion and the original ones
 
         Parameters
         ----------
-        new_fiber : np.ndarray
-            new fiber location
-        fiber_pos : np.ndarray
-            original fibers
+        new_inclusion : np.ndarray
+            new inclusion location
+        inclusion_pos : np.ndarray
+            original inclusions
         dist_factor : float
             distance factor which used to control the minimum distance
-            between to fibers
-        fiber_index : int, optional
-            fiber index , by default 0
+            between to inclusions
+        inclusion_index : int, optional
+            inclusion index , by default 0
         stage : str, optional
             stage of the algorithm, by default "step_one"
 
@@ -844,14 +844,14 @@ class CircleParticles(MicrosctuctureGenerator):
 
         """
 
-        fiber_pos = fiber_pos.copy()
+        inclusion_pos = inclusion_pos.copy()
 
         if stage == "step_one":
             min_dis_threshold = dist_factor * (
-                new_fiber[0, 2] + fiber_pos[:, 2]
+                new_inclusion[0, 2] + inclusion_pos[:, 2]
             ).reshape((-1, 1))
             points_dis_temp = distance_matrix(
-                fiber_pos[:, 0:2], new_fiber[:, 0:2]
+                inclusion_pos[:, 0:2], new_inclusion[:, 0:2]
             )
             points_dis = np.min(points_dis_temp, 1, keepdims=True)
             min_dis = points_dis - min_dis_threshold
@@ -859,13 +859,13 @@ class CircleParticles(MicrosctuctureGenerator):
         elif stage == "step_two":
             # calculate the minimum distance threshold
             min_dis_threshold = dist_factor * (
-                new_fiber[0, 2] + fiber_pos[:, 2]
+                new_inclusion[0, 2] + inclusion_pos[:, 2]
             ).reshape((-1, 1))
             points_dis_temp = distance_matrix(
-                fiber_pos[:, 0:2], new_fiber[:, 0:2]
+                inclusion_pos[:, 0:2], new_inclusion[:, 0:2]
             )
             points_dis_temp[
-                fiber_index: fiber_index + int(fiber_pos[fiber_index, 3]), :
+                inclusion_index: inclusion_index + int(inclusion_pos[inclusion_index, 3]), :
             ] = math.inf
             points_dis = np.min(points_dis_temp, 1, keepdims=True)
             min_dis = points_dis - min_dis_threshold
@@ -882,23 +882,23 @@ class CircleParticles(MicrosctuctureGenerator):
 
     @staticmethod
     def min_dis_index(
-        temp_fiber: np.ndarray,
-        fiber_pos: np.ndarray,
-        fiber_min_dis_vector: np.ndarray,
+        temp_inclusion: np.ndarray,
+        inclusion_pos: np.ndarray,
+        inclusion_min_dis_vector: np.ndarray,
         ii: int,
         cycle: int,
     ) -> list[np.ndarray, int, float]:
-        """This function is used to identify the index of closest fiber
-        of every fiber, which is very import for the first heuristic
+        """This function is used to identify the index of closest inclusion
+        of every inclusion, which is very import for the first heuristic
         stirring to get more space placing the new disks.
 
         Parameters
         ----------
-        temp_fiber : np.ndarray
-            the fiber been processed
-        fiber_pos : np.ndarray
-            fiber position
-        fiber_min_dis_vector : np.ndarray
+        temp_inclusion : np.ndarray
+            the inclusion been processed
+        inclusion_pos : np.ndarray
+            inclusion position
+        inclusion_min_dis_vector : np.ndarray
             the first column is the index of the closed point,
             the second column contains the minimum distance between
             those two points
@@ -910,7 +910,7 @@ class CircleParticles(MicrosctuctureGenerator):
 
         Returns
         -------
-        fiber_min_dis_vector: np.ndarray
+        inclusion_min_dis_vector: np.ndarray
             The updated minimum distance array
         min_index: int
             The index of the minimum distance point
@@ -918,30 +918,30 @@ class CircleParticles(MicrosctuctureGenerator):
             The minimum distance to the minimum distance point
 
         """
-        fiber_pos = fiber_pos.copy()
+        inclusion_pos = inclusion_pos.copy()
 
         # pre-process the data : find out the same row data and delete it
-        temp_fiber = temp_fiber.reshape((1, 2))
-        points_dis = distance_matrix(fiber_pos[:, 0:2], temp_fiber)
+        temp_inclusion = temp_inclusion.reshape((1, 2))
+        points_dis = distance_matrix(inclusion_pos[:, 0:2], temp_inclusion)
         points_dis[points_dis == 0] = math.inf
         if cycle == 0:
             min_dis = points_dis.min()
             min_index = np.where(points_dis == min_dis)[0]
-            fiber_min_dis_vector[ii, cycle, 0] = min_index
-            fiber_min_dis_vector[ii, cycle, 1] = min_dis
+            inclusion_min_dis_vector[ii, cycle, 0] = min_index
+            inclusion_min_dis_vector[ii, cycle, 1] = min_dis
         elif cycle == 1:
-            index_pre = int(fiber_min_dis_vector[ii, cycle - 1, 0])
+            index_pre = int(inclusion_min_dis_vector[ii, cycle - 1, 0])
             if index_pre < points_dis.shape[0]:
                 points_dis[index_pre, :] = math.inf
             # identify the minimum index
             min_dis = points_dis.min()
             min_index = np.where(points_dis == min_dis)[0]
-            fiber_min_dis_vector[ii, cycle, 0] = min_index
-            fiber_min_dis_vector[ii, cycle, 1] = min_dis
+            inclusion_min_dis_vector[ii, cycle, 0] = min_index
+            inclusion_min_dis_vector[ii, cycle, 1] = min_dis
         else:
 
-            index_pre = int(fiber_min_dis_vector[ii, cycle - 1, 0])
-            index_pre_pre = int(fiber_min_dis_vector[ii, cycle - 2, 0])
+            index_pre = int(inclusion_min_dis_vector[ii, cycle - 1, 0])
+            index_pre_pre = int(inclusion_min_dis_vector[ii, cycle - 2, 0])
             if (
                 index_pre < points_dis.shape[0]
                 and index_pre_pre < points_dis.shape[0]
@@ -951,56 +951,56 @@ class CircleParticles(MicrosctuctureGenerator):
             # identify the minimum index
             min_dis = points_dis.min()
             min_index = np.where(points_dis == min_dis)[0]
-            fiber_min_dis_vector[ii, cycle, 0] = min_index
-            fiber_min_dis_vector[ii, cycle, 1] = min_dis
+            inclusion_min_dis_vector[ii, cycle, 0] = min_index
+            inclusion_min_dis_vector[ii, cycle, 1] = min_dis
 
-        return fiber_min_dis_vector, min_index, min_dis
+        return inclusion_min_dis_vector, min_index, min_dis
 
     @staticmethod
-    def gen_heuristic_fibers(
+    def gen_heuristic_inclusions(
         ref_point: np.ndarray,
-        fiber_temp: np.ndarray,
+        inclusion_temp: np.ndarray,
         dist_factor: float,
         rng: Any,
     ) -> np.ndarray:
-        """Move fiber to its reference point
+        """Move inclusion to its reference point
 
         Parameters
         ----------
         ref_point : np.ndarray
-            Reference point that the fiber should move to
-        fiber_temp : np.ndarray
-            The considering fiber
+            Reference point that the inclusion should move to
+        inclusion_temp : np.ndarray
+            The considering inclusion
         dist_factor : float
-            the minimum distance factor between two fibers
+            the minimum distance factor between two inclusions
         rng: Any
             random generator
 
         Returns
         -------
         np.ndarray
-            The updated location of the considering fiber
+            The updated location of the considering inclusion
         """
 
-        fiber_temp = fiber_temp.reshape((1, 3))
+        inclusion_temp = inclusion_temp.reshape((1, 3))
         ref_point = ref_point.reshape((1, 3))
-        # generate the random factor for fiber stirring
+        # generate the random factor for inclusion stirring
         delta = np.random.uniform(0, 1, 1)
-        dist_min = dist_factor * (fiber_temp[0, 2] + ref_point[0, 2])
-        fiber_loc = fiber_temp[0, 0:2].reshape((1, 2)).copy()
+        dist_min = dist_factor * (inclusion_temp[0, 2] + ref_point[0, 2])
+        inclusion_loc = inclusion_temp[0, 0:2].reshape((1, 2)).copy()
         ref_loc = ref_point[0, 0:2].reshape((1, 2)).copy()
         # maximum length of movement
-        k = 1 - dist_min / distance_matrix(ref_loc, fiber_loc)
-        fiber_temp[0, 0:2] = fiber_loc + delta * k * (ref_loc - fiber_loc)
+        k = 1 - dist_min / distance_matrix(ref_loc, inclusion_loc)
+        inclusion_temp[0, 0:2] = inclusion_loc + delta * k * (ref_loc - inclusion_loc)
 
-        return fiber_temp
+        return inclusion_temp
 
     @staticmethod
-    def _first_new_fiber(x: float,
+    def _first_new_inclusion(x: float,
                          y: float,
                          r: float,
                          portion: int) -> np.ndarray:
-        """generate the first new fiber
+        """generate the first new inclusion
 
         Parameters
         ----------
@@ -1011,19 +1011,19 @@ class CircleParticles(MicrosctuctureGenerator):
         r : float
             radius
         portion : int
-            portion of the fiber(1, 2, 4)
+            portion of the inclusion(1, 2, 4)
 
         Returns
         -------
         np.ndarray
-            new fiber
+            new inclusion
         """
         return np.array([[x, y, r, portion]])
 
 
     @staticmethod
-    def fiber_volume(radius: float) -> float:
-        """calculate the fiber volume of the current fiber
+    def inclusion_volume(radius: float) -> float:
+        """calculate the inclusion volume of the current inclusion
 
         Parameters
         ----------
@@ -1033,12 +1033,12 @@ class CircleParticles(MicrosctuctureGenerator):
         Returns
         -------
         vol:float
-            volume of current fiber(disk)
+            volume of current inclusion(disk)
         """
         return np.pi * radius**2
 
     @staticmethod
-    def generate_random_fibers(
+    def generate_random_inclusions(
         len_start: float,
         len_end: float,
         wid_start: float,
@@ -1047,7 +1047,7 @@ class CircleParticles(MicrosctuctureGenerator):
         radius_std: float,
         rng,
     ) -> np.ndarray:
-        """generate random fibers with different radiis
+        """generate random inclusions with different radiis
 
         Parameters
         ----------
@@ -1069,7 +1069,7 @@ class CircleParticles(MicrosctuctureGenerator):
         Returns
         -------
         np.ndarray
-            location information of generated fiber
+            location information of generated inclusion
         """
 
         x = rng.uniform(len_start, len_end, 1)
@@ -1078,5 +1078,5 @@ class CircleParticles(MicrosctuctureGenerator):
         # the radius is too small for mesh
         while r <= 0.02*(len_end - len_start - 2*radius_mu):
             r = rng.normal(radius_mu, radius_std, 1)
-        fiber = np.array([x, y, r])
-        return fiber
+        inclusion = np.array([x, y, r])
+        return inclusion
