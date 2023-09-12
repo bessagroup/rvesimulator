@@ -100,7 +100,7 @@ class MicrostructureGenerator:
         fig_name : str, optional
             figure name, by default "rgmsh.png"
         """
-        if self.fiber_positions.shape[1] == 4:
+        if self.inclusion_positions.shape[1] == 4:
             fig = plt.figure(**kwarg)
             ax = fig.add_subplot(111)
             ax.imshow(
@@ -114,7 +114,7 @@ class MicrostructureGenerator:
             if save_fig is True:
                 plt.savefig(fig_name, dpi=300, bbox_inches="tight")
             plt.show()
-        elif self.fiber_positions.shape[1] == 5:
+        elif self.inclusion_positions.shape[1] == 5:
             fig = plt.figure(**kwarg)
             ax = fig.add_subplot(projection="3d")
             ax.voxels(self.rgmsh.T, facecolors="#EE3377")
@@ -126,7 +126,7 @@ class MicrostructureGenerator:
 
     @staticmethod
     def circle_plot(
-        fibers: np.ndarray,
+        inclusions: np.ndarray,
         length: float,
         width: float,
         vol_frac: float,
@@ -138,8 +138,8 @@ class MicrostructureGenerator:
 
         Parameters
         ----------
-        fibers : np.ndarray
-            fiber locations/positions
+        inclusions : np.ndarray
+            inclusion locations/positions
         length : float
             length of the rve
         width : float
@@ -153,10 +153,10 @@ class MicrostructureGenerator:
         """
 
         fig, axes = plt.subplots(**kwargs)
-        for ii in range(fibers.shape[0]):
+        for ii in range(inclusions.shape[0]):
             cc = plt.Circle(
-                (fibers[ii, 0], fibers[ii, 1]),
-                fibers[ii, 2],
+                (inclusions[ii, 0], inclusions[ii, 1]),
+                inclusions[ii, 2],
                 color="#77AADD",
             )
             axes.add_artist(cc)
@@ -199,7 +199,7 @@ class MicrostructureGenerator:
 
     def sphere_plot(
         self,
-        fibers: np.ndarray,
+        inclusions: np.ndarray,
         length: float,
         width: float,
         height: float,
@@ -231,16 +231,16 @@ class MicrostructureGenerator:
         fig = plt.figure()
         ax = fig.add_subplot(projection="3d")
         # Plot the surface
-        for ii in range(fibers.shape[0]):
+        for ii in range(inclusions.shape[0]):
             x, y, z = \
-                self.sphere_coordinate(location_information=fibers[ii, :])
-            if fibers[ii, 4] == 1:
+                self.sphere_coordinate(location_information=inclusions[ii, :])
+            if inclusions[ii, 4] == 1:
                 ax.plot_surface(x, y, z, color="lightseagreen")
-            elif fibers[ii, 4] == 2:
+            elif inclusions[ii, 4] == 2:
                 ax.plot_surface(x, y, z, color="orange")
-            elif fibers[ii, 4] == 4:
+            elif inclusions[ii, 4] == 4:
                 ax.plot_surface(x, y, z, color="blue")
-            elif fibers[ii, 4] == 8:
+            elif inclusions[ii, 4] == 8:
                 ax.plot_surface(x, y, z, color="firebrick")
             else:
                 raise ValueError("Spltting number is wrong!\n")
