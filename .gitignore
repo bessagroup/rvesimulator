@@ -132,3 +132,6 @@ dmypy.json
 # folders
 examples/
 tutorials/Data/
+tutorials/*_data/
+simulations/*/*_data
+
