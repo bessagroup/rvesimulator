@@ -113,11 +113,11 @@ class VonMisesPlasticElasticRegularLoads(NormalDisplacementLoading,
         self,
         sim_info={
             "job_name": "two_materials_rve",
-            "location_information": None,
-            "len_start": None,
-            "len_end": None,
-            "wid_start": None,
-            "wid_end": None,
+            "inclusion_location_information": None,
+            "length_start": None,
+            "length_end": None,
+            "width_start": None,
+            "width_end": None,
             "radius_mu": None,
             "radius_std": None,
             "youngs_modulus_matrix": None,
@@ -150,22 +150,22 @@ class VonMisesPlasticElasticRegularLoads(NormalDisplacementLoading,
         self.material = None
 
         #  define the geometry information
-        self.len_start = sim_info["len_start"]
-        self.len_end = sim_info["len_end"]
-        self.wid_start = sim_info["wid_start"]
-        self.wid_end = sim_info["wid_end"]
-        self.circles_information = sim_info["location_information"]
-        # modeling
-        self.length = (sim_info["len_end"] - sim_info["len_start"]
-                       ) - 2 * sim_info["radius_mu"]
+        self.length_start  = sim_info["length_start"]
+        self.length_end  = sim_info["length_end"]
+        self.width_start  = sim_info["width_start"]
+        self.width_end  = sim_info["width_end"]
+        self.circles_information = sim_info["inclusion_location_information"]  
+        # modeling 
+        self.length = (sim_info["length_end"] - sim_info["length_start"]
+        ) - 2 * sim_info["radius_mu"]
 
-        self.width = (sim_info["wid_end"] - sim_info["wid_start"]
-                      ) - 2 * sim_info["radius_mu"]
+        self.width = (sim_info["width_end"] - sim_info["width_start"]
+        ) - 2 * sim_info["radius_mu"]
 
         self.center = [
-            (sim_info["len_end"] + sim_info["len_start"]) / 2.0,
-            (sim_info["wid_end"] + sim_info["wid_start"]) / 2.0,
-        ]
+            (sim_info["length_end"] + sim_info["length_start"]) / 2.0,
+            (sim_info["width_end"] + sim_info["width_start"]) / 2.0,
+        ] 
         self.radius_mu = sim_info["radius_mu"]
         self.radius_std = sim_info["radius_std"]
         self.mesh_size = (
@@ -245,11 +245,11 @@ class VonMisesPlasticElasticPathLoads(HistoryDependentDisplacement2D,
         self,
         sim_info={
             "job_name": "single_material_rve",
-            "location_information": None,
-            "len_start": None,
-            "len_end": None,
-            "wid_start": None,
-            "wid_end": None,
+            "inclusion_location_information": None,
+            "length_start": None,
+            "length_end": None,
+            "width_start": None,
+            "width_end": None,
             "radius_mu": None,
             "radius_std": None,
             "youngs_modulus_matrix": None,
@@ -282,22 +282,22 @@ class VonMisesPlasticElasticPathLoads(HistoryDependentDisplacement2D,
         self.material = None
 
         #  define the geometry information
-        self.len_start = sim_info["len_start"]
-        self.len_end = sim_info["len_end"]
-        self.wid_start = sim_info["wid_start"]
-        self.wid_end = sim_info["wid_end"]
-        self.circles_information = sim_info["location_information"]
-        # modeling
-        self.length = (sim_info["len_end"] - sim_info["len_start"]
-                       ) - 2 * sim_info["radius_mu"]
+        self.length_start  = sim_info["length_start"] 
+        self.length_end  = sim_info["length_end"] 
+        self.width_start  = sim_info["width_start"] 
+        self.width_end  = sim_info["width_end"] 
+        self.circles_information = sim_info["inclusion_location_information"]  
+        # modeling 
+        self.length = (sim_info["length_end"] - sim_info["length_start"]
+        ) - 2 * sim_info["radius_mu"]
 
-        self.width = (sim_info["wid_end"] - sim_info["wid_start"]
-                      ) - 2 * sim_info["radius_mu"]
+        self.width = (sim_info["width_end"] - sim_info["width_start"]
+        ) - 2 * sim_info["radius_mu"]
 
         self.center = [
-            (sim_info["len_end"] + sim_info["len_start"]) / 2.0,
-            (sim_info["wid_end"] + sim_info["wid_start"]) / 2.0,
-        ]
+            (sim_info["length_end"] + sim_info["length_start"]) / 2.0,
+            (sim_info["width_end"] + sim_info["width_start"]) / 2.0,
+        ] 
         self.radius_mu = sim_info["radius_mu"]
         self.radius_std = sim_info["radius_std"]
         self.mesh_size = (
