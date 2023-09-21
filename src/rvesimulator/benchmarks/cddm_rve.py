@@ -157,16 +157,16 @@ class CDDM_RVE(SimulationBase):
         """get simulation information"""
         self.sim_info = {
             "job_name": "cddm_rve",
-            "location_information": self.microstructure.microstructure_info[
-                "location_information"
+            "inclusion_location_information": self.microstructure.microstructure_info[
+                "inclusion_location_information"
             ],
             "radius_mu": self.microstructure.microstructure_info["radius_mu"],
             "radius_std": self.microstructure.microstructure_info[
                 "radius_std"],
-            "len_start": self.microstructure.microstructure_info["len_start"],
-            "len_end": self.microstructure.microstructure_info["len_end"],
-            "wid_start": self.microstructure.microstructure_info["wid_start"],
-            "wid_end": self.microstructure.microstructure_info["wid_end"],
+            "length_start": self.microstructure.microstructure_info["length_start"],
+            "length_end": self.microstructure.microstructure_info["length_end"],
+            "width_start": self.microstructure.microstructure_info["width_start"],
+            "width_end": self.microstructure.microstructure_info["width_end"],
             "youngs_modulus_matrix": self.youngs_modulus_matrix,
             "poisson_ratio_matrix": self.poisson_ratio_matrix,
             "youngs_modulus_fiber": self.youngs_modulus_fiber,
