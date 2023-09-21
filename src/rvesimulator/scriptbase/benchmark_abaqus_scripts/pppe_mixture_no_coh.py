@@ -30,13 +30,13 @@ class PPPEMixtureNoCohesive(object):
                                  "job_name": "veni_nocoh_rve",
                                  "strain": [0.10, 0.0, 0.0],
                                  "paras_pp": None,
-                                 "paras_pe": None,
-                                 "mesh_partition": None,
-                                 "simulation_time": 100.0,
-                                 "num_steps": None,
-                                 "num_cpu": 1,
-                                 "record_time_step": 5,
-                                 "subroutine_path": None}):
+                                 "paras_pe": None, 
+                                 "mesh_partition": None, 
+                                 "simulation_time": 100.0, 
+                                 "num_steps": None, 
+                                 "platform": "ubuntu", 
+                                 "num_cpu":1, 
+                                 "subroutine_path":None}):
         # ------------------------------ parameters ------------------------- #
         # names of model, part, instance
         self.model_name = "veni_sve"
