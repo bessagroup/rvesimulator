@@ -7,7 +7,7 @@ import pandas as pd
 
 def run_simulation():
     # load dataframe from csv
-    displacement_gradient = pd.read_csv('input_data_space.csv')
+    displacement_gradient = pd.read_csv('doe.csv')
 
     # initialization
     task1 = HyperelasticRVE()
@@ -16,7 +16,7 @@ def run_simulation():
                         radius_mu = 0.002,
                         radius_std = 0.0004,
                         vol_req= 0.4,
-                        platform='cluster',
+                        platform='ubuntu',
                         seed=17)
 
     task1_results = {}
@@ -27,5 +27,5 @@ def run_simulation():
             third_folder_index=ii
         )
 
-def main():
+if __name__ == "__main__":
     run_simulation()
