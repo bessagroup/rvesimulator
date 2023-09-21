@@ -25,7 +25,8 @@ from basic_analysis_scripts.mesh import Mesh2D
 from basic_analysis_scripts.periodical_boundary_condition import \
     PeriodicalBoundaryCondition2D
 from basic_analysis_scripts.post_process import PostProcess2D
-from basic_analysis_scripts.steps import LargeDeformationSteps
+from basic_analysis_scripts.steps import SmallDeformationSteps
+
 
 
 # =============================================================================
@@ -34,7 +35,7 @@ class TwoMaterialsRVEBase(CommonProcedure,
                           Mesh2D,
                           PeriodicalBoundaryCondition2D,
                           Jobs,
-                          LargeDeformationSteps,
+                          SmallDeformationSteps,
                           MultiCirclesInclusion):
 
     def create_pbc(self, vertices_name):
