@@ -205,17 +205,17 @@ class MultiCirclesInclusion:
             name="__profile__", sheetSize=self.length
         )
         sketch.rectangle(
-            point1=(self.len_start + self.radius_mu, self.wid_start + self.radius_mu),
-            point2=(self.len_end - self.radius_mu, self.wid_end - self.radius_mu),
+            point1=(self.length_start + self.radius_mu, self.width_start + self.radius_mu),
+            point2=(self.length_end - self.radius_mu, self.width_end - self.radius_mu),
         )
         sketch.rectangle(
             point1=(
-                self.len_start - 2 * self.radius_mu,
-                self.wid_start - 2 * self.radius_mu,
+                self.length_start - 2 * self.radius_mu,
+                self.width_start - 2 * self.radius_mu,
             ),
             point2=(
-                self.len_end + 2 * self.radius_mu,
-                self.wid_end + 2 * self.radius_mu,
+                self.length_end + 2 * self.radius_mu,
+                self.width_end + 2 * self.radius_mu,
             ),
         )
         self.model.sketches.changeKey(
@@ -227,8 +227,8 @@ class MultiCirclesInclusion:
             name="__profile__", sheetSize=self.length
         )
         sketch.rectangle(
-            point1=(self.len_start + self.radius_mu, self.wid_start + self.radius_mu),
-            point2=(self.len_end - self.radius_mu, self.wid_end - self.radius_mu),
+            point1=(self.length_start + self.radius_mu, self.width_start + self.radius_mu),
+            point2=(self.length_end - self.radius_mu, self.width_end - self.radius_mu),
         )
         self.model.sketches.changeKey(
             fromName="__profile__", toName="Matrix_Sketch"
