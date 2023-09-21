@@ -29,7 +29,7 @@ class VeniNoCohRVE(object):
                                  "job_name": "veni_nocoh_rve", 
                                  "strain": [0.10,0.0,0.0], 
                                  "paras_pp": None,
-                                 "paras_pp": None, 
+                                 "paras_pe": None, 
                                  "mesh_partition": None, 
                                  "simulation_time": 100.0, 
                                  "num_steps": None, 
