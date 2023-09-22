@@ -35,7 +35,7 @@ def get_data_samples(input_dim = 3, lower_bounds = [0.2, 0.2, 0], upper_bounds =
 
 if __name__ == '__main__':
     input_data_space = get_data_samples(input_dim=3,
-                                    lower_bounds=[0.2, 0.2, 0],
+                                    lower_bounds=[0.5, 0.5, 0],
                                     upper_bounds=[4, 4, np.pi],
                                     number_of_samples_exponent=12)
     input_data_space.to_csv('doe.csv', index=False)
