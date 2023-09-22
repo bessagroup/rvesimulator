@@ -478,7 +478,6 @@ class HyperelasticRVE(object):
                         "ELEDEN",
                         "EVOL",
                         "IVOL",
-                        'SDV'
                     ),
                     timeInterval=self.reporting_interval,
                 )
