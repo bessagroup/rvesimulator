@@ -17,6 +17,7 @@ def run_simulation():
                          radius_std=0.04,
                          vol_req=0.4,
                          mesh_division=500,
+                         platform='cluster',
                          seed=1234)
 
     task_results = pd.DataFrame(columns=['F11', 'F12', 'F21', 'F22', 'P11', 'P12', 'P21', 'P22'])
