@@ -5,6 +5,7 @@ import os
 import pickle
 import subprocess
 import time
+from pathlib import Path
 from math import inf
 
 # local
@@ -144,9 +145,22 @@ class AbaqusSimulator(Simulator, AssertInputs):
 
     def read_back_results(self, file_name: str = "results.p") -> dict:
 
-        with open(file_name, "rb") as fd:
-            results = pickle.load(fd, fix_imports=True, encoding="latin1")
-
+        try:
+            with open(file_name, "rb") as fd:
+                results = pickle.load(fd, fix_imports=True, encoding="latin1")
+        except:
+            # fix issue of windows system
+            content = ''
+            outsize = 0
+            with open(file_name, 'rb') as infile:
+                content = infile.read()
+            with open(file_name, 'wb') as output:
+                for line in content.splitlines():
+                    outsize += len(line) + 1
+                    output.write(line + str.encode('\n'))
+            # open the file again
+            with open(file_name, "rb") as fd:
+                results = pickle.load(fd, fix_imports=True, encoding="latin1")
         return results
 
     def _run_abaqus_simulation(
@@ -205,7 +219,7 @@ class AbaqusSimulator(Simulator, AssertInputs):
             print(f"simulation time :{(end_time - start_time):2f} s")
             # remove files that influence the simulation process
             self.remove_files(directory=os.getcwd())
-        elif self.platform == "cluster":
+        elif self.platform == "cluster" or self.platform == "windows":
             # count time for simulation
             start_time = time.time()
             os.system(command)
@@ -233,6 +247,9 @@ class AbaqusSimulator(Simulator, AssertInputs):
             status of  simulation, by default "simulation"
 
         """
+        # if the platform is windows, change the path to posix
+        if self.sim_info["platform"] == "windows":
+            self.folder_info["script_path"] =  Path(self.folder_info["script_path"]).as_posix()
 
         if status == "simulation":
             with open(file_name, "w") as file:

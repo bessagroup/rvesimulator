@@ -82,7 +82,7 @@ class VeniNoCohRVE(object):
         self.create_job()
         self.submit_job()
         # post process
-        if sim_info["platform"] == "cluster":
+        if sim_info["platform"] == "cluster" or sim_info["platform"] == "windows":
             PostProcess(job_name=self.job_name)
 
     def create_simulation_job(self):
