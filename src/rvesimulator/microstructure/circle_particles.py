@@ -285,7 +285,7 @@ class CircleParticles(MicrosctuctureGenerator):
                     width=self.width,
                 )
                 if new_fiber[0, 3] == 4:
-                    self.logger.info("generate fiber, vertex check ...")
+                    # self.logger.info("generate fiber, vertex check ...")
                     # if the temp fiber locates at un-proper location for mesh
                     while self.vertices_mesh_loc(new_fiber) == "fail":
                         fiber_temp = self.generate_random_fibers(
@@ -304,9 +304,9 @@ class CircleParticles(MicrosctuctureGenerator):
                             length=self.length,
                             width=self.width,
                         )
-                    self.logger.info("generate fiber, vertex check pass")
+                    # self.logger.info("generate fiber, vertex check pass")
                 elif new_fiber[0, 3] == 2:
-                    self.logger.info("generate fiber, edge check ...")
+                    # self.logger.info("generate fiber, edge check ...")
                     # if the temp fiber locates at un-proper location for mesh
                     while self.proper_edge_mesh_location(new_fiber) == "fail":
                         fiber_temp = self.generate_random_fibers(
@@ -325,7 +325,7 @@ class CircleParticles(MicrosctuctureGenerator):
                             length=self.length,
                             width=self.width,
                         )
-                    self.logger.info("generate fiber, edge check pass")
+                    # self.logger.info("generate fiber, edge check pass")
                 # check the overlap of new fiber
                 overlap_status = self.overlap_check(
                     new_fiber=new_fiber,
@@ -380,7 +380,7 @@ class CircleParticles(MicrosctuctureGenerator):
                     # max stirring iteration
                     stirring_iter = 0
                     if new_fiber[0, 3] == 4:
-                        self.logger.info("stirring fiber,vertex check ...")
+                        # self.logger.info("stirring fiber,vertex check ...")
                         while (
                             self.vertices_mesh_loc(new_fiber) == "fail"
                             and stirring_iter < self.stirring_iters
@@ -408,10 +408,10 @@ class CircleParticles(MicrosctuctureGenerator):
                         if stirring_iter == self.stirring_iters:
                             self.logger.error(
                                 "stirring vertex check failed")
-                        else:
-                            self.logger.info("stirring vertex check pass")
+                        # else:
+                            # self.logger.info("stirring vertex check pass")
                     elif new_fiber[0, 3] == 2:
-                        self.logger.info("stirring fiber, edge check ...")
+                        # self.logger.info("stirring fiber, edge check ...")
                         # check proper location for mesh
                         while self.proper_edge_mesh_location(
                             new_fiber
@@ -438,8 +438,8 @@ class CircleParticles(MicrosctuctureGenerator):
                             stirring_iter += 1
                         if stirring_iter == self.stirring_iters:
                             self.logger.error("stirring edge check failed")
-                        else:
-                            self.logger.info("stirring edge check pass")
+                        # else:
+                        #     self.logger.info("stirring edge check pass")
                     overlap_status = self.overlap_check(
                         new_fiber=new_fiber,
                         fiber_pos=self.fiber_positions.copy(),
