@@ -231,7 +231,8 @@ class VeniNoCohRVE(SimulationBase):
             sim_info=self.sim_info, folder_info=self.folder_info
         )
         # run abaqus simulation
-        simulator.run()
+        simulator.execute()
+        simulator.post_process(delete_odb=True)
         # get the simulation results back
         results = simulator.read_back_results()
         end_time = time.time()

@@ -152,7 +152,7 @@ class ElasticRegularLoads(
         self.create_sequential_job(subroutine_path="")
 
         # post process
-        if self.platform == "cluster":
+        if self.platform == "cluster" or self.platform == "windows":
             PostProcess2D(self.job_name)
 
 # =============================================================================
@@ -258,7 +258,7 @@ class VonMisesPlasticRegularLoads(CommonProcedure,
         self.create_sequential_job(subroutine_path="")
 
         # post process
-        if self.platform == "cluster":
+        if self.platform == "cluster" or self.platform == "windows":
             PostProcess2D(self.job_name)
 
 # =============================================================================
@@ -376,5 +376,5 @@ class VonMisesPlasticPathLoads(CommonProcedure,
         self.create_sequential_job(subroutine_path="")
 
         # post process
-        if self.platform == "cluster":
+        if self.platform == "cluster" or self.platform == "windows":
             PostProcess2D(self.job_name)
