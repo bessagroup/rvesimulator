@@ -26,13 +26,21 @@ def pre_process(config):
     config
         Configuration parameters defined in config.yaml
     """
-    dataset_path = Path('/home/vijayakumaran/scratch/1work/lighten-itn/bessa_group/work/rvesimulator/simulations/parallel_hyperelastic_simulations/doe_.csv') # Path object to the csv file for DOE
+    if config.dataset.rerun:
+        pickle_file_name = f"exp_data_{config.dataset.model}_jobs.pkl"
+        job_status = pickle.load(open(Path.cwd() / pickle_file_name, 'rb'))
+        job_status[job_status == 'in progress'] = 'open'
+        job_status[job_status == 'error'] = 'open'
+        # save the pickle again
+        pickle.dump(job_status, open(Path.cwd() / pickle_file_name, 'wb'))
+        return None
+    # Actual dataset path
+    dataset_path = Path(config.dataset.store_path_access).parents[0]
     experimentdata = f3dasm.ExperimentData.from_csv(Path(
-                            "{}".format(
-                                dataset_path)))
+                            "{}/doe.csv".format(dataset_path)))
     # Save to disk
     experimentdata.jobs.mark_all_open()
-    experimentdata.store(filename='exp_data_{}'.format('rve'))
+    experimentdata.store(filename='exp_data_{}'.format(config.dataset.model))
     return None
 
 
@@ -55,7 +63,7 @@ def process(config):
                     'rve')) # Same name and location as before!
     print(os.getcwd())
     # call objective_per_example
-    data.run(run_simulation, mode='sequential', # Change this to parallel if you want to run in parallel
+    data.run(run_simulation, mode='cluster', # Change this to parallel if you want to run in parallel
              kwargs={'config': config}) # Run your function like this with any kwargs that you aht to pass on
     return None
 

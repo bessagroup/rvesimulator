@@ -133,5 +133,4 @@ dmypy.json
 examples/
 tutorials/Data/
 tutorials/*_data/
-simulations/*/*_data
-
+**/*_data/
