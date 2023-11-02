@@ -137,5 +137,4 @@ studies/cddm_data_generation/out*
 # ignore Data
 **/Data/
 tutorials/*_data/
-simulations/*/*_data
-
+**/*_data/

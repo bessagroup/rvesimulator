@@ -17,3 +17,10 @@ hydra:
 # Common settings
 hpc: # Needed by f3dasm for parallel jb submission in HPC
   jobid: 0
+# =============================================================================
+# 1. Dataset creation parameters
+# =============================================================================
+dataset:
+  model: 'rve'
+  rerun: True
+  store_path_access: ${hydra:runtime.cwd}

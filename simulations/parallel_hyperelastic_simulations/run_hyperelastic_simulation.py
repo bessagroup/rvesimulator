@@ -31,6 +31,7 @@ def run_simulation(design: Design, config):
                          vol_req=0.4,
                          mesh_division=300,
                          platform='cluster',
+                         num_cpu=16,
                          seed=1234)
     
     try:
