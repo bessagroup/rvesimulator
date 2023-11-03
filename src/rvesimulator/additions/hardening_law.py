@@ -24,8 +24,9 @@ __status__ = 'Stable'
 # =============================================================================
 
 
-#                                                                  Base Classes
+#                                                                       Classes
 # =============================================================================
+
 class HardeningLaw(ABC):
     def __init__(self) -> None:
         """Abstract class for the hardening law. The hardening law is defined

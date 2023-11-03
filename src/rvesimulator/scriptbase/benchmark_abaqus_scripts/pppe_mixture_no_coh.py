@@ -16,7 +16,7 @@ try:
 except ValueError:
     import pickle
 
-class VeniNoCohRVE(object):
+class PPPEMixtureNoCohesive(object):
     """ PP and PE 2D SVE without cohesive elements"""
 
     def __init__(self, sim_info={"location_information": None, 

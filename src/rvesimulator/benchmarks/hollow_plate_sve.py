@@ -27,7 +27,7 @@ __status__ = "Stable"
 # =============================================================================
 
 
-class HollowplateBase(SimulationBase):
+class HollowPlateBase(SimulationBase):
 
     def _get_sim_info(self) -> None:
         """get simulation info
@@ -102,7 +102,7 @@ class HollowplateBase(SimulationBase):
 
         return results
 
-class ElasticRegularLoads(HollowplateBase):
+class ElasticRegularLoads(HollowPlateBase):
     def __init__(self) -> None:
         """Interface between python and abaqus of the Hollow plate case"""
         logging.basicConfig(level=logging.INFO,
@@ -196,7 +196,7 @@ class ElasticRegularLoads(HollowplateBase):
 # =============================================================================
 
 
-class VonMisesPlasticRegularLoads(HollowplateBase):
+class VonMisesPlasticRegularLoads(HollowPlateBase):
 
     def __init__(self) -> None:
         """Interface between python and abaqus of the Hollow plate case"""
@@ -311,7 +311,7 @@ class VonMisesPlasticRegularLoads(HollowplateBase):
 
 
 # =============================================================================
-class VonMisesPlasticPathLoads(HollowplateBase):
+class VonMisesPlasticPathLoads(HollowPlateBase):
     """Hollow plate simulation case, with von mises plasticity and path loading
 
     Parameters

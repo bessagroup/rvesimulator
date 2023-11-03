@@ -17,14 +17,15 @@ from .shared_functionalities import SimulationBase
 __author__ = "Jiaxiang Yi (J.Yi@tudelft.nl)"
 __credits__ = ["Jiaxiang Yi"]
 __status__ = "Stable"
-# =============================================================================
 
 # =============================================================================
 
+# =============================================================================
 
-class VeniNoCohRVE(SimulationBase):
-    """uni-axial tension for pp/pe composite without cohesive elements in
-    between fiber and matrix material phases"""
+
+class PPPEMixtureNoCohesive(SimulationBase):
+    """uni-axial tension for pp/pe Mixture/composite without cohesive elements 
+    in between fiber and matrix material phases"""
 
     def __init__(self) -> None:
 
@@ -37,9 +38,9 @@ class VeniNoCohRVE(SimulationBase):
             "script_path": os.path.dirname(rvesimulator.__file__) + \
                 "/scriptbase/",
             "current_work_directory": "point_1",
-            "sim_path": "benchmark_abaqus_scripts.veni_nocohesive_rve",
-            "sim_script": "VeniNoCohRVE",
-            "post_path": "benchmark_abaqus_scripts.veni_nocohesive_rve",
+            "sim_path": "benchmark_abaqus_scripts.pppe_mixture_no_coh",
+            "sim_script": "PPPEMixtureNoCohesive",
+            "post_path": "benchmark_abaqus_scripts.pppe_mixture_no_coh",
             "post_script": "PostProcess",
         }
         self.subroutine_path = self.folder_info["script_path"] + \
@@ -231,10 +232,15 @@ class VeniNoCohRVE(SimulationBase):
             sim_info=self.sim_info, folder_info=self.folder_info
         )
         # run abaqus simulation
-        simulator.execute()
-        simulator.post_process(delete_odb=True)
-        # get the simulation results back
-        results = simulator.read_back_results()
+        try:
+            simulator.execute()
+            simulator.post_process(delete_odb=True)
+            # get the simulation results back
+            results = simulator.read_back_results()
+        except:
+            # error occurs in the simulation, return None and continue the 
+            # simulation
+            results = None
         end_time = time.time()
         self.logger.info("time used: {} s".format(end_time - start_time))
         self.logger.info("============== End abaqus simulation ============")
