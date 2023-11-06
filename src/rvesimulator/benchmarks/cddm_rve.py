@@ -245,9 +245,16 @@ class CDDM_RVE(SimulationBase):
             sim_info=self.sim_info, folder_info=self.folder_info
         )
         # run abaqus simulation
-        simulator.run()
+        try: 
+            simulator.execute()
+            simulator.post_process(delete_odb=True)
+            results = simulator.read_back_results()
+            self.logger.info("simulation finished")
+        except Exception as e:
+            self.logger.info("simulation failed")
+            self.logger.info(e)
+            results = None
         # get the simulation results back
-        results = simulator.read_back_results()
         end_time = time.time()
         self.logger.info("time used: {} s".format(end_time - start_time))
         self.logger.info("============== End abaqus simulation ============")

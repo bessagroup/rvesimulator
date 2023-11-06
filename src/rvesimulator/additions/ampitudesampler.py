@@ -1,7 +1,7 @@
 #                                                                       Modules
 # =============================================================================
 # Standard
-from typing import Any
+from typing import Any, Tuple
 
 # Third-party
 import numpy as np
@@ -100,10 +100,7 @@ class AmplitudeGenerator:
     @staticmethod
     def generate_control_points(
         seed: int, num_control: int, num_steps: int, num_dim: int = 3
-    ) -> tuple[
-        np.ndarray[Any, np.dtype[np.floating]],
-        np.ndarray[Any, np.dtype[np.floating]],
-    ]:
+    ) -> Tuple[Any, Any]:
         """generate control points
 
         Parameters
@@ -119,8 +116,7 @@ class AmplitudeGenerator:
 
         Returns
         -------
-        tuple[ np.ndarray[any, np.dtype[np.floating]],
-               np.ndarray[any, np.dtype[np.floating]], ]
+        Tuple[Any, Any]
             x_location of control points, y_location of control points
         """
         num_control = int(num_control)
