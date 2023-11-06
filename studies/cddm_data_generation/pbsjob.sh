@@ -37,4 +37,4 @@ if ! [ -n "${PBS_ARRAYID+1}" ]; then
 fi
 
 #Executing my python program
-python main.py ++hpc.jobid=${PBS_ARRAYID}
+python main.py --jobid=${PBS_ARRAYID}
