@@ -237,9 +237,11 @@ class PPPEMixtureNoCohesive(SimulationBase):
             simulator.post_process(delete_odb=True)
             # get the simulation results back
             results = simulator.read_back_results()
+            self.logger.info("simulation finished")
         except:
             # error occurs in the simulation, return None and continue the 
             # simulation
+            self.logger.info("simulation failed")
             results = None
         end_time = time.time()
         self.logger.info("time used: {} s".format(end_time - start_time))
