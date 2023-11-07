@@ -127,15 +127,15 @@ class HyperelasticRVE(object):
         part.projectReferencesOntoSketch(sketch=sketch, filter=COPLANAR_EDGES)
 
         # create the inclusions
-        for ii in range(len(self.inclusion_location_information)):
-            # actual inclusions
-            sketch.CircleByCenterPerimeter(
-                center=(self.inclusion_location_information[ii][0], self.inclusion_location_information[ii][1]),
-                point1=(self.inclusion_location_information[ii][0] +
-                        self.inclusion_location_information[ii][2], self.inclusion_location_information[ii][1]),
-            )
-        part.PartitionFaceBySketch(faces=faces[:], sketch=sketch)
-        del sketch
+        # for ii in range(len(self.inclusion_location_information)):
+        #     # actual inclusions
+        #     sketch.CircleByCenterPerimeter(
+        #         center=(self.inclusion_location_information[ii][0], self.inclusion_location_information[ii][1]),
+        #         point1=(self.inclusion_location_information[ii][0] +
+        #                 self.inclusion_location_information[ii][2], self.inclusion_location_information[ii][1]),
+        #     )
+        # part.PartitionFaceBySketch(faces=faces[:], sketch=sketch)
+        # del sketch
 
         # create sets----------------------------------------------------------
         # get faces
@@ -145,33 +145,33 @@ class HyperelasticRVE(object):
         part.Set(faces=faces, name="all_faces")
 
         # inclusion faces
-        inclusionface = part.faces.getByBoundingCylinder(
-            (self.inclusion_location_information[0][0], self.inclusion_location_information[0][1], 0.0),
-            (self.inclusion_location_information[0][0], self.inclusion_location_information[0][1], 1.0),
-            self.inclusion_location_information[0][2] + 0.001 * self.inclusion_location_information[0][2],
-        )
-        part.Set(faces=inclusionface, name="inclusionface")
-        for ii in range(1, len(self.inclusion_location_information)):
-            inclusionface_1 = part.faces.getByBoundingCylinder(
-                (self.inclusion_location_information[ii][0], self.inclusion_location_information[ii][1], 0.0),
-                (self.inclusion_location_information[ii][0], self.inclusion_location_information[ii][1], 1.0),
-                self.inclusion_location_information[ii][2] + 0.001 * self.inclusion_location_information[ii][2],
-            )
-            part.Set(faces=inclusionface_1, name="inclusionface_1")
-            part.SetByBoolean(
-                name="inclusionface",
-                sets=(part.sets["inclusionface_1"],  part.sets["inclusionface"]),
-                operation=UNION,
-            )
-        # delete inclusion face 1
-        del part.sets["inclusionface_1"]
+        # inclusionface = part.faces.getByBoundingCylinder(
+        #     (self.inclusion_location_information[0][0], self.inclusion_location_information[0][1], 0.0),
+        #     (self.inclusion_location_information[0][0], self.inclusion_location_information[0][1], 1.0),
+        #     self.inclusion_location_information[0][2] + 0.001 * self.inclusion_location_information[0][2],
+        # )
+        # part.Set(faces=inclusionface, name="inclusionface")
+        # for ii in range(1, len(self.inclusion_location_information)):
+        #     inclusionface_1 = part.faces.getByBoundingCylinder(
+        #         (self.inclusion_location_information[ii][0], self.inclusion_location_information[ii][1], 0.0),
+        #         (self.inclusion_location_information[ii][0], self.inclusion_location_information[ii][1], 1.0),
+        #         self.inclusion_location_information[ii][2] + 0.001 * self.inclusion_location_information[ii][2],
+        #     )
+        #     part.Set(faces=inclusionface_1, name="inclusionface_1")
+        #     part.SetByBoolean(
+        #         name="inclusionface",
+        #         sets=(part.sets["inclusionface_1"],  part.sets["inclusionface"]),
+        #         operation=UNION,
+        #     )
+        # # delete inclusion face 1
+        # del part.sets["inclusionface_1"]
 
-        # create set for matrix
-        part.SetByBoolean(
-            name="matrixface",
-            sets=(part.sets["all_faces"], part.sets["inclusionface"]),
-            operation=DIFFERENCE,
-        )
+        # # create set for matrix
+        # part.SetByBoolean(
+        #     name="matrixface",
+        #     sets=(part.sets["all_faces"], part.sets["inclusionface"]),
+        #     operation=DIFFERENCE,
+        # )
 
         # create sets for edges
         s = part.edges
@@ -260,20 +260,24 @@ class HyperelasticRVE(object):
                                 secondOrderAccuracy=OFF, hourglassControl=ENHANCED,
                                 distortionControl=DEFAULT)
         elemType2 = mesh.ElemType(elemCode=CPE3, elemLibrary=STANDARD)
-        part.setElementType(
-            regions=part.sets["inclusionface"], elemTypes=(elemType1, elemType2))
-        part.setElementType(
-            regions=part.sets["matrixface"], elemTypes=(elemType1, elemType2))
 
+        # part.setElementType(
+        #     regions=part.sets["inclusionface"], elemTypes=(elemType1, elemType2))
+        # part.setElementType(
+        #     regions=part.sets["matrixface"], elemTypes=(elemType1, elemType2))
+        
+        part.setElementType(
+            regions=part.sets["all_faces"], elemTypes=(elemType1, elemType2))
+        
         part.generateMesh()
 
         # material properties ---------------------------------------------------------
         # material property for top part
-        material_inclusion = model.Material(name="material_inclusion")
+        # material_inclusion = model.Material(name="material_inclusion")
         # material_inclusion.Elastic(table=((self.params_inclusion[0], self.params_inclusion[1]), ))
-        material_inclusion.Hyperelastic(materialType=ISOTROPIC, testData=OFF, type=NEO_HOOKE, 
-                                        volumetricResponse=VOLUMETRIC_DATA, 
-                                        table=((self.params_inclusion[0], self.params_inclusion[1]), ))
+        # material_inclusion.Hyperelastic(materialType=ISOTROPIC, testData=OFF, type=NEO_HOOKE, 
+        #                                 volumetricResponse=VOLUMETRIC_DATA, 
+        #                                 table=((self.params_inclusion[0], self.params_inclusion[1]), ))
         # material_inclusion.Depvar(n=44)
         # material_inclusion.Density(table=((7.9e-9, ), ))
         
@@ -289,16 +293,16 @@ class HyperelasticRVE(object):
         # matrix material
         model.HomogeneousSolidSection(
             name='matrix', material='material_matrix', thickness=None)
-        part.SectionAssignment(region=part.sets['matrixface'], sectionName='matrix', offset=0.0,
+        part.SectionAssignment(region=part.sets['all_faces'], sectionName='matrix', offset=0.0,
                             offsetType=MIDDLE_SURFACE, offsetField='', thicknessAssignment=FROM_SECTION)
 
 
         # inclusion material
-        model.HomogeneousSolidSection(
-            name='inclusion', material='material_inclusion', thickness=None)
-        part.SectionAssignment(region=part.sets['inclusionface'], sectionName='inclusion', offset=0.0,
-                            offsetType=MIDDLE_SURFACE, offsetField='',
-                            thicknessAssignment=FROM_SECTION)
+        # model.HomogeneousSolidSection(
+        #     name='inclusion', material='material_inclusion', thickness=None)
+        # part.SectionAssignment(region=part.sets['inclusionface'], sectionName='inclusion', offset=0.0,
+        #                     offsetType=MIDDLE_SURFACE, offsetField='',
+        #                     thicknessAssignment=FROM_SECTION)
 
         sim_assembly = model.rootAssembly
         sim_instance = sim_assembly.Instance(
