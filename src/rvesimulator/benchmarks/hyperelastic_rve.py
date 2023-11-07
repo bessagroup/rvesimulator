@@ -216,7 +216,7 @@ class HyperelasticRVE(SimulationBase):
         )
         # run abaqus simulation
         simulator.execute()
-        simulator.post_process(delete_odb=True)
+        simulator.post_process(delete_odb=False)
         # get the simulation results back
         results = simulator.read_back_results()
         end_time = time.time()
