@@ -134,3 +134,4 @@ examples/
 tutorials/Data/
 tutorials/*_data/
 **/*_data/
+**/outputs/
