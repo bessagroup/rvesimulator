@@ -35,7 +35,7 @@ def pre_process(config):
         pickle.dump(job_status, open(Path.cwd() / pickle_file_name, 'wb'))
         return None
     # Actual dataset path
-    dataset_path = Path(config.dataset.store_path_access).parents[0]
+    dataset_path = Path(config.dataset.store_path_access)
     experimentdata = f3dasm.ExperimentData.from_csv(Path(
                             "{}/doe.csv".format(dataset_path)))
     # Save to disk
