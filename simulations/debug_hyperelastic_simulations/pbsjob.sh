@@ -57,8 +57,8 @@ if ! [ -n "${PBS_ARRAYID+1}" ]; then
 fi
 
 #Executing my python program
-# python main.py ++hpc.jobid=${PBS_ARRAYID} hydra.run.dir=outputs/${now:%Y-%m-%d}/${JOB_ID}
-python main.py ++hpc.jobid=${PBS_ARRAYID} hydra.run.dir=outputs/533618.hpc06.hpc
+python main.py ++hpc.jobid=${PBS_ARRAYID} hydra.run.dir=outputs/${now:%Y-%m-%d}/${JOB_ID}
+# python main.py ++hpc.jobid=${PBS_ARRAYID} hydra.run.dir=outputs/533618.hpc06.hpc
 
 # # job done, copy everything back
 # echo "Copying from ${TMP}/ to ${PBS_O_WORKDIR}/"
