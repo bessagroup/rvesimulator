@@ -598,8 +598,8 @@ class PostProcess:
         rve_odb = openOdb(path=odbfile)
         # get element sets
         entire_element_set = rve_odb.rootAssembly.elementSets[" ALL ELEMENTS"]
-        inclusion_element_set = rve_odb.rootAssembly.instances["RVE_2PHASE"].elementSets['INCLUSIONFACE']
-        matrix_element_set = rve_odb.rootAssembly.instances["RVE_2PHASE"].elementSets["MATRIXFACE"]
+        # inclusion_element_set = rve_odb.rootAssembly.instances["RVE_2PHASE"].elementSets['INCLUSIONFACE']
+        # matrix_element_set = rve_odb.rootAssembly.instances["RVE_2PHASE"].elementSets["MATRIXFACE"]
 
         ref1_node_set = rve_odb.rootAssembly.nodeSets["REF-R"]
         ref2_node_set = rve_odb.rootAssembly.nodeSets["REF-T"]
@@ -619,10 +619,12 @@ class PostProcess:
         # Extract volume at integration point in ENTIRE RVE:
         ivol_field = rve_frame.fieldOutputs["IVOL"]
 
-        # get element volume for inclusion
-        self.ivol_inclusions = self.get_ivol(ivol_field, inclusion_element_set)
+        # # get element volume for inclusion
+        # self.ivol_inclusions = self.get_ivol(ivol_field, inclusion_element_set)
+        # # get the filed output for matrix
+        # self.ivol_matrix = self.get_ivol(ivol_field, matrix_element_set)
         # get the filed output for matrix
-        self.ivol_matrix = self.get_ivol(ivol_field, matrix_element_set)
+        self.ivol_matrix = self.get_ivol(ivol_field, entire_element_set)
 
         # define required variables
         self.deformation_gradient = np.zeros((total_frames, 2, 2))
@@ -703,13 +705,21 @@ class PostProcess:
                     self.displacement_gradient[ii * len(step_frames) + jj][1][i] \
                         = self.U_ref2[ii * len(step_frames) + jj][i]
 
+                    # # get pk1_stress
+                    # self.pk1_stress[ii * len(step_frames) + jj][0][i] \
+                    #     = self.RF_ref1[ii * len(step_frames) + jj][i] / \
+                    #     (self.ivol_matrix.sum() + self.ivol_inclusions.sum())
+                    # self.pk1_stress[ii * len(step_frames) + jj][1][i] = \
+                    #     self.RF_ref2[ii * len(step_frames) + jj][i] / \
+                    #     (self.ivol_matrix.sum() + self.ivol_inclusions.sum())
+                    
                     # get pk1_stress
                     self.pk1_stress[ii * len(step_frames) + jj][0][i] \
                         = self.RF_ref1[ii * len(step_frames) + jj][i] / \
-                        (self.ivol_matrix.sum() + self.ivol_inclusions.sum())
+                        (self.ivol_matrix.sum())
                     self.pk1_stress[ii * len(step_frames) + jj][1][i] = \
                         self.RF_ref2[ii * len(step_frames) + jj][i] / \
-                        (self.ivol_matrix.sum() + self.ivol_inclusions.sum())
+                        (self.ivol_matrix.sum())
 
         self.save_results()
 
@@ -755,8 +765,8 @@ class PostProcess:
             "pk1_stress": self.pk1_stress,
             "deformation_gradient": self.deformation_gradient,
             "displacement_gradient": self.displacement_gradient,
-            "inclusion_volume": self.ivol_inclusions,
-            "matrix_volume": self.ivol_matrix,
+            # "inclusion_volume": self.ivol_inclusions,
+            # "matrix_volume": self.ivol_matrix,
         }
         # Save the results to a pickle file
         with open("results.p", "wb") as fp:
