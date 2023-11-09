@@ -1,0 +1,3 @@
+[submodule "external_libraries/ODB2VTK"]
+	path = external_libraries/ODB2VTK
+	url = https://github.com/Arris-Composites/ODB2VTK.git
