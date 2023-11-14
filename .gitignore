@@ -132,3 +132,6 @@ dmypy.json
 # folders
 examples/
 tutorials/Data/
+studies/cddm_data_generation/Data/
+studies/cddm_data_generation/err*
+studies/cddm_data_generation/out*

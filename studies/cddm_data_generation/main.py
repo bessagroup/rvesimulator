@@ -218,20 +218,17 @@ def execute_experimentdata() -> None:
     # load data from file
     data = f3dasm.ExperimentData.from_file(filename='exp_{}'.format('cddm'))
     # run the function
-    data.evaluate(CDDMDataGenerator(), mode='parallel')
+    data.evaluate(CDDMDataGenerator(), mode='cluster')
     data.store(filename='exp_{}'.format('cddm'))
 
-def main() -> None:
-    """ Main script distinguishes between the master and the workers."""
 
+if __name__ == '__main__':
+    # run the function
+    """ Main script distinguishes between the master and the workers."""
+    print(f3dasm.HPC_JOBID)
     if f3dasm.HPC_JOBID == 0:
         create_experimentdata()
         execute_experimentdata()
     elif f3dasm.HPC_JOBID > 0:
         sleep(f3dasm.HPC_JOBID)
         execute_experimentdata()
-
-
-if __name__ == '__main__':
-    # run the function
-    main()
