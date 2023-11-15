@@ -283,9 +283,14 @@ class HyperelasticRVE(object):
         
         material_matrix = model.Material(name="material_matrix")
         # material_matrix.Elastic(table=((self.params_matrix[0], self.params_matrix[1]), ))
-        material_matrix.Hyperelastic(materialType=ISOTROPIC, testData=OFF, type=ARRUDA_BOYCE, 
+        # material_matrix.Hyperelastic(materialType=ISOTROPIC, testData=OFF, type=ARRUDA_BOYCE, 
+        #                                 volumetricResponse=VOLUMETRIC_DATA, 
+        #                                 table=((self.params_matrix[0], self.params_matrix[1], self.params_matrix[2]), ))
+        material_matrix.Hyperelastic(materialType=ISOTROPIC, testData=OFF, type=NEO_HOOKE, 
                                         volumetricResponse=VOLUMETRIC_DATA, 
-                                        table=((self.params_matrix[0], self.params_matrix[1], self.params_matrix[2]), ))
+                                        table=((180.5/2.0, 0.0025), ))
+
+
         # material_matrix.Depvar(n=44)
         # material_matrix.Density(table=((7.9e-9, ), ))
 
