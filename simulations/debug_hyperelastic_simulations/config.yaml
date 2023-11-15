@@ -22,5 +22,5 @@ hpc: # Needed by f3dasm for parallel jb submission in HPC
 # =============================================================================
 dataset:
   model: 'rve'
-  rerun: False
+  rerun: True
   store_path_access: ${hydra:runtime.cwd}
