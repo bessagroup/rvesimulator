@@ -1,41 +1,53 @@
 import numpy as np
 import pandas as pd
 from scipy.stats import qmc
+import jax
+jax.config.update('jax_enable_x64', True)
+import jax.numpy as jnp
 
 
-def get_displacement_gradient_from_principal_stretches(sample_space):
-    l1 = sample_space[:, 0]
-    l2 = sample_space[:, 1]
-    theta = sample_space[:, 2]
+def get_displacement_gradient_from_principal_stretches(sample):
+    l1 = sample[0]
+    l2 = sample[1]
+    theta = sample[2]
 
-    R = np.array([[np.cos(theta), -np.sin(theta)],
-                  [np.sin(theta), np.cos(theta)]]).transpose(2, 0, 1)
+    R = jnp.array([[jnp.cos(theta), -jnp.sin(theta)],
+                  [jnp.sin(theta), jnp.cos(theta)]])
 
-    U_eig = np.array([[l1, np.zeros_like(l1)],
-                      [np.zeros_like(l2), l2]]).transpose(2, 0, 1)
-    
-    Identity = np.array([[np.ones_like(l1), np.zeros_like(l1)],
-                         [np.zeros_like(l2), np.ones_like(l2)]]).transpose(2, 0, 1)
+    U_eig = jnp.diag(jnp.array([l1, l2]))
 
-    F = np.einsum('mij,mjk->mik', R, U_eig)
+    Identity = jnp.eye(2)
+
+    F = jnp.matmul(R, jnp.matmul(U_eig, R.T))
 
     dU = F - Identity
 
-    return pd.DataFrame(dU.reshape(-1, 4), columns=['dU11', 'dU12', 'dU21', 'dU22'])
+    return dU
 
-def get_data_samples(input_dim = 3, lower_bounds = [0.2, 0.2, 0], upper_bounds = [4, 4, np.pi], number_of_samples_exponent=11):
+def get_data_samples(input_dim=3,
+                     lower_bounds=[0.2, 0.2, 0],
+                     upper_bounds=[4, 4, np.pi],
+                     number_of_samples_exponent=11):
 
     number_of_samples = 2**number_of_samples_exponent
     m = number_of_samples_exponent
     sampler = qmc.Sobol(d=input_dim, scramble=False)
     uniform_samples = sampler.random_base2(m=m)
     assert uniform_samples.shape[0] >= number_of_samples
-    data_samples = get_displacement_gradient_from_principal_stretches(qmc.scale(uniform_samples, lower_bounds, upper_bounds))
+    data_samples = jax.vmap(
+        get_displacement_gradient_from_principal_stretches)(
+            qmc.scale(uniform_samples, lower_bounds, upper_bounds)
+            ).reshape(-1, 4)
+
     return data_samples
 
 if __name__ == '__main__':
+
     input_data_space = get_data_samples(input_dim=3,
-                                    lower_bounds=[0.5, 0.5, 0],
-                                    upper_bounds=[4, 4, np.pi],
-                                    number_of_samples_exponent=12)
-    input_data_space.to_csv('doe.csv', index=False)
+                                        lower_bounds=[0.5, 0.5, 0],
+                                        upper_bounds=[4, 4, np.pi],
+                                        number_of_samples_exponent=12)
+
+    input_dataframe = pd.DataFrame(input_data_space,
+                                   columns=['dU11', 'dU12', 'dU21', 'dU22']).round(4)
+    input_dataframe.to_csv('doe_1.csv', index=False)
