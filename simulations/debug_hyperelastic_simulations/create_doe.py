@@ -44,8 +44,8 @@ def get_data_samples(input_dim=3,
 if __name__ == '__main__':
 
     input_data_space = get_data_samples(input_dim=3,
-                                        lower_bounds=[0.90, 0.90, 0],
-                                        upper_bounds=[1.10, 1.10, np.pi],
+                                        lower_bounds=[0.5, 0.5, 0],
+                                        upper_bounds=[4, 4, np.pi],
                                         number_of_samples_exponent=4)
 
     input_dataframe = pd.DataFrame(input_data_space,
