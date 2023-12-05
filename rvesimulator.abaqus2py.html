@@ -163,9 +163,24 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="rvesimulator.abaqus2py.abaqus_simulator.AbaqusSimulator._run_abaqus_simulation">
 <span class="sig-name descname"><span class="pre">_run_abaqus_simulation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">command</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sleep_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refresh_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/abaqus2py/abaqus_simulator.html#AbaqusSimulator._run_abaqus_simulation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.abaqus2py.abaqus_simulator.AbaqusSimulator._run_abaqus_simulation" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>run abaqus simulation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>command</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – system command for running abaqus</p></li>
+<li><p><strong>max_time</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a><em>, </em><em>optional</em>) – maximum simulation time, by default inf</p></li>
+<li><p><strong>sleep_time</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a><em>, </em><em>optional</em>) – sleep time, by default 20.0</p></li>
+<li><p><strong>refresh_time</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a><em>, </em><em>optional</em>) – refresh time, by default 5.0</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>simulation status</p>
+</dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)">str</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NotImplementedError" title="(in Python v3.12)"><strong>NotImplementedError</strong></a> – platform not be implemented</p>
 </dd>
 </dl>
 </dd></dl>
@@ -173,10 +188,22 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="rvesimulator.abaqus2py.abaqus_simulator.AbaqusSimulator.execute">
 <span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sleep_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refresh_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/abaqus2py/abaqus_simulator.html#AbaqusSimulator.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.abaqus2py.abaqus_simulator.AbaqusSimulator.execute" title="Link to this definition">¶</a></dt>
-<dd><p>Function that calls the FEM simulator the pre-processing</p>
+<dd><p>execute the abaqus simulation</p>
 <dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>max_time</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a><em>, </em><em>optional</em>) – maximum simulation time, kill the simulation when time reaches the
+given maximum simulation time, by default inf</p></li>
+<li><p><strong>sleep_time</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a><em>, </em><em>optional</em>) – sleep time, let abaqus run for 20s first, by default 20.0</p></li>
+<li><p><strong>refresh_time</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a><em>, </em><em>optional</em>) – detect if the simulation is finished or not every given refresh
+time, by default 5.0</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>simulation status</p>
+</dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)">str</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -212,7 +239,7 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="rvesimulator.abaqus2py.abaqus_simulator.AbaqusSimulator.post_process">
 <span class="sig-name descname"><span class="pre">post_process</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">delete_odb</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/abaqus2py/abaqus_simulator.html#AbaqusSimulator.post_process"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.abaqus2py.abaqus_simulator.AbaqusSimulator.post_process" title="Link to this definition">¶</a></dt>
-<dd><p>post process</p>
+<dd><p>post process to get the preliminary results</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>delete_odb</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a><em>, </em><em>optional</em>) – delete odb file to save memory, by default True</p>
@@ -226,9 +253,16 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="rvesimulator.abaqus2py.abaqus_simulator.AbaqusSimulator.read_back_results">
 <span class="sig-name descname"><span class="pre">read_back_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'results.p'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/abaqus2py/abaqus_simulator.html#AbaqusSimulator.read_back_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.abaqus2py.abaqus_simulator.AbaqusSimulator.read_back_results" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>read back the results from the generated pickle file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>, </em><em>optional</em>) – file name, by default “results.p”</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a dict containing the results</p>
+</dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></span></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)">dict</a></p>
 </dd>
 </dl>
 </dd></dl>
