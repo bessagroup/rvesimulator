@@ -111,7 +111,7 @@
 <span class="kn">from</span> <span class="nn">scipy.spatial</span> <span class="kn">import</span> <span class="n">distance_matrix</span>
 
 <span class="c1"># local functions</span>
-<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">MicrosctuctureGenerator</span>
+<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">MicrostructureGenerator</span>
 
 <span class="c1">#                                                          Authorship &amp; Credits</span>
 <span class="c1"># =============================================================================</span>
@@ -125,12 +125,12 @@
 
 <div class="viewcode-block" id="SphereParticles">
 <a class="viewcode-back" href="../../../rvesimulator.microstructure.html#rvesimulator.microstructure.shpere_particles.SphereParticles">[docs]</a>
-<span class="k">class</span> <span class="nc">SphereParticles</span><span class="p">(</span><span class="n">MicrosctuctureGenerator</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">SphereParticles</span><span class="p">(</span><span class="n">MicrostructureGenerator</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate the 3D RVE with different size of sphere</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    MicrosctucturaGenerator : class</span>
+<span class="sd">    MicrostructureGenerator : class</span>
 <span class="sd">        parent class of microstructure generator</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -439,7 +439,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">fiber_positions</span><span class="p">,</span> <span class="p">(</span><span class="nb">iter</span><span class="p">),</span> <span class="n">new_fiber</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span>
         <span class="p">)</span>
         <span class="nb">iter</span> <span class="o">=</span> <span class="nb">iter</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="n">new_fiber</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
-        <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="nb">iter</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">iter</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span>
 
         <span class="k">return</span> <span class="nb">iter</span></div>
 
