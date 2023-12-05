@@ -7,6 +7,7 @@ import subprocess
 import time
 from math import inf
 from pathlib import Path
+from pickle import UnpicklingError
 
 # local
 from .simulator_interface import AssertInputs, Simulator
@@ -41,7 +42,6 @@ class AbaqusSimulator(Simulator, AssertInputs):
     >>> simulator.run()
     >>> simulator.read_back_results()
     """
-
 
     def __init__(self, sim_info: dict, folder_info: dict) -> None:
         """initialization of abaqus simulator class
@@ -178,7 +178,7 @@ class AbaqusSimulator(Simulator, AssertInputs):
         try:
             with open(file_name, "rb") as fd:
                 results = pickle.load(fd, fix_imports=True, encoding="latin1")
-        except ValueError:
+        except UnpicklingError:
             # fix issue of windows system
             content = ''
             outsize = 0
