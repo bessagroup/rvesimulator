@@ -4,22 +4,26 @@
 
 ## rvesimulator
 
-RVE simulation via ABAQUS[ABAQUS](https://www.3ds.com/products-services/simulia/products/abaqus/) secondary development.
+RVE simulation via [ABAQUS](https://www.3ds.com/products-services/simulia/products/abaqus/) secondary development.
 
 ---
 
-[![Python](https://img.shields.io/pypi/pyversions/f3dasm)](https://www.python.org)
-[![GitHub license](https://img.shields.io/badge/license-BSD-blue)](https://github.com/bessagroup/rvesimulator)
-
-[**Docs**](https://bessagroup.github.io/rvesimulator/)
+[**Documentation**](https://bessagroup.github.io/rvesimulator/)
 | [**Installation**](https://bessagroup.github.io/rvesimulator/get_started.html)
 | [**GitHub**](https://github.com/bessagroup/rvesimulator)
+| [**Tutorials**](https://github.com/bessagroup/rvesimulator/tree/main/tutorials)
 
 ---
 
 ### **Summary**
 
-This repo aims to do representative volume element (RVE) simulation via [ABAQUS](https://www.3ds.com/products-services/simulia/products/abaqus/). It has two main parts, the first part is to generate microstructure of representative volume element (RVE), and the second part is realize the functionality of do RVE simulation automatically and has the ability to generate large dataset without any GUI operation.
+The **rvesimulator** aims to provide a user-friendly, automated Python-based framework conducting Representative Volume Element (RVE) simulation via powerful Finite Element Method (FEM) software Abaqus. By utilizing this repository, large amount of reliable FEM data-set generation is possible with RVEs encompassing materials from elastic to plastic composites .
+
+**rvesimulator** provides:
+
+1.  A cross-platform function to run arbitrary Python-Abaqus script without graphical user interface (GUI), it offers users a convenience way to run their unique scripts
+2.  Python-Abaqus scripts to simulate RVE with different design of experiments including various micro-structures, material laws, and loading;
+3.  Benchmarks of running prevalent RVEs covering elastic, hyper-elastic, plastic materials are provided, which illustrates the general pipeline (preprocess, execution, and postprocess) of the developed framework
 
 This idea of the repo is shown by the following figures:
 
@@ -31,7 +35,7 @@ This idea of the repo is shown by the following figures:
 
 ### **State of need**
 
-In order to use this repo, one needs first to know basics of ABAQUS secondary development, and basic under standing of design of experiment (DoE).
+In order to use this repo, one needs first to know basics of ABAQUS secondary development, and basic under standing of design of experiment (DoE) so that one can design their own RVEs.
 
 ---
 
@@ -41,7 +45,7 @@ In order to use this repo, one needs first to know basics of ABAQUS secondary de
 
 - Jiaxiang Yi ([J.Yi@tudelft.nl](mailto:J.Yi@tudelft.nl))
 
-**Author filliation**:
+**Author affiliation**:
 
 - Delft University of Technology
 
@@ -63,17 +67,17 @@ git clone https://github.com/bessagroup/rvesimulator.git
 pip install --verbose --no-build-isolation --editable .
 ```
 
-(3). install dependancies
+(3). install dependencies
 
 ```
 pip install -r requirements.txt
 ```
 
-**Contents**
+<!-- **Contents**
 
 Part I: microstructure generation
 
-Part II: rve simulation
+Part II: rve simulation -->
 
 ---
 
