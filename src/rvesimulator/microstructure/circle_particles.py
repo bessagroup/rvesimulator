@@ -12,7 +12,7 @@ import numpy as np
 from scipy.spatial import distance_matrix
 
 # import local functions
-from .base import MicrosctuctureGenerator
+from .base import MicrostructureGenerator
 
 #                                                          Authorship & Credits
 # =============================================================================
@@ -24,12 +24,12 @@ __status__ = "Stable"
 # =============================================================================
 
 
-class CircleParticles(MicrosctuctureGenerator):
+class CircleParticles(MicrostructureGenerator):
     """2D RVE with different size of disks/circles
 
     Parameters
     ----------
-    MicrosctuctureGenerator : class
+    MicrostructureGenerator : class
         parent class of microstructure generator
 
     Examples
@@ -489,7 +489,8 @@ class CircleParticles(MicrosctuctureGenerator):
             self.fiber_positions, (iter), new_fiber, axis=0
         )
         iter = iter + int(new_fiber[0, 3])
-        assert type(iter) == int
+
+        assert isinstance(iter, int) is True
 
         return iter
 

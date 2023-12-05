@@ -11,7 +11,7 @@ import numpy as np
 from scipy.spatial import distance_matrix
 
 # local functions
-from .base import MicrosctuctureGenerator
+from .base import MicrostructureGenerator
 
 #                                                          Authorship & Credits
 # =============================================================================
@@ -23,12 +23,12 @@ __status__ = "Stable"
 # =============================================================================
 
 
-class SphereParticles(MicrosctuctureGenerator):
+class SphereParticles(MicrostructureGenerator):
     """Generate the 3D RVE with different size of sphere
 
     Parameters
     ----------
-    MicrosctucturaGenerator : class
+    MicrostructureGenerator : class
         parent class of microstructure generator
     """
 
@@ -314,7 +314,7 @@ class SphereParticles(MicrosctuctureGenerator):
             self.fiber_positions, (iter), new_fiber, axis=0
         )
         iter = iter + int(new_fiber[0, 4])
-        assert type(iter) == int
+        assert isinstance(iter, int) is True
 
         return iter
 

@@ -16,7 +16,7 @@ __status__ = "Stable"
 # =============================================================================
 
 
-class MicrosctuctureGenerator:
+class MicrostructureGenerator:
     "base class of mirostructure generator"
 
     def generate_microstructure(self, seed: any = None) -> float:
