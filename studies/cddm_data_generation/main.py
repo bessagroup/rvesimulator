@@ -219,8 +219,6 @@ def execute_experimentdata() -> None:
     data = f3dasm.ExperimentData.from_file(filename='exp_{}'.format('cddm'))
     # run the function
     data.evaluate(CDDMDataGenerator(), mode='cluster')
-    data.store(filename='exp_{}'.format('cddm'))
-
 
 if __name__ == '__main__':
     # run the function

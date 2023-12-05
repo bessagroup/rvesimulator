@@ -5,8 +5,8 @@ import os
 import pickle
 import subprocess
 import time
-from pathlib import Path
 from math import inf
+from pathlib import Path
 
 # local
 from .simulator_interface import AssertInputs, Simulator
@@ -86,6 +86,24 @@ class AbaqusSimulator(Simulator, AssertInputs):
         sleep_time: float = 20.0,
         refresh_time: float = 5.0,
     ) -> str:
+        """execute the abaqus simulation
+
+        Parameters
+        ----------
+        max_time : float, optional
+            maximum simulation time, kill the simulation when time reaches the
+            given maximum simulation time, by default inf
+        sleep_time : float, optional
+            sleep time, let abaqus run for 20s first, by default 20.0
+        refresh_time : float, optional
+            detect if the simulation is finished or not every given refresh
+            time, by default 5.0
+
+        Returns
+        -------
+        str
+            simulation status
+        """
 
         # hidden name information
         abaqus_py_script = "abaScript.py"
@@ -115,7 +133,7 @@ class AbaqusSimulator(Simulator, AssertInputs):
         return self.flag
 
     def post_process(self, delete_odb: bool = False) -> None:
-        """post process
+        """post process to get the preliminary results
 
         Parameters
         ----------
@@ -144,11 +162,23 @@ class AbaqusSimulator(Simulator, AssertInputs):
             self.remove_files(directory=os.getcwd(), file_types=[".odb"])
 
     def read_back_results(self, file_name: str = "results.p") -> dict:
+        """read back the results from the generated pickle file
+
+        Parameters
+        ----------
+        file_name : str, optional
+            file name, by default "results.p"
+
+        Returns
+        -------
+        dict
+            a dict containing the results
+        """
 
         try:
             with open(file_name, "rb") as fd:
                 results = pickle.load(fd, fix_imports=True, encoding="latin1")
-        except:
+        except ValueError:
             # fix issue of windows system
             content = ''
             outsize = 0
@@ -170,6 +200,29 @@ class AbaqusSimulator(Simulator, AssertInputs):
         sleep_time: float = 20.0,
         refresh_time: float = 5.0,
     ) -> str:
+        """run abaqus simulation
+
+        Parameters
+        ----------
+        command : str
+            system command for running abaqus
+        max_time : float, optional
+            maximum simulation time, by default inf
+        sleep_time : float, optional
+            sleep time, by default 20.0
+        refresh_time : float, optional
+            refresh time, by default 5.0
+
+        Returns
+        -------
+        str
+            simulation status
+
+        Raises
+        ------
+        NotImplementedError
+            platform not be implemented
+        """
 
         if self.platform == "ubuntu":
 
@@ -249,7 +302,8 @@ class AbaqusSimulator(Simulator, AssertInputs):
         """
         # if the platform is windows, change the path to posix
         if self.sim_info["platform"] == "windows":
-            self.folder_info["script_path"] =  Path(self.folder_info["script_path"]).as_posix()
+            path_temp = Path(self.folder_info["script_path"]).as_posix()
+            self.folder_info["script_path"] = path_temp  # for flake8
 
         if status == "simulation":
             with open(file_name, "w") as file:

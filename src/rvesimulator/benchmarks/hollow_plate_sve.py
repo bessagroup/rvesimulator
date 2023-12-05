@@ -4,7 +4,6 @@
 # Standard
 import logging
 import os
-import pathlib
 import time
 from typing import Any
 
