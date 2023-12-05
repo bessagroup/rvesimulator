@@ -20,8 +20,8 @@ __credits__ = ["Jiaxiang Yi"]
 __status__ = "Stable"
 # =============================================================================
 
-class CDDM_RVE(SimulationBase):
-    """Interface between python and abaqus of the CDDM RVE case
+class ASCA_RVE(SimulationBase):
+    """Interface between python and abaqus of the ASCA RVE case
 
     Parameters
     ----------
@@ -29,9 +29,9 @@ class CDDM_RVE(SimulationBase):
         base class for simulation
     """
     def __init__(self) -> None:
-        """Interface between python and abaqus of the Hollow plate case"""
+        """Interface between python and abaqus of the ASCA case"""
 
-        logging.basicConfig(level=logging.INFO, filename="cddm_rve.log")
+        logging.basicConfig(level=logging.INFO, filename="asca_rve.log")
         self.logger = logging.getLogger("abaqus_simulation")
 
         self.main_folder = os.getcwd()
@@ -41,11 +41,10 @@ class CDDM_RVE(SimulationBase):
                 "/scriptbase",
             "current_work_directory": "point_1",
             "sim_path": "benchmark_abaqus_scripts.two_materials_rve",
-            "sim_script": "VonMisesPlasticElasticPathLoads",
+            "sim_script": "VonMisesPlasticElasticRegularLoads",
             "post_path": "basic_analysis_scripts.post_process",
             "post_script": "PostProcess2D",
         }
-
 
 
     def update_sim_info(
@@ -60,7 +59,6 @@ class CDDM_RVE(SimulationBase):
         poisson_ratio_fiber: float = 0.19,
         mesh_partition: int = 30,
         strain: list = [0.1, 0.0, 0.0],
-        strain_amplitude: list = None,
         num_steps: int = 100,
         simulation_time: float = 1.0,
         num_cpu: int = 1,
@@ -93,8 +91,6 @@ class CDDM_RVE(SimulationBase):
             mesh partition for the edges, by default 30
         strain : list, optional
             applied maximum strain, by default [0.1, 0.0, 0.0]
-        strain_amplitude : list, optional
-            applied strain amplitude to mimic path dependence, by default None
         num_steps : int, optional
             number of simulation steps, by default 100
         simulation_time : float, optional
@@ -122,7 +118,6 @@ class CDDM_RVE(SimulationBase):
         self.poisson_ratio_fiber = poisson_ratio_fiber
         self.mesh_partition = mesh_partition
         self.strain = strain
-        self.strain_amplitude = strain_amplitude
         self.num_steps = num_steps
         self.simulation_time = simulation_time
         self.num_cpu = num_cpu
@@ -156,7 +151,7 @@ class CDDM_RVE(SimulationBase):
     def _get_sim_info(self) -> None:
         """get simulation information"""
         self.sim_info = {
-            "job_name": "cddm_rve",
+            "job_name": "asca_rve",
             "location_information": self.microstructure.microstructure_info[
                 "location_information"
             ],
@@ -176,7 +171,6 @@ class CDDM_RVE(SimulationBase):
             "num_steps": self.num_steps,
             "simulation_time": self.simulation_time,
             "strain": self.strain,
-            "strain_amplitude": self.strain_amplitude,
             "num_cpu": self.num_cpu,
             "platform": self.platform,
         }
@@ -245,16 +239,9 @@ class CDDM_RVE(SimulationBase):
             sim_info=self.sim_info, folder_info=self.folder_info
         )
         # run abaqus simulation
-        try:
-            simulator.execute()
-            simulator.post_process(delete_odb=True)
-            results = simulator.read_back_results()
-            self.logger.info("simulation finished")
-        except Exception as e:
-            self.logger.info("simulation failed")
-            self.logger.info(e)
-            results = None
+        simulator.run()
         # get the simulation results back
+        results = simulator.read_back_results()
         end_time = time.time()
         self.logger.info("time used: {} s".format(end_time - start_time))
         self.logger.info("============== End abaqus simulation ============")
