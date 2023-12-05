@@ -106,7 +106,7 @@ Then you can run your simulation by:
                 job_name: "job", # important
                 platform: "ubuntu", # important
                 }
-    # intialize the simulator
+    # initiate the simulator
     simulator = AbaqusSimulator(sim_info=sim_info, folder_info=folder_info)
     # run the simulation
     simulator.run()

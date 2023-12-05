@@ -26,10 +26,18 @@ rvesimulator.benchmarks.hollow\_plate\_sve
    :show-inheritance:
 
 
-rvesimulator.benchmarks.veni\_nocohesive\_rve
+rvesimulator.benchmarks.pppe\_no\_cohesive\_rve
 ---------------------------------------------------
 
-.. automodule:: rvesimulator.benchmarks.veni_nocohesive_rve
+.. automodule:: rvesimulator.benchmarks.pppe_no_cohesive_rve
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+rvesimulator.benchmarks.asca\_rve
+---------------------------------------------------
+
+.. automodule:: rvesimulator.benchmarks.asca_rve
    :members:
    :undoc-members:
    :show-inheritance:
