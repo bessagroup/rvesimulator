@@ -24,7 +24,7 @@ __status__ = "Stable"
 
 
 class PPPEMixtureNoCohesive(SimulationBase):
-    """uni-axial tension for pp/pe Mixture/composite without cohesive elements 
+    """uni-axial tension for pp/pe Mixture/composite without cohesive elements
     in between fiber and matrix material phases"""
 
     def __init__(self) -> None:
@@ -238,8 +238,9 @@ class PPPEMixtureNoCohesive(SimulationBase):
             # get the simulation results back
             results = simulator.read_back_results()
             self.logger.info("simulation finished")
-        except:
-            # error occurs in the simulation, return None and continue the 
+        except FileNotFoundError:
+            # if the results file is not found, then we assume that there is an
+            # error occurs in the simulation, return None and continue the
             # simulation
             self.logger.info("simulation failed")
             results = None

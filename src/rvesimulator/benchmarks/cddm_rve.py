@@ -245,7 +245,7 @@ class CDDM_RVE(SimulationBase):
             sim_info=self.sim_info, folder_info=self.folder_info
         )
         # run abaqus simulation
-        try: 
+        try:
             simulator.execute()
             simulator.post_process(delete_odb=True)
             results = simulator.read_back_results()

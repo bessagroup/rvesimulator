@@ -37,7 +37,7 @@ class CDDMDataGenerator(DataGenerator):
         data generator class from f3dasm
     """
     def execute(data: ExperimentSample) -> ExperimentSample:
-    
+
 
         """execute simulation for CDDM data generator
 
@@ -80,7 +80,7 @@ class CDDMDataGenerator(DataGenerator):
             # get the output data
             sample.output_data['progress'] = "finished"
 
-        except Exception as e:
+        except Exception:
             # if the job failed, then we set the progress to be failed
             sample.output_data['progress'] = "failed"
 
@@ -98,7 +98,7 @@ class CDDMDataGenerator(DataGenerator):
             return self._config_simulator_of_task_D()
         else:
             raise ValueError("task ID is not defined")
-    
+
     def _config_simulator_of_task_A(self) -> None:
 
         # initialize CDDM RVE simulator
@@ -136,7 +136,7 @@ class CDDMDataGenerator(DataGenerator):
             platform="cluster",
             seed=17,
             print_info=False)
-        
+
         return simulator
 
     def _config_simulator_of_task_C(self) -> None:
@@ -182,7 +182,7 @@ class CDDMDataGenerator(DataGenerator):
 
 
 def create_experimentdata() -> None:
-    """this function is used to create design of experiment for CDDM case, the 
+    """this function is used to create design of experiment for CDDM case, the
     DOE contains two columns, one is the task ID number, the other is the seed
     used for generating the amplitude curves."""
 

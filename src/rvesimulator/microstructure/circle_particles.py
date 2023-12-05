@@ -5,7 +5,7 @@ import json
 import logging
 import math
 import time
-from typing import Any, List, Tuple
+from typing import Any, Tuple
 
 # Third party
 import numpy as np
