@@ -128,20 +128,20 @@
 <span class="c1"># =============================================================================</span>
 
 
-<div class="viewcode-block" id="HollowplateBase">
-<a class="viewcode-back" href="../../../rvesimulator.benchmarks.html#rvesimulator.benchmarks.hollow_plate_sve.HollowplateBase">[docs]</a>
-<span class="k">class</span> <span class="nc">HollowplateBase</span><span class="p">(</span><span class="n">SimulationBase</span><span class="p">):</span>
+<div class="viewcode-block" id="HollowPlateBase">
+<a class="viewcode-back" href="../../../rvesimulator.benchmarks.html#rvesimulator.benchmarks.hollow_plate_sve.HollowPlateBase">[docs]</a>
+<span class="k">class</span> <span class="nc">HollowPlateBase</span><span class="p">(</span><span class="n">SimulationBase</span><span class="p">):</span>
 
-<div class="viewcode-block" id="HollowplateBase._get_sim_info">
-<a class="viewcode-back" href="../../../rvesimulator.benchmarks.html#rvesimulator.benchmarks.hollow_plate_sve.HollowplateBase._get_sim_info">[docs]</a>
+<div class="viewcode-block" id="HollowPlateBase._get_sim_info">
+<a class="viewcode-back" href="../../../rvesimulator.benchmarks.html#rvesimulator.benchmarks.hollow_plate_sve.HollowPlateBase._get_sim_info">[docs]</a>
     <span class="k">def</span> <span class="nf">_get_sim_info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;get simulation info</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sim_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim_paras</span></div>
 
 
-<div class="viewcode-block" id="HollowplateBase.run_simulation">
-<a class="viewcode-back" href="../../../rvesimulator.benchmarks.html#rvesimulator.benchmarks.hollow_plate_sve.HollowplateBase.run_simulation">[docs]</a>
+<div class="viewcode-block" id="HollowPlateBase.run_simulation">
+<a class="viewcode-back" href="../../../rvesimulator.benchmarks.html#rvesimulator.benchmarks.hollow_plate_sve.HollowPlateBase.run_simulation">[docs]</a>
     <span class="k">def</span> <span class="nf">run_simulation</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">sample</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -214,7 +214,7 @@
 
 <div class="viewcode-block" id="ElasticRegularLoads">
 <a class="viewcode-back" href="../../../rvesimulator.benchmarks.html#rvesimulator.benchmarks.hollow_plate_sve.ElasticRegularLoads">[docs]</a>
-<span class="k">class</span> <span class="nc">ElasticRegularLoads</span><span class="p">(</span><span class="n">HollowplateBase</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">ElasticRegularLoads</span><span class="p">(</span><span class="n">HollowPlateBase</span><span class="p">):</span>
 <div class="viewcode-block" id="ElasticRegularLoads.__init__">
 <a class="viewcode-back" href="../../../rvesimulator.benchmarks.html#rvesimulator.benchmarks.hollow_plate_sve.ElasticRegularLoads.__init__">[docs]</a>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -317,7 +317,7 @@
 
 <div class="viewcode-block" id="VonMisesPlasticRegularLoads">
 <a class="viewcode-back" href="../../../rvesimulator.benchmarks.html#rvesimulator.benchmarks.hollow_plate_sve.VonMisesPlasticRegularLoads">[docs]</a>
-<span class="k">class</span> <span class="nc">VonMisesPlasticRegularLoads</span><span class="p">(</span><span class="n">HollowplateBase</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">VonMisesPlasticRegularLoads</span><span class="p">(</span><span class="n">HollowPlateBase</span><span class="p">):</span>
 
 <div class="viewcode-block" id="VonMisesPlasticRegularLoads.__init__">
 <a class="viewcode-back" href="../../../rvesimulator.benchmarks.html#rvesimulator.benchmarks.hollow_plate_sve.VonMisesPlasticRegularLoads.__init__">[docs]</a>
@@ -441,7 +441,7 @@
 <span class="c1"># =============================================================================</span>
 <div class="viewcode-block" id="VonMisesPlasticPathLoads">
 <a class="viewcode-back" href="../../../rvesimulator.benchmarks.html#rvesimulator.benchmarks.hollow_plate_sve.VonMisesPlasticPathLoads">[docs]</a>
-<span class="k">class</span> <span class="nc">VonMisesPlasticPathLoads</span><span class="p">(</span><span class="n">HollowplateBase</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">VonMisesPlasticPathLoads</span><span class="p">(</span><span class="n">HollowPlateBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Hollow plate simulation case, with von mises plasticity and path loading</span>
 
 <span class="sd">    Parameters</span>

@@ -317,7 +317,7 @@ layer folder structure, you have to provide at least one folder index</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="rvesimulator.benchmarks.hollow_plate_sve.ElasticRegularLoads">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ElasticRegularLoads</span></span><a class="reference internal" href="_modules/rvesimulator/benchmarks/hollow_plate_sve.html#ElasticRegularLoads"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.benchmarks.hollow_plate_sve.ElasticRegularLoads" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#rvesimulator.benchmarks.hollow_plate_sve.HollowplateBase" title="rvesimulator.benchmarks.hollow_plate_sve.HollowplateBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">HollowplateBase</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#rvesimulator.benchmarks.hollow_plate_sve.HollowPlateBase" title="rvesimulator.benchmarks.hollow_plate_sve.HollowPlateBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">HollowPlateBase</span></code></a></p>
 <p>Interface between python and abaqus of the Hollow plate case</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="rvesimulator.benchmarks.hollow_plate_sve.ElasticRegularLoads.__init__">
@@ -352,12 +352,12 @@ layer folder structure, you have to provide at least one folder index</p>
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="rvesimulator.benchmarks.hollow_plate_sve.HollowplateBase">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">HollowplateBase</span></span><a class="reference internal" href="_modules/rvesimulator/benchmarks/hollow_plate_sve.html#HollowplateBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.benchmarks.hollow_plate_sve.HollowplateBase" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="rvesimulator.benchmarks.hollow_plate_sve.HollowPlateBase">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">HollowPlateBase</span></span><a class="reference internal" href="_modules/rvesimulator/benchmarks/hollow_plate_sve.html#HollowPlateBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.benchmarks.hollow_plate_sve.HollowPlateBase" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#rvesimulator.benchmarks.shared_functionalities.SimulationBase" title="rvesimulator.benchmarks.shared_functionalities.SimulationBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimulationBase</span></code></a></p>
 <dl class="py method">
-<dt class="sig sig-object py" id="rvesimulator.benchmarks.hollow_plate_sve.HollowplateBase._get_sim_info">
-<span class="sig-name descname"><span class="pre">_get_sim_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/benchmarks/hollow_plate_sve.html#HollowplateBase._get_sim_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.benchmarks.hollow_plate_sve.HollowplateBase._get_sim_info" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="rvesimulator.benchmarks.hollow_plate_sve.HollowPlateBase._get_sim_info">
+<span class="sig-name descname"><span class="pre">_get_sim_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/benchmarks/hollow_plate_sve.html#HollowPlateBase._get_sim_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.benchmarks.hollow_plate_sve.HollowPlateBase._get_sim_info" title="Link to this definition">¶</a></dt>
 <dd><p>get simulation info</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -367,8 +367,8 @@ layer folder structure, you have to provide at least one folder index</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="rvesimulator.benchmarks.hollow_plate_sve.HollowplateBase.run_simulation">
-<span class="sig-name descname"><span class="pre">run_simulation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sub_folder_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">third_folder_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/benchmarks/hollow_plate_sve.html#HollowplateBase.run_simulation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.benchmarks.hollow_plate_sve.HollowplateBase.run_simulation" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="rvesimulator.benchmarks.hollow_plate_sve.HollowPlateBase.run_simulation">
+<span class="sig-name descname"><span class="pre">run_simulation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sub_folder_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">third_folder_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rvesimulator/benchmarks/hollow_plate_sve.html#HollowPlateBase.run_simulation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.benchmarks.hollow_plate_sve.HollowPlateBase.run_simulation" title="Link to this definition">¶</a></dt>
 <dd><p>run single simulation</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -393,7 +393,7 @@ layer folder structure, you have to provide at least one folder index</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="rvesimulator.benchmarks.hollow_plate_sve.VonMisesPlasticPathLoads">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">VonMisesPlasticPathLoads</span></span><a class="reference internal" href="_modules/rvesimulator/benchmarks/hollow_plate_sve.html#VonMisesPlasticPathLoads"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.benchmarks.hollow_plate_sve.VonMisesPlasticPathLoads" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#rvesimulator.benchmarks.hollow_plate_sve.HollowplateBase" title="rvesimulator.benchmarks.hollow_plate_sve.HollowplateBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">HollowplateBase</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#rvesimulator.benchmarks.hollow_plate_sve.HollowPlateBase" title="rvesimulator.benchmarks.hollow_plate_sve.HollowPlateBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">HollowPlateBase</span></code></a></p>
 <p>Hollow plate simulation case, with von mises plasticity and path loading</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -440,7 +440,7 @@ layer folder structure, you have to provide at least one folder index</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="rvesimulator.benchmarks.hollow_plate_sve.VonMisesPlasticRegularLoads">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">VonMisesPlasticRegularLoads</span></span><a class="reference internal" href="_modules/rvesimulator/benchmarks/hollow_plate_sve.html#VonMisesPlasticRegularLoads"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rvesimulator.benchmarks.hollow_plate_sve.VonMisesPlasticRegularLoads" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#rvesimulator.benchmarks.hollow_plate_sve.HollowplateBase" title="rvesimulator.benchmarks.hollow_plate_sve.HollowplateBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">HollowplateBase</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#rvesimulator.benchmarks.hollow_plate_sve.HollowPlateBase" title="rvesimulator.benchmarks.hollow_plate_sve.HollowPlateBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">HollowPlateBase</span></code></a></p>
 <p>Interface between python and abaqus of the Hollow plate case</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="rvesimulator.benchmarks.hollow_plate_sve.VonMisesPlasticRegularLoads.__init__">

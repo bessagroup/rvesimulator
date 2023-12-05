@@ -101,7 +101,7 @@
 <span></span><span class="c1">#                                                                       Modules</span>
 <span class="c1"># =============================================================================</span>
 <span class="c1"># Standard</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Tuple</span>
 
 <span class="c1"># Third-party</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -210,10 +210,7 @@
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">generate_control_points</span><span class="p">(</span>
         <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">num_control</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">num_steps</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">num_dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">floating</span><span class="p">]],</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">floating</span><span class="p">]],</span>
-    <span class="p">]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;generate control points</span>
 
 <span class="sd">        Parameters</span>
@@ -229,8 +226,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        tuple[ np.ndarray[any, np.dtype[np.floating]],</span>
-<span class="sd">               np.ndarray[any, np.dtype[np.floating]], ]</span>
+<span class="sd">        Tuple[Any, Any]</span>
 <span class="sd">            x_location of control points, y_location of control points</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">num_control</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">num_control</span><span class="p">)</span>

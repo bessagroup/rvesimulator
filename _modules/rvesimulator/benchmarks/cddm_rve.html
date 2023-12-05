@@ -358,9 +358,16 @@
             <span class="n">sim_info</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sim_info</span><span class="p">,</span> <span class="n">folder_info</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">folder_info</span>
         <span class="p">)</span>
         <span class="c1"># run abaqus simulation</span>
-        <span class="n">simulator</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">simulator</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+            <span class="n">simulator</span><span class="o">.</span><span class="n">post_process</span><span class="p">(</span><span class="n">delete_odb</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="n">simulator</span><span class="o">.</span><span class="n">read_back_results</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;simulation finished&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;simulation failed&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="c1"># get the simulation results back</span>
-        <span class="n">results</span> <span class="o">=</span> <span class="n">simulator</span><span class="o">.</span><span class="n">read_back_results</span><span class="p">()</span>
         <span class="n">end_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;time used: </span><span class="si">{}</span><span class="s2"> s&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;============== End abaqus simulation ============&quot;</span><span class="p">)</span>
