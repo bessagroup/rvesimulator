@@ -2,15 +2,15 @@ microstructure
 ==============
 
 Generating the micro-structures is a non-trival problem because there are many 
-requirements such as the partiles should not overlap between each other, 
-different shapes of partcles should provide, the particles also shoulf obey the periodical 
+requirements such as the particles should not overlap between each other, 
+different shapes of particles should provide, the particles also should obey the periodical 
 boundary conditions, and so on.
 With regular shapes, such as disk, 
 ellipse in 2D scenario, sphere in 3D scenario; we can obtain the analytical 
 formula to describe their shapes. Therefore, it provides much more information 
 to design an algorithm to generate the micro-structures. 
 Moreover, most of those algorithms are based on techniques like Monte Carlo Simulation, 
-Melocular dynamics and so forth, so there are no same micro-structures from two different realizations.
+Molecular dynamics and so forth, so there are no same micro-structures from two different realizations.
 What's more, if the shapes are arbitrary then the generation of micro-structure becomes 
 very difficult as an NP hard problem.
 
