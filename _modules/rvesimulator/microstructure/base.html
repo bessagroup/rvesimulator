@@ -98,10 +98,13 @@
            <div itemprop="articleBody">
              
   <h1>Source code for rvesimulator.microstructure.base</h1><div class="highlight"><pre>
-<span></span><span class="c1">#                                                                       Modules</span>
+<span></span><span class="sd">&quot;&quot;&quot;base class of microstructure generator&quot;&quot;&quot;</span>
+<span class="c1">#                                                                       Modules</span>
 <span class="c1"># =============================================================================</span>
 
 <span class="c1"># Third party</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
 
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -123,12 +126,12 @@
 
 <div class="viewcode-block" id="MicrostructureGenerator.generate_microstructure">
 <a class="viewcode-back" href="../../../rvesimulator.microstructure.html#rvesimulator.microstructure.base.MicrostructureGenerator.generate_microstructure">[docs]</a>
-    <span class="k">def</span> <span class="nf">generate_microstructure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">generate_microstructure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;generating micro-structure</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        seed : any, optional</span>
+<span class="sd">        seed : Any, optional</span>
 <span class="sd">            seed generator or number , by default None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 

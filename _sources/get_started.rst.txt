@@ -37,15 +37,15 @@ We recommend using a `Linux distribution system <https://releases.ubuntu.com/foc
 
      pip install --verbose --no-build-isolation --editable .
 
-4. In order to check your installation you can use
+.. 4. In order to check your installation you can use
 
-  .. code-block:: console
+..   .. code-block:: console
 
-     $ python -c "import rvesimulator"
-     >>> 2023-07-05 14:56:40,015 - Imported rvesimulator (version: 1.x.x)
+..      $ python -c "import rvesimulator"
+..      >>> 2023-07-05 14:56:40,015 - Imported rvesimulator (version: 1.x.x)
 
 
-5. Install the development requirements:
+4. Install the development requirements:
 
    .. code-block:: console
 

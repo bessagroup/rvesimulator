@@ -98,7 +98,8 @@
            <div itemprop="articleBody">
              
   <h1>Source code for rvesimulator.benchmarks.pppe_no_cohesive_rve</h1><div class="highlight"><pre>
-<span></span><span class="c1">#                                                                       Modules</span>
+<span></span><span class="sd">&quot;&quot;&quot;Class for uni-axial tension for pp/pe Mixture/composite without cohesive&quot;&quot;&quot;</span>
+<span class="c1">#                                                                       Modules</span>
 <span class="c1"># =============================================================================</span>
 <span class="c1"># Standard</span>
 <span class="kn">import</span> <span class="nn">logging</span>
@@ -197,6 +198,39 @@
         <span class="n">seed</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">print_info</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;update simulation information</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        size : float, optional</span>
+<span class="sd">            size of rve, by default 0.02</span>
+<span class="sd">        radius_mu : float, optional</span>
+<span class="sd">            radius mean, by default 0.0031</span>
+<span class="sd">        radius_std : float, optional</span>
+<span class="sd">            radius standard deviation, by default 0.0</span>
+<span class="sd">        vol_req : float, optional</span>
+<span class="sd">            volume fraction requirement, by default 0.30</span>
+<span class="sd">        paras_pp : list, optional</span>
+<span class="sd">            parameters of pp</span>
+<span class="sd">        paras_pe : list, optional</span>
+<span class="sd">            parameters of pe</span>
+<span class="sd">        mesh_partition : int, optional</span>
+<span class="sd">            mesh partition, by default 100</span>
+<span class="sd">        strain : list, optional</span>
+<span class="sd">            maximum strain, by default [0.1, 0.0, 0.0]</span>
+<span class="sd">        num_steps : int, optional</span>
+<span class="sd">            number of simulation steps, by default 1000</span>
+<span class="sd">        simulation_time : float, optional</span>
+<span class="sd">            simulation time, by default 100.0</span>
+<span class="sd">        num_cpu : int, optional</span>
+<span class="sd">            number of cpu, by default 8</span>
+<span class="sd">        platform : str, optional</span>
+<span class="sd">            platform, by default &quot;ubuntu&quot;</span>
+<span class="sd">        seed : Any, optional</span>
+<span class="sd">            seed, by default None</span>
+<span class="sd">        print_info : bool, optional</span>
+<span class="sd">            print simulation information to the screen or not, by default False</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># micro_structure information</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">seed</span> <span class="o">=</span> <span class="n">seed</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="n">size</span>
