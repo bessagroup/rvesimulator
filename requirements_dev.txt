@@ -1,0 +1,16 @@
+# Core package requirements
+-r ./requirements.txt
+
+# Linting
+flake8
+
+# Testing
+-r ./tests/requirements.txt
+
+# Documentation
+-r ./docs/requirements.txt
+
+# Building
+setuptools>=43.0.0
+build
+wheel

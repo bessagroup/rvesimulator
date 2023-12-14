@@ -1,4 +1,5 @@
-"""here"""
+"""Hollow plate simulation case, with different material models
+and path loading"""
 #                                                                       Modules
 # =============================================================================
 # Standard

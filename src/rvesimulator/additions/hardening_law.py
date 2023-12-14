@@ -1,6 +1,5 @@
-
 """
-Material module for the simulation
+Material hardening laws for Abaqus default material models
 """
 
 #                                                                       Modules

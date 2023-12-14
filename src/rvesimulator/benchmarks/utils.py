@@ -1,3 +1,4 @@
+
 #                                                                       Modules
 # =============================================================================
 # Standard
@@ -55,63 +56,6 @@ def write_json(sim_info: dict, file_name: str) -> None:
 
     with open(file_name, "w") as fp:
         json.dump(sim_info, fp)
-
-
-def create_working_folder(
-    self,
-    folder_index: int = None,
-    sub_folder_index: int = None,
-    third_folder_index: int = None,
-) -> None:
-    """create working folder
-
-    Parameters
-    ----------
-    folder_index : int, optional
-        folder index, by default None
-    sub_folder_index : int, optional
-        second folder index , by default None
-    third_folder_index : int, optional
-        third folder index, by default None
-
-    """
-    if folder_index is None:
-        if sub_folder_index is None:
-            self.folder_info["current_work_directory"] = "rate_" + str(
-                third_folder_index
-            )
-        else:
-            if third_folder_index is None:
-                self.folder_info["current_work_directory"] = "point_" + str(
-                    sub_folder_index
-                )
-            else:
-                self.folder_info["current_work_directory"] = (
-                    "point_"
-                    + str(sub_folder_index)
-                    + "/case_"
-                    + str(third_folder_index)
-                )
-    else:
-        if sub_folder_index is None:
-            raise ValueError("provide sub_folder_index")
-        elif third_folder_index is None:
-            raise ValueError("provide third_folder_index")
-        else:
-            self.folder_info["current_work_directory"] = (
-                "gen_"
-                + str(folder_index)
-                + "/point_"
-                + str(sub_folder_index)
-                + "/case_"
-                + str(third_folder_index)
-            )
-    new_path = create_dir(
-        current_folder=self.folder_info["main_work_directory"],
-        dirname=self.folder_info["current_work_directory"],
-    )
-    self.working_folder = new_path
-    os.chdir(new_path)
 
 
 def rve_microstructure_plot(

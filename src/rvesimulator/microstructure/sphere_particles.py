@@ -1,3 +1,4 @@
+"""This module is used to generate the 3D RVE with different size of sphere"""
 #                                                                       Modules
 # =============================================================================
 # standard packages

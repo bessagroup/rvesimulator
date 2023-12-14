@@ -1,3 +1,6 @@
+"""
+Module for calling abaqus simulation and post processing
+"""
 #                                                                       Modules
 # =============================================================================
 # Standard
@@ -122,7 +125,8 @@ class AbaqusSimulator(Simulator, AssertInputs):
         # system command for running abaqus
         command = "abaqus cae noGUI=" + str(abaqus_py_script) + " -mesa"
 
-        # run (flag is for advanced usage)
+        # run (flag is used to identify if the simulation is finished or killed
+        # because of overtime)
         self.flag = self._run_abaqus_simulation(
             command=command,
             max_time=max_time,
@@ -179,7 +183,10 @@ class AbaqusSimulator(Simulator, AssertInputs):
             with open(file_name, "rb") as fd:
                 results = pickle.load(fd, fix_imports=True, encoding="latin1")
         except UnpicklingError:
-            # fix issue of windows system
+            # fix issue of windows system, if the simulation is ran on windows
+            # then the pickle file is not been read via above method. In this
+            # case, the following code is used to work around this issue
+            # TODO: find a better way to fix this issue
             content = ''
             outsize = 0
             with open(file_name, 'rb') as infile:
@@ -228,14 +235,15 @@ class AbaqusSimulator(Simulator, AssertInputs):
 
             proc = subprocess.Popen(command, shell=True)
 
-            start_time = time.time()
+            start_time = time.perf_counter()
             time.sleep(sleep_time)
             while True:
 
                 time.sleep(
-                    refresh_time - ((time.time() - start_time) % refresh_time)
+                    refresh_time - \
+                        ((time.perf_counter() - start_time) % refresh_time)
                 )
-                end_time = time.time()
+                end_time = time.perf_counter()
                 #
                 try:
                     file = open(self.job_name + ".msg")
@@ -274,10 +282,10 @@ class AbaqusSimulator(Simulator, AssertInputs):
             self.remove_files(directory=os.getcwd())
         elif self.platform == "cluster" or self.platform == "windows":
             # count time for simulation
-            start_time = time.time()
+            start_time = time.perf_counter()
             os.system(command)
             self.flag = "finished"
-            end_time = time.time()
+            end_time = time.perf_counter()
             print(f"simulation time :{(end_time - start_time):2f} s")
 
         else:

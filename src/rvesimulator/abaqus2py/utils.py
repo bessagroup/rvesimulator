@@ -1,3 +1,6 @@
+"""
+Functions for general use for abaqus2py module
+"""
 #                                                                       Modules
 # =============================================================================
 # Standard

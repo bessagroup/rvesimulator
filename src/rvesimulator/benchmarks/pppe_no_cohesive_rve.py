@@ -1,3 +1,4 @@
+"""Class for uni-axial tension for pp/pe Mixture/composite without cohesive"""
 #                                                                       Modules
 # =============================================================================
 # Standard
@@ -93,6 +94,39 @@ class PPPEMixtureNoCohesive(SimulationBase):
         seed: Any = None,
         print_info: bool = False,
     ) -> None:
+        """update simulation information
+
+        Parameters
+        ----------
+        size : float, optional
+            size of rve, by default 0.02
+        radius_mu : float, optional
+            radius mean, by default 0.0031
+        radius_std : float, optional
+            radius standard deviation, by default 0.0
+        vol_req : float, optional
+            volume fraction requirement, by default 0.30
+        paras_pp : list, optional
+            parameters of pp
+        paras_pe : list, optional
+            parameters of pe
+        mesh_partition : int, optional
+            mesh partition, by default 100
+        strain : list, optional
+            maximum strain, by default [0.1, 0.0, 0.0]
+        num_steps : int, optional
+            number of simulation steps, by default 1000
+        simulation_time : float, optional
+            simulation time, by default 100.0
+        num_cpu : int, optional
+            number of cpu, by default 8
+        platform : str, optional
+            platform, by default "ubuntu"
+        seed : Any, optional
+            seed, by default None
+        print_info : bool, optional
+            print simulation information to the screen or not, by default False
+        """
         # micro_structure information
         self.seed = seed
         self.size = size

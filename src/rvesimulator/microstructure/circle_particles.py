@@ -1,3 +1,4 @@
+"""microstructure generator for 2D RVE with different size of disks/circles"""
 #                                                                       Modules
 # =============================================================================
 # standard

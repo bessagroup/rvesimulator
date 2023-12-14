@@ -35,11 +35,13 @@ This idea of the repo is shown by the following figures:
 
 ### **State of need**
 
-In order to use this repo, one needs first to know basics of ABAQUS secondary development, and basic under standing of design of experiment (DoE) so that one can design their own RVEs.
+[rvesimulator](https://github.com/bessagroup/rvesimulator) is an open-source Python-based framework for RVE simulation via [ABAQUS](https://www.3ds.com/products-services/simulia/products/abaqus/) secondary development. It is noted that ABAQUS 2021 is used in the development. In order to conduct RVE simulation via [rvesimulator](https://github.com/bessagroup/rvesimulator) , basic knowledge of [ABAQUS](https://www.3ds.com/products-services/simulia/products/abaqus/) usage, especially Python scripting, is required. Meanwhile, basic understanding of RVE simulation is also required. Several examples are provided in the [Tutorials](https://github.com/bessagroup/rvesimulator/tree/main/tutorials) where users can learn the basic usage of [rvesimulator](https://github.com/bessagroup/rvesimulator). If the user wants to develop their own RVE simulation, the [Documentation](https://bessagroup.github.io/rvesimulator/) provides a detailed description on how to adapt the framework to their own needs.
+
+Consider leaving a star if you think [rvesimulator](https://github.com/bessagroup/rvesimulator) is useful for the research community!
 
 ---
 
-### **Authorship**
+### **Authorship & Citation**
 
 **Author**:
 
@@ -48,6 +50,21 @@ In order to use this repo, one needs first to know basics of ABAQUS secondary de
 **Author affiliation**:
 
 - Delft University of Technology
+
+---
+
+If you use [rvesimulator](https://github.com/bessagroup/rvesimulator), please cite the following [paper](https://openreview.net/forum?id=511z1DGjPi):
+
+```
+    @inproceedings{
+    yi2023rvesimulator,
+    title={rvesimulator: An automated representative volume element simulator for data-driven material discovery},
+    author={Jiaxiang Yi and Miguel Anibal Bessa},
+    booktitle={AI for Accelerated Materials Design - NeurIPS 2023 Workshop},
+    year={2023},
+    url={https://openreview.net/forum?id=511z1DGjPi}
+    }
+```
 
 ---
 
@@ -83,13 +100,13 @@ Part II: rve simulation -->
 
 ### **Community Support**
 
-Now everything is under developing, if you have any question, please contact to the developer.
+Now the [rvesimulator](https://github.com/bessagroup/rvesimulator) is still under development, if you have any questions, please feel free to contact [Jiaxiang Yi](mailto:J.Yi@tudelf.nl), or open an issue on the [GitHub](https://github.com/bessagroup/rvesimulator/issues) issues page.
 
-### **Credits**
+<!-- ### **Credits** -->
 
 ### **License**
 
-Copyright 2020, Jiaxiang Yi
+Copyright 2022, Jiaxiang Yi
 
 All rights reserved.
 
