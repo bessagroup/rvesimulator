@@ -218,5 +218,5 @@ class PostProcess2D(object):
         }
 
         # Save post-processing information to pkl file:
-        with open("results.p", "w") as fp:
+        with open("results.pkl", "w") as fp:
             pickle.dump(results, fp)

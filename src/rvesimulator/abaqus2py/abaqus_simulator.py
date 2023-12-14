@@ -165,13 +165,13 @@ class AbaqusSimulator(Simulator, AssertInputs):
         if delete_odb:
             self.remove_files(directory=os.getcwd(), file_types=[".odb"])
 
-    def read_back_results(self, file_name: str = "results.p") -> dict:
+    def read_back_results(self, file_name: str = "results.pkl") -> dict:
         """read back the results from the generated pickle file
 
         Parameters
         ----------
         file_name : str, optional
-            file name, by default "results.p"
+            file name, by default "results.pkl"
 
         Returns
         -------

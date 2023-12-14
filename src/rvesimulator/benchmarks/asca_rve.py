@@ -130,7 +130,7 @@ class ASCA_RVE(SimulationBase):
         # get hardening law
         self.hardening_table = hardening_law.calculate_hardening_table()
 
-        self.sim_paras = {
+        self.sim_params = {
             "size": size,
             "radius_mu": radius_mu,
             "radius_std": radius_std,
@@ -149,7 +149,7 @@ class ASCA_RVE(SimulationBase):
 
         # print simulation information to screen
         if print_info:
-            self._print_sim_info(info=self.sim_paras)
+            self._print_sim_info(info=self.sim_params)
 
     def _get_sim_info(self) -> None:
         """get simulation information"""

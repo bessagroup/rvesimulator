@@ -223,10 +223,16 @@ def execute_experimentdata() -> None:
 if __name__ == '__main__':
     # run the function
     """ Main script distinguishes between the master and the workers."""
-    print(f3dasm.HPC_JOBID)
-    if f3dasm.HPC_JOBID == 0:
+
+    if f3dasm.HPC_JOBID is None:
+        """run the simulation locally"""
+        create_experimentdata()
+        execute_experimentdata()
+    elif f3dasm.HPC_JOBID == 0:
+        """run the simulation on cluster"""
         create_experimentdata()
         execute_experimentdata()
     elif f3dasm.HPC_JOBID > 0:
+        """run the simulation on cluster"""
         sleep(f3dasm.HPC_JOBID)
         execute_experimentdata()

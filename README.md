@@ -2,18 +2,12 @@
     <img src="docs/images/logo.png" width="70%" align="center">
 </p>
 
-## rvesimulator
-
-RVE simulation via [ABAQUS](https://www.3ds.com/products-services/simulia/products/abaqus/) secondary development.
-
 ---
 
 [**Documentation**](https://bessagroup.github.io/rvesimulator/)
 | [**Installation**](https://bessagroup.github.io/rvesimulator/get_started.html)
 | [**GitHub**](https://github.com/bessagroup/rvesimulator)
 | [**Tutorials**](https://github.com/bessagroup/rvesimulator/tree/main/tutorials)
-
----
 
 ### **Summary**
 
