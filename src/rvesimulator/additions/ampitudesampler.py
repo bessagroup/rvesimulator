@@ -1,3 +1,6 @@
+"""
+Module for generating amplitude curves for history dependent strain
+"""
 #                                                                       Modules
 # =============================================================================
 # Standard

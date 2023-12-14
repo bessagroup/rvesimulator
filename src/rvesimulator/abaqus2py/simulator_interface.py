@@ -1,3 +1,5 @@
+"""Abstract class for a FEM simulator and assert inputs
+"""
 #                                                                       Modules
 # =============================================================================
 

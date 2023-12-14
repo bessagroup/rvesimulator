@@ -6,7 +6,6 @@
 #PBS -l nodes=1:ppn=8
 #PBS -o out.$PBS_JOBID
 #PBS -e err.$PBS_JOBID
-#PBS -M J.Yi@tudelft.nl
 
 
 # Make sure I'm the only one that can read my output

@@ -1,9 +1,24 @@
+"""
+Module for simulation base class
+"""
+#                                                                       Modules
+# =============================================================================
+# Standard
 import json
 import os
 from typing import Any
 
 # local functions
 from .utils import create_dir
+
+#                                                          Authorship & Credits
+# =============================================================================
+__author__ = 'Jiaxiang Yi (J.Yi@tudelft.nl)'
+__credits__ = ['Jiaxiang Yi']
+__status__ = 'Stable'
+# =============================================================================
+#
+# =============================================================================
 
 
 class SimulationBase:

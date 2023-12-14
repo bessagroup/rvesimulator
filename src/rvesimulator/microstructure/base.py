@@ -1,7 +1,10 @@
+"""base class of microstructure generator"""
 #                                                                       Modules
 # =============================================================================
 
 # Third party
+
+from typing import Any
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -19,12 +22,12 @@ __status__ = "Stable"
 class MicrostructureGenerator:
     "base class of mirostructure generator"
 
-    def generate_microstructure(self, seed: any = None) -> float:
+    def generate_microstructure(self, seed: Any = None) -> float:
         """generating micro-structure
 
         Parameters
         ----------
-        seed : any, optional
+        seed : Any, optional
             seed generator or number , by default None
         """
 
