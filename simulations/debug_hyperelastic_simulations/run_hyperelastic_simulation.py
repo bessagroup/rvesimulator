@@ -29,7 +29,7 @@ def run_simulation(design: Design, config):
                          radius_mu=0.2,
                          radius_std=0.04,
                          params_matrix = [180.5, 2.8, 0.0025],
-                         params_inclusion = [180.5/2.0, 2.0/800],
+                         params_inclusion = [950, 0.0005],
                          vol_req=0.4,
                          mesh_division=300,
                          platform='cluster',
