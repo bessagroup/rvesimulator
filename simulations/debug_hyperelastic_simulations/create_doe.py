@@ -44,11 +44,11 @@ def get_data_samples(input_dim=3,
 if __name__ == '__main__':
 
     input_data_space = get_data_samples(input_dim=3,
-                                        lower_bounds=[0.5, 0.5, 0],
-                                        upper_bounds=[2, 2, np.pi/2],
-                                        number_of_samples_exponent=7)
+                                        lower_bounds=[2, 2, 0],
+                                        upper_bounds=[4, 4, np.pi/2],
+                                        number_of_samples_exponent=4)
 
     input_dataframe = pd.DataFrame(input_data_space,
                                    columns=['dU11', 'dU12', 'dU21', 'dU22']).round(4)
-    input_dataframe = input_dataframe.tail(-16).reset_index(drop=True)
+    # input_dataframe = input_dataframe.tail(-16).reset_index(drop=True)
     input_dataframe.to_csv('doe_1.csv', index=True)
