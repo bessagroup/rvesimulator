@@ -8,7 +8,7 @@ import json
 import os
 from typing import Any
 
-# local functions
+# local
 from .utils import create_dir
 
 #                                                          Authorship & Credits

@@ -1,7 +1,7 @@
 """This module is used to generate the 3D RVE with different size of sphere"""
 #                                                                       Modules
 # =============================================================================
-# standard packages
+# standard
 import json
 import math
 import time
@@ -11,7 +11,7 @@ from typing import Any, Tuple
 import numpy as np
 from scipy.spatial import distance_matrix
 
-# local functions
+# local
 from .base import MicrostructureGenerator
 
 #                                                          Authorship & Credits
@@ -107,7 +107,14 @@ class SphereParticles(MicrostructureGenerator):
         # x, y,z, r, p (partition)
         self.fiber_positions = None
 
-    def generate_microstructure(self, seed: any = None) -> None:
+    def generate_microstructure(self, seed: Any = None) -> None:
+        """main function to generate the micro-structure
+
+        Parameters
+        ----------
+        seed : Any, optional
+            seed for replication, by default None
+        """
 
         # decide to use seed or not
         self.rng = np.random.default_rng(seed=seed)
@@ -121,6 +128,18 @@ class SphereParticles(MicrostructureGenerator):
 
     def to_abaqus_format(self,
                          file_name: str = "micro_structure_info.json") -> dict:
+        """convert the micro-structure to abaqus format
+
+        Parameters
+        ----------
+        file_name : str, optional
+            name of the file, by default "micro_structure_info.json"
+
+        Returns
+        -------
+        dict
+            a dict that contains the information of micro-structure
+        """
 
         microstructure_info = {
             "location_information": self.fiber_positions.tolist(),
@@ -139,6 +158,15 @@ class SphereParticles(MicrostructureGenerator):
     def plot_microstructure(
         self, save_figure: bool = False, fig_name: str = "RVE.png"
     ) -> None:
+        """plot the micro-structure if needed
+
+        Parameters
+        ----------
+        save_figure : bool, optional
+            choose to save to file or not, by default False
+        fig_name : str, optional
+            file name of the file, by default "RVE.png"
+        """
 
         self.sphere_plot(
             fibers=self.fiber_positions,

@@ -12,7 +12,7 @@ from typing import Any, Tuple
 import numpy as np
 from scipy.spatial import distance_matrix
 
-# import local functions
+# local
 from .base import MicrostructureGenerator
 
 #                                                          Authorship & Credits

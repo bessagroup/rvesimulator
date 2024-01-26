@@ -8,8 +8,10 @@ import os
 import time
 from typing import Any
 
+# third-party
 import numpy as np
 
+# local
 import rvesimulator
 from rvesimulator.abaqus2py.abaqus_simulator import AbaqusSimulator
 from rvesimulator.additions.hardening_law import LinearHardeningLaw
