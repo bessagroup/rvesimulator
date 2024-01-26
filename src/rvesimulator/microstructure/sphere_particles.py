@@ -1,7 +1,7 @@
 """This module is used to generate the 3D RVE with different size of sphere"""
 #                                                                       Modules
 # =============================================================================
-# standard packages
+# standard
 import json
 import math
 import time
@@ -11,7 +11,7 @@ from typing import Any, Tuple
 import numpy as np
 from scipy.spatial import distance_matrix
 
-# local functions
+# local
 from .base import MicrostructureGenerator
 
 #                                                          Authorship & Credits
