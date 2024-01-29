@@ -50,11 +50,23 @@ def uniaxial_test(uniaxial_strain):
     U = F - jnp.eye(2)
     return U.reshape(-1)
 
-def get_test_data():
+def shear_test(shear_strain):
+    gl_strain = jnp.array([0, shear_strain, shear_strain, 0]).reshape(2, 2)
+    C = 2.0 * gl_strain + jnp.eye(2)
+    S, V, D = jnp.linalg.svd(C)
+    F = S @ jnp.diag(jnp.sqrt(V)) @ D
+    U = F - jnp.eye(2)
+    return U.reshape(-1)
+
+def get_uniaxial_test_data():
     uniaxial_strains = jnp.linspace(-0.3, 2, 50)
     data_samples = jax.vmap(uniaxial_test)(uniaxial_strains)
     return data_samples
 
+def get_shear_test_data():
+    shear_strains = jnp.linspace(-0.42, 42, 50)
+    data_samples = jax.vmap(shear_test)(shear_strains)
+    return data_samples
 
 
 
@@ -66,9 +78,9 @@ if __name__ == '__main__':
     #                                     upper_bounds=[2, 2, np.pi/2],
     #                                     number_of_samples_exponent=11)
     
-    input_data_space = get_test_data()
+    input_data_space = get_shear_test_data()
 
     input_dataframe = pd.DataFrame(input_data_space,
                                    columns=['dU11', 'dU12', 'dU21', 'dU22']).round(4)
     # input_dataframe = input_dataframe.tail(-128).reset_index(drop=True)
-    input_dataframe.to_csv('doe_test.csv', index=True)
+    input_dataframe.to_csv('doe_shear_test.csv', index=True)
