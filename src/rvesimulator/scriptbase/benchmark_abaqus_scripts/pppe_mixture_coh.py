@@ -940,7 +940,7 @@ class PostProcess:
             "plastic_strain": self.plastic_strain,
         }
         # Save the results to a pickle file
-        with open("results.p", "wb") as fp:
+        with open("results.pkl", "wb") as fp:
             pickle.dump(results, fp)
 
 
