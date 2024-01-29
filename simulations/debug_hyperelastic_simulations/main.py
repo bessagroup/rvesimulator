@@ -37,7 +37,7 @@ def pre_process(config):
     # Actual dataset path
     dataset_path = Path(config.dataset.store_path_access)
     experimentdata = f3dasm.ExperimentData.from_csv(Path(
-                            "{}/doe_1.csv".format(dataset_path)))
+                            "{}/doe_test.csv".format(dataset_path)))
     # Save to disk
     experimentdata.jobs.mark_all_open()
     experimentdata.store(filename='exp_data_{}'.format(config.dataset.model))
