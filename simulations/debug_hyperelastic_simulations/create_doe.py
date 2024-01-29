@@ -64,7 +64,7 @@ def get_uniaxial_test_data():
     return data_samples
 
 def get_shear_test_data():
-    shear_strains = jnp.linspace(-0.42, 42, 50)
+    shear_strains = jnp.linspace(-0.42, 0.42, 50)
     data_samples = jax.vmap(shear_test)(shear_strains)
     return data_samples
 
