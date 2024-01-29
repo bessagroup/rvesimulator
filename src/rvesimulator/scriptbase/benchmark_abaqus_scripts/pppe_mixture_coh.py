@@ -90,19 +90,10 @@ class PPPEMixtureCohesive:
         self.create_job()
         self.submit_job()
         # do data check
-        # self.data_check()
-        # # error information
-        # self.error_flag = self.read_error()
 
-        # # submit job
-        # if self.error_flag == 0:
-        #     self.submit_job()
-        #     # post processing
-        #     if sim_info["platform"] == "cluster":
-        #         PostProcess(job_name=self.job_name)
-        # else:
-        #     if sim_info["platform"] == "cluster":
-        #         PostProcess(job_name="error")
+        # post process
+        if sim_info["platform"] == "cluster":
+            PostProcess(job_name=self.job_name)
     
     def read_error(self):
         file = open(self.job_name + ".dat")
