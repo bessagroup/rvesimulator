@@ -30,11 +30,11 @@ def run_simulation(design: Design, config):
                          radius_std=0.04,
                          params_matrix = [5.530, 5.089, 2.222e-1],
                          params_inclusion = [259.615, 1.778e-3],
-                         vol_req=0.4,
+                         vol_req=0.5,
                          mesh_division=300,
                          platform='cluster',
                          num_cpu=16,
-                         seed=1234)
+                         seed=1235)
     
     try:
         task.run_simulation(sample={'displacement_gradient': displacement_gradient},
