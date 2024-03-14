@@ -593,7 +593,7 @@ class PostProcess:
         # job name
         self.job_name = str(job_name)
         # record time step (fir saving memory)
-        self.record_time_step = 1
+        self.record_time_step = 5
         # post process
         if job_name == "error":
             results = {
@@ -626,7 +626,7 @@ class PostProcess:
         for ii in range(len(my_steps)):
             total_frames = total_frames + \
                 len(my_steps[my_steps.keys()[ii]].frames)
-
+        # self.record_time_step = ceil(total_frames / self.record_frames)
         # get the variables that do not change with time steps
         rve_frame = rve_odb.steps[my_steps.keys()[0]].frames[0]
 
