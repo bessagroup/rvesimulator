@@ -743,7 +743,7 @@ class PostProcess:
                 "mesh": "error"
             }
             # Save the results to a pickle file
-            with open("results.p", "wb") as fp:
+            with open("results.pkl", "wb") as fp:
                 pickle.dump(results, fp)
         else: 
             self.post_process()

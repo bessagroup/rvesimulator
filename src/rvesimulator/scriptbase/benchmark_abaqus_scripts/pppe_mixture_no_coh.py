@@ -707,12 +707,12 @@ class PostProcess:
 
                 # save the results every 10 frames to save memory
                 if jj % self.record_time_step == 0:
-                    
                     plastic_strain_field = frame.fieldOutputs["SDV17"].getSubset(
                         region=matrix_element_set, position=INTEGRATION_POINT)
                     for kk in range(0, len(plastic_strain_field.values)):
                         self.plastic_strain[ii * len(step_frames) +
-                                            jj / self.record_time_step][kk] = plastic_strain_field.values[kk].data
+                                            jj / self.record_time_step][kk] = plastic_strain_field.values[kk].data  
+
                 # get deformation gradient
                 for i in range(0, 2):
                     # get deformation gradient
