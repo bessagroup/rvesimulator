@@ -736,7 +736,7 @@ class PostProcess:
         # job name
         self.job_name = str(job_name)
         # record time step (fir saving memory)
-        self.record_time_step = 10
+        self.record_time_step = 50
         # post process
         if job_name == "error":
             results = {
