@@ -16,37 +16,39 @@ try:
 except ValueError:
     import pickle
 
+
 class PPPEMixtureCohesive:
     """ PP and PE 2D RVE with cohesive elements"""
 
-    def __init__(self, sim_info={"location_information": None, 
+    def __init__(self, sim_info={"location_information": None,
                                  "radius_mu": None,
                                  "radius_std": None,
-                                 "len_start": None, 
-                                 "len_end":None, 
-                                 "wid_start":None, 
-                                 "wid_end": None, 
-                                 "job_name": "pp_pe_cohesive_2d", 
-                                 "strain": [0.10,0.0,0.0], 
+                                 "len_start": None,
+                                 "len_end": None,
+                                 "wid_start": None,
+                                 "wid_end": None,
+                                 "job_name": "pp_pe_cohesive_2d",
+                                 "strain": [0.10, 0.0, 0.0],
                                  "paras_pp": None,
-                                 "paras_pp": None, 
-                                 "damage_stress":None, 
+                                 "paras_pe": None,
+                                 "damage_stress": None,
                                  "damage_energy": None,
-                                 "mesh_partition": None, 
-                                 "simulation_time": 100.0, 
-                                 "num_steps": None, 
-                                 "platform": "ubuntu", 
-                                 "num_cpu":1, 
-                                 "subroutine_path":None}):
+                                 "mesh_partition": None,
+                                 "simulation_time": 100.0,
+                                 "num_steps": None,
+                                 "platform": "ubuntu",
+                                 "record_time_step": 100,
+                                 "num_cpu": 1,
+                                 "subroutine_path": None}):
         # ------------------------------ parameters ------------------------- #
         # names of model, part, instance
-        self.model_name = "pppe_cohesive_2d"
+        self.model_name = "pp_pe_cohesive_2d"
         self.part_name = "Final_Stuff"
         self.instance_name = "Final_Stuff"
         self.job_name = str(sim_info["job_name"])
         self.platform = sim_info["platform"]
         self.num_cpu = sim_info["num_cpu"]
-
+        self.record_time_step = sim_info["record_time_step"]
         # information of geometry of RVE
         self.loc_info = sim_info
         # mech and sets information
@@ -69,7 +71,6 @@ class PPPEMixtureCohesive:
         self.mesh_size = (
             min(self.length, self.width) / sim_info["mesh_partition"]
         )
-        self.size_circle = 0.0001
         self.time_period = sim_info["simulation_time"]
         self.time_interval = (
             sim_info["simulation_time"] / sim_info["num_steps"]
@@ -85,27 +86,20 @@ class PPPEMixtureCohesive:
         self.damage_energy = sim_info["damage_energy"]
         self.cohesive_radius_factor = 1.02
         self.power = 1.0
-        # submit 
-        self.create_simulation_job()     
+        # submit
+        self.create_simulation_job()
         self.create_job()
         self.submit_job()
-        # do data check
 
         # post process
-        if sim_info["platform"] == "cluster":
-            PostProcess(job_name=self.job_name)
-    
-    def read_error(self):
-        file = open(self.job_name + ".dat")
-        word1 = "ERROR"
-        if word1 in file.read():
-            return 1
-        else:
-            return 0
+        if sim_info["platform"] == "cluster" or sim_info["platform"] == "windows":
+            # post process for getting the results
+            PostProcess(job_name=self.job_name,
+                        record_time_step=self.record_time_step)
 
     def create_simulation_job(self):
-        
-        # get delta 
+
+        # get delta
         delta = min(min(self.length, self.width) / 1000, self.mesh_size / 10)
 
         # get model information
@@ -118,13 +112,13 @@ class PPPEMixtureCohesive:
         # delete existed model
         if 'Model-1' in mdb.models.keys():
             del mdb.models['Model-1']
-        
+
         # create sketch--------------------------------------------------------
         # model the matrix part first
         sketch = model.ConstrainedSketch(name='__profile__', sheetSize=200.0)
         sketch.rectangle(point1=(0.0, 0.0), point2=(self.length, self.width))
         part = model.Part(name='Final_Stuff',
-                        dimensionality=TWO_D_PLANAR, type=DEFORMABLE_BODY)
+                          dimensionality=TWO_D_PLANAR, type=DEFORMABLE_BODY)
         part.BaseShell(sketch=sketch)
         del sketch
 
@@ -142,13 +136,15 @@ class PPPEMixtureCohesive:
         for ii in range(len(self.circles_information)):
             # actual fibers
             sketch.CircleByCenterPerimeter(
-                center=(self.circles_information[ii][0], self.circles_information[ii][1]),
+                center=(self.circles_information[ii][0],
+                        self.circles_information[ii][1]),
                 point1=(self.circles_information[ii][0] +
                         self.circles_information[ii][2], self.circles_information[ii][1]),
             )
             # cohesive zone
             sketch.CircleByCenterPerimeter(
-                center=(self.circles_information[ii][0], self.circles_information[ii][1]),
+                center=(self.circles_information[ii][0],
+                        self.circles_information[ii][1]),
                 point1=(self.circles_information[ii][0] + self.cohesive_radius_factor *
                         self.circles_information[ii][2], self.circles_information[ii][1]),
             )
@@ -164,16 +160,22 @@ class PPPEMixtureCohesive:
 
         # fiber faces
         fiberface = part.faces.getByBoundingCylinder(
-            (self.circles_information[0][0], self.circles_information[0][1], 0.0),
-            (self.circles_information[0][0], self.circles_information[0][1], 1.0),
-            self.circles_information[0][2] + 0.001 * self.circles_information[0][2],
+            (self.circles_information[0][0],
+             self.circles_information[0][1], 0.0),
+            (self.circles_information[0][0],
+             self.circles_information[0][1], 1.0),
+            self.circles_information[0][2] + 0.001 *
+            self.circles_information[0][2],
         )
         part.Set(faces=fiberface, name="fiberface")
         for ii in range(1, len(self.circles_information)):
             fiberface_1 = part.faces.getByBoundingCylinder(
-                (self.circles_information[ii][0], self.circles_information[ii][1], 0.0),
-                (self.circles_information[ii][0], self.circles_information[ii][1], 1.0),
-                self.circles_information[ii][2] + 0.001 * self.circles_information[ii][2],
+                (self.circles_information[ii][0],
+                 self.circles_information[ii][1], 0.0),
+                (self.circles_information[ii][0],
+                 self.circles_information[ii][1], 1.0),
+                self.circles_information[ii][2] +
+                0.001 * self.circles_information[ii][2],
             )
             part.Set(faces=fiberface_1, name="fiberface_1")
             part.SetByBoolean(
@@ -186,8 +188,10 @@ class PPPEMixtureCohesive:
 
         # create set for cohesive and fibers
         cohesive_fiber = part.faces.getByBoundingCylinder(
-            (self.circles_information[0][0], self.circles_information[0][1], 0.0),
-            (self.circles_information[0][0], self.circles_information[0][1], 1.0),
+            (self.circles_information[0][0],
+             self.circles_information[0][1], 0.0),
+            (self.circles_information[0][0],
+             self.circles_information[0][1], 1.0),
             self.circles_information[0][2]*self.cohesive_radius_factor +
             0.001 * self.circles_information[0][2],
         )
@@ -195,15 +199,18 @@ class PPPEMixtureCohesive:
         part.Set(faces=cohesive_fiber, name="cohesive_fiber")
         for ii in range(1, len(self.circles_information)):
             cohesive_fiber_1 = part.faces.getByBoundingCylinder(
-                (self.circles_information[ii][0], self.circles_information[ii][1], 0.0),
-                (self.circles_information[ii][0], self.circles_information[ii][1], 1.0),
+                (self.circles_information[ii][0],
+                 self.circles_information[ii][1], 0.0),
+                (self.circles_information[ii][0],
+                 self.circles_information[ii][1], 1.0),
                 self.circles_information[ii][2]*self.cohesive_radius_factor +
                 0.001 * self.circles_information[ii][2],
             )
             part.Set(faces=cohesive_fiber_1, name="cohesive_fiber_1")
             part.SetByBoolean(
                 name="cohesive_fiber",
-                sets=(part.sets["cohesive_fiber_1"],  part.sets["cohesive_fiber"]),
+                sets=(part.sets["cohesive_fiber_1"],
+                      part.sets["cohesive_fiber"]),
                 operation=UNION,
             )
         # delete fiber face 1
@@ -266,8 +273,10 @@ class PPPEMixtureCohesive:
 
         # create set for cohesive edges
         cohesive_edges = s.getByBoundingCylinder(
-            (self.circles_information[0][0], self.circles_information[0][1], 0.0),
-            (self.circles_information[0][0], self.circles_information[0][1], 1.0),
+            (self.circles_information[0][0],
+             self.circles_information[0][1], 0.0),
+            (self.circles_information[0][0],
+             self.circles_information[0][1], 1.0),
             self.circles_information[0][2]*self.cohesive_radius_factor +
             0.001 * self.circles_information[0][2],
         )
@@ -275,15 +284,18 @@ class PPPEMixtureCohesive:
 
         for ii in range(1, len(self.circles_information)):
             cohesive_edges_1 = s.getByBoundingCylinder(
-                (self.circles_information[ii][0], self.circles_information[ii][1], 0.0),
-                (self.circles_information[ii][0], self.circles_information[ii][1], 1.0),
+                (self.circles_information[ii][0],
+                 self.circles_information[ii][1], 0.0),
+                (self.circles_information[ii][0],
+                 self.circles_information[ii][1], 1.0),
                 self.circles_information[ii][2]*self.cohesive_radius_factor +
                 0.001 * self.circles_information[ii][2],
             )
             part.Set(edges=cohesive_edges_1, name="cohesive_edges_1")
             part.SetByBoolean(
                 name="cohesive_edges",
-                sets=(part.sets["cohesive_edges_1"],  part.sets["cohesive_edges"]),
+                sets=(part.sets["cohesive_edges_1"],
+                      part.sets["cohesive_edges"]),
                 operation=UNION,
             )
         # delete fiber face 1
@@ -338,9 +350,10 @@ class PPPEMixtureCohesive:
         vertices_name = ["VertexLB", "VertexLT", "VertexRB", "VertexRT"]
 
         # meshing ---------------------------------------------------------------------
-        # calculate 
-        
-        part.seedPart(deviationFactor=0.05,  minSizeFactor=0.05,size=self.mesh_size)
+        # calculate
+
+        part.seedPart(deviationFactor=0.05,
+                      minSizeFactor=0.05, size=self.mesh_size)
         # part.seedEdgeBySize(constraint=FINER, edges=part.sets['cohesive_edges'].edges,size=self.mesh_size/2.0)
 
         # mesh control
@@ -353,13 +366,14 @@ class PPPEMixtureCohesive:
         elemType2 = mesh.ElemType(elemCode=UNKNOWN_TRI, elemLibrary=STANDARD)
 
         part.setElementType(
-            regions=part.sets["cohesive_face"], elemTypes=(elemType1, elemType2)
+            regions=part.sets["cohesive_face"], elemTypes=(
+                elemType1, elemType2)
         )
 
         # element type (plane strain element)
         elemType1 = mesh.ElemType(elemCode=CPE4R, elemLibrary=STANDARD,
-                                secondOrderAccuracy=OFF, hourglassControl=ENHANCED,
-                                distortionControl=DEFAULT)
+                                  secondOrderAccuracy=OFF, hourglassControl=ENHANCED,
+                                  distortionControl=DEFAULT)
         elemType2 = mesh.ElemType(elemCode=CPE3, elemLibrary=STANDARD)
         part.setElementType(
             regions=part.sets["fiberface"], elemTypes=(elemType1, elemType2))
@@ -416,49 +430,48 @@ class PPPEMixtureCohesive:
         material_cohesive = model.Material(name='material_cohesive')
         material_cohesive.Density(table=((7.9e-9, ), ))
         material_cohesive.Elastic(type=TRACTION, table=((
-            1e5, 1e5, 1e5), ))
+            1e8, 1e8, 1e8), ))
         material_cohesive.MaxsDamageInitiation(table=((
             self.damage_stress, self.damage_stress, 0.0), ))
         material_cohesive.maxsDamageInitiation.DamageEvolution(
             type=ENERGY, mixedModeBehavior=POWER_LAW, power=self.power, table=((self.damage_energy, self.damage_energy,
-                                                                0.0), ))
+                                                                                0.0), ))
         material_cohesive.maxsDamageInitiation.DamageStabilizationCohesive(
-            cohesiveCoeff=0.0000001)
+            cohesiveCoeff=0.000001)
 
         # create section and assign material property to corresponding section
         # matrix material
         model.HomogeneousSolidSection(
             name='matrix', material='material_matrix', thickness=None)
         part.SectionAssignment(region=part.sets['matrixface'], sectionName='matrix', offset=0.0,
-                            offsetType=MIDDLE_SURFACE, offsetField='', thicknessAssignment=FROM_SECTION)
-
+                               offsetType=MIDDLE_SURFACE, offsetField='', thicknessAssignment=FROM_SECTION)
 
         # fiber material
         model.HomogeneousSolidSection(
             name='fiber', material='material_fiber', thickness=None)
         part.SectionAssignment(region=part.sets['fiberface'], sectionName='fiber', offset=0.0,
-                            offsetType=MIDDLE_SURFACE, offsetField='',
-                            thicknessAssignment=FROM_SECTION)
+                               offsetType=MIDDLE_SURFACE, offsetField='',
+                               thicknessAssignment=FROM_SECTION)
 
         # cohesive material
         model.CohesiveSection(name='cohesive',
-                            material='material_cohesive', response=TRACTION_SEPARATION,
-                            outOfPlaneThickness=None)
+                              material='material_cohesive', response=TRACTION_SEPARATION,
+                              outOfPlaneThickness=None)
         part.SectionAssignment(region=part.sets['cohesive_face'], sectionName='cohesive', offset=0.0,
-                            offsetType=MIDDLE_SURFACE, offsetField='',
-                            thicknessAssignment=FROM_SECTION)
-
+                               offsetType=MIDDLE_SURFACE, offsetField='',
+                               thicknessAssignment=FROM_SECTION)
 
         sim_assembly = model.rootAssembly
         sim_instance = sim_assembly.Instance(
             dependent=ON, name=instance_name, part=part)
 
-
         # pbcs-----------------------------------------------------------------
         # right reference point
-        right_reference_point_id = sim_assembly.ReferencePoint(point=(self.length * 1.5, self.center[1], 0.0)).id
+        right_reference_point_id = sim_assembly.ReferencePoint(
+            point=(self.length * 1.5, self.center[1], 0.0)).id
         # top reference point
-        top_reference_point_id = sim_assembly.ReferencePoint(point=(self.center[0], self.width * 1.5, 0.0)).id
+        top_reference_point_id = sim_assembly.ReferencePoint(
+            point=(self.center[0], self.width * 1.5, 0.0)).id
         # reference points
 
         reference_points = sim_assembly.referencePoints
@@ -474,11 +487,12 @@ class PPPEMixtureCohesive:
 
         # pbc for vertices ------------------------------------------------------------
         # regenerate assembly
-        session.viewports["Viewport: 1"].setValues( displayedObject=sim_assembly)
+        session.viewports["Viewport: 1"].setValues(
+            displayedObject=sim_assembly)
         sim_assembly.regenerate()
 
         #
-        set_name_for_vertices =["NodeLB", "NodeLT", "NodeRB", "NodeRT"]
+        set_name_for_vertices = ["NodeLB", "NodeLT", "NodeRB", "NodeRT"]
         for ii in range(len(vertices_name)):
             vertex_node = part.sets[vertices_name[ii]].nodes
             # create the assembly node set for vertex
@@ -605,80 +619,71 @@ class PPPEMixtureCohesive:
         else:
             print "the number of nodes between the two sides are not the same"
 
-
-        # steps (static-step, implicit solver) 
+        # steps (static-step, implicit solver)
         model.StaticStep(name="Step-1", previous="Initial")
         step = model.StaticStep(
-                    initialInc=0.01,
-                    maxInc=1.0,
-                    maxNumInc=100000,
-                    minInc=1e-20,
-                    name="Step-1",
-                    previous="Initial",
-                    timePeriod=self.time_period,
-                    stabilizationMethod=DISSIPATED_ENERGY_FRACTION,
-                    continueDampingFactors=True, adaptiveDampingRatio=0.0001
-                )
-        # change the solver setting to improve the convergence
-        # step.control.setValues(allowPropagation=OFF,
-        #                                 resetDefaultValues=OFF, displacementField=(
-        #                                     0.05, 1.0, 0.0, 0.0, 0.02, 1e-05, 0.001, 1e-08, 1.0, 1e-05, 1e-08),
-        #                                 timeIncrementation=(200.0, 200.0, 9.0, 200.0, 200.0, 4.0, 20.0, 50.0, 6.0,
-        #                                                     3.0, 50.0),
-        #                                 electricalPotentialField=DEFAULT,
-        #                                 hydrostaticFluidPressureField=DEFAULT, rotationField=DEFAULT,
-        #                                 lineSearch=(4.0, 4.0, 0.25, 0.25, 0.15))
+            initialInc=0.01,
+            maxInc=1.0,
+            maxNumInc=100000,
+            minInc=1e-05,
+            name="Step-1",
+            previous="Initial",
+            timePeriod=self.time_period,
+            stabilizationMethod=DISSIPATED_ENERGY_FRACTION,
+            continueDampingFactors=True,
+            adaptiveDampingRatio=0.0001
+        )
         # # define filed output
         model.fieldOutputRequests["F-Output-1"].setValues(
-                    variables=(
-                        "S",
-                        "E",
-                        "LE",
-                        "ENER",
-                        "ELEN",
-                        "ELEDEN",
-                        "EVOL",
-                        "IVOL",
-                        'SDEG',
-                        'STATUS',
-                        'SDV'
-                    ),
-                    timeInterval=self.time_interval,
-                )
+            variables=(
+                "S",
+                "E",
+                "LE",
+                "ENER",
+                "ELEN",
+                "ELEDEN",
+                "EVOL",
+                "IVOL",
+                'SDEG',
+                'STATUS',
+                'SDV'
+            ),
+            timeInterval=self.time_interval,
+        )
         model.FieldOutputRequest(
-                    name="F-Output-2",
-                    createStepName="Step-1",
-                    variables=("U", "RF"),
-                    timeInterval=self.time_interval,
-                )
+            name="F-Output-2",
+            createStepName="Step-1",
+            variables=("U", "RF"),
+            timeInterval=self.time_interval,
+        )
         model.historyOutputRequests["H-Output-1"].setValues(
-                    variables=(
-                        "ALLAE",
-                        "ALLCD",
-                        "ALLIE",
-                        "ALLKE",
-                        "ALLPD",
-                        "ALLSE",
-                        "ALLWK",
-                        "ETOTAL",
-                    ),
-                    timeInterval=self.time_interval,
-                )
+            variables=(
+                "ALLAE",
+                "ALLCD",
+                "ALLIE",
+                "ALLKE",
+                "ALLPD",
+                "ALLSE",
+                "ALLWK",
+                "ETOTAL",
+            ),
+            timeInterval=self.time_interval,
+        )
 
         # loadings --------------------------------------------------------------------
         model.DisplacementBC(
-                    name="E_11",
-                    createStepName="Step-1",
-                    region=sim_assembly.sets["Ref-R"],
-                    u1=self.strain[0],
-                    u2=UNSET,
-                    ur3=UNSET,
-                    amplitude=UNSET,
-                    fixed=OFF,
-                    distributionType=UNIFORM,
-                    fieldName="",
-                    localCsys=None,
-                )
+            name="E_11",
+            createStepName="Step-1",
+            region=sim_assembly.sets["Ref-R"],
+            u1=self.strain[0],
+            u2=UNSET,
+            ur3=UNSET,
+            amplitude=UNSET,
+            fixed=OFF,
+            distributionType=UNIFORM,
+            fieldName="",
+            localCsys=None,
+        )
         # fix the rigid movement
         model.DisplacementBC(
             amplitude=UNSET,
@@ -711,17 +716,17 @@ class PPPEMixtureCohesive:
     def create_job(self):
         # run the job
         self.job = mdb.Job(name=self.job_name, model=self.model_name, description='', type=ANALYSIS,
-            atTime=None, waitMinutes=0, waitHours=0, queue=None, memory=90,
-            memoryUnits=PERCENTAGE, getMemoryFromAnalysis=True,
-            explicitPrecision=SINGLE, nodalOutputPrecision=SINGLE, echoPrint=OFF,
-            modelPrint=OFF, contactPrint=OFF, historyPrint=OFF, userSubroutine=self.subroutine_path,
-            scratch='', resultsFormat=ODB, multiprocessingMode=DEFAULT, numCpus=self.num_cpu,
-            numDomains=self.num_cpu, numGPUs=0)
-        
+                           atTime=None, waitMinutes=0, waitHours=0, queue=None, memory=90,
+                           memoryUnits=PERCENTAGE, getMemoryFromAnalysis=True,
+                           explicitPrecision=SINGLE, nodalOutputPrecision=SINGLE, echoPrint=OFF,
+                           modelPrint=OFF, contactPrint=OFF, historyPrint=OFF, userSubroutine=self.subroutine_path,
+                           scratch='', resultsFormat=ODB, multiprocessingMode=DEFAULT, numCpus=self.num_cpu,
+                           numDomains=self.num_cpu, numGPUs=0)
+
     def data_check(self):
         """check if there is error in the model
         """
-        self.job.submit(consistencyChecking=OFF, datacheckJob=True)  
+        self.job.submit(consistencyChecking=OFF, datacheckJob=True)
         self.job.waitForCompletion()
 
     def submit_job(self):
@@ -732,11 +737,11 @@ class PPPEMixtureCohesive:
 
 class PostProcess:
 
-    def __init__(self, job_name):
+    def __init__(self, job_name, record_time_step=100):
         # job name
         self.job_name = str(job_name)
         # record time step (fir saving memory)
-        self.record_time_step = 100
+        self.record_time_step = record_time_step
         # post process
         if job_name == "error":
             results = {
@@ -745,7 +750,7 @@ class PostProcess:
             # Save the results to a pickle file
             with open("results.pkl", "wb") as fp:
                 pickle.dump(results, fp)
-        else: 
+        else:
             self.post_process()
 
     def post_process(self):
@@ -854,7 +859,7 @@ class PostProcess:
 
                 # save the results every 10 frames to save memory
                 if jj % self.record_time_step == 0:
-                    
+
                     plastic_strain_field = frame.fieldOutputs["SDV17"].getSubset(
                         region=matrix_element_set, position=INTEGRATION_POINT)
                     for kk in range(0, len(plastic_strain_field.values)):
@@ -949,5 +954,7 @@ def get_node_y(node):
     return node.coordinates[1]
 
 # get node coordinates
+
+
 def get_node_x(node):
     return node.coordinates[0]

@@ -37,8 +37,8 @@ class PPPEMixtureCohesive(SimulationBase):
         self.main_folder = os.getcwd()
         self.folder_info = {
             "main_work_directory": os.path.join(self.main_folder, "Data"),
-            "script_path": os.path.dirname(rvesimulator.__file__) + \
-                "/scriptbase/",
+            "script_path": os.path.dirname(rvesimulator.__file__) +
+            "/scriptbase/",
             "current_work_directory": "point_1",
             "sim_path": "benchmark_abaqus_scripts.pppe_mixture_coh",
             "sim_script": "PPPEMixtureCohesive",
@@ -96,6 +96,7 @@ class PPPEMixtureCohesive(SimulationBase):
         platform: str = "ubuntu",
         seed: Any = None,
         print_info: bool = False,
+        record_time_step: int = 100,
     ) -> None:
         """update simulation information
 
@@ -133,6 +134,8 @@ class PPPEMixtureCohesive(SimulationBase):
             seed, by default None
         print_info : bool, optional
             print simulation information to the screen or not, by default False
+        record_time_step : int, optional
+            record time step, by default 100
         """
         # micro_structure information
         self.seed = seed
@@ -158,6 +161,9 @@ class PPPEMixtureCohesive(SimulationBase):
         # get the micro_structure information
         self.seed = seed
 
+        # record time step
+        self.record_time_step = record_time_step
+
         # update simulation information to logger
         self.logger.info("=============== simulation information ============")
         self.logger.info("size: {}".format(size))
@@ -174,6 +180,7 @@ class PPPEMixtureCohesive(SimulationBase):
         self.logger.info("simulation_time: {}".format(simulation_time))
         self.logger.info("num_cpu: {}".format(num_cpu))
         self.logger.info("platform: {}".format(platform))
+        self.logger.info("record_time_step: {}".format(record_time_step))
 
         self.sim_params = {
             "size": size,
@@ -183,13 +190,14 @@ class PPPEMixtureCohesive(SimulationBase):
             "paras_pp": paras_pp,
             "paras_pe": paras_pe,
             "damage_stress": damage_stress,
-            "damage_energy": damage_energy,           
+            "damage_energy": damage_energy,
             "mesh_partition": mesh_partition,
             "strain": strain,
             "num_steps": num_steps,
             "simulation_time": simulation_time,
             "num_cpu": num_cpu,
-            "platform": platform, }
+            "platform": platform,
+            "record_time_step": record_time_step, }
 
         # print simulation information to screen
         if print_info:
@@ -218,7 +226,8 @@ class PPPEMixtureCohesive(SimulationBase):
             "strain": self.strain,
             "num_cpu": self.num_cpu,
             "platform": self.platform,
-            "subroutine_path": self.subroutine_path
+            "subroutine_path": self.subroutine_path,
+            "record_time_step": self.record_time_step,
         }
 
     def run_simulation(
@@ -227,6 +236,7 @@ class PPPEMixtureCohesive(SimulationBase):
         folder_index: int = None,
         sub_folder_index: int = None,
         third_folder_index: int = None,
+        delete_odb: bool = True,
     ) -> dict:
         """run single simulation
 
@@ -240,6 +250,8 @@ class PPPEMixtureCohesive(SimulationBase):
             second folder index, by default None
         third_folder_index : int, optional
             third folder index, by default None
+        delete_odb : bool, optional
+            delete odb file or not, by default True
 
         Returns
         -------
@@ -284,7 +296,7 @@ class PPPEMixtureCohesive(SimulationBase):
         # run abaqus simulation
         try:
             simulator.execute()
-            simulator.post_process(delete_odb=True)
+            simulator.post_process(delete_odb=delete_odb)
             # get the simulation results back
             results = simulator.read_back_results()
             self.logger.info("simulation finished")
