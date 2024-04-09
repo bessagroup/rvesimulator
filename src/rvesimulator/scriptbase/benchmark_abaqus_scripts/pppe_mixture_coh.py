@@ -352,7 +352,7 @@ class PPPEMixtureCohesive:
         # meshing ---------------------------------------------------------------------
         # calculate
 
-        part.seedPart(deviationFactor=0.05,
+        part.seedPart(deviationFactor=0.1,
                       minSizeFactor=0.05, size=self.mesh_size)
         # part.seedEdgeBySize(constraint=FINER, edges=part.sets['cohesive_edges'].edges,size=self.mesh_size/2.0)
 
