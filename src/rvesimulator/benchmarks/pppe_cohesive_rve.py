@@ -97,6 +97,9 @@ class PPPEMixtureCohesive(SimulationBase):
         seed: Any = None,
         print_info: bool = False,
         record_time_step: int = 100,
+        young_modulus_cohesive: float = 1.0e5,
+        power_law_exponent_cohesive: float = 1.0,
+        radius_cohesive_factor: float = 1.02,
     ) -> None:
         """update simulation information
 
@@ -149,6 +152,9 @@ class PPPEMixtureCohesive(SimulationBase):
         # cohesive elements information
         self.damage_stress = damage_stress
         self.damage_energy = damage_energy
+        self.young_modulus_cohesive = young_modulus_cohesive
+        self.power_law_exponent_cohesive = power_law_exponent_cohesive
+        self.radius_cohesive_factor = radius_cohesive_factor
 
         # simulation information
         self.mesh_partition = mesh_partition
@@ -181,6 +187,9 @@ class PPPEMixtureCohesive(SimulationBase):
         self.logger.info("num_cpu: {}".format(num_cpu))
         self.logger.info("platform: {}".format(platform))
         self.logger.info("record_time_step: {}".format(record_time_step))
+        self.logger.info(("young_modulus_cohesive: {}".format(young_modulus_cohesive)))
+        self.logger.info(("power_law_exponent_cohesive: {}".format(power_law_exponent_cohesive)))
+        self.logger.info(("radius_cohesive_factor: {}".format(radius_cohesive_factor)))
 
         self.sim_params = {
             "size": size,
@@ -197,7 +206,10 @@ class PPPEMixtureCohesive(SimulationBase):
             "simulation_time": simulation_time,
             "num_cpu": num_cpu,
             "platform": platform,
-            "record_time_step": record_time_step, }
+            "record_time_step": record_time_step,
+             "young_modulus_cohesive": young_modulus_cohesive,
+             "power_law_exponent_cohesive": power_law_exponent_cohesive,
+             "radius_cohesive_factor": radius_cohesive_factor,}
 
         # print simulation information to screen
         if print_info:
@@ -228,6 +240,9 @@ class PPPEMixtureCohesive(SimulationBase):
             "platform": self.platform,
             "subroutine_path": self.subroutine_path,
             "record_time_step": self.record_time_step,
+            "young_modulus_cohesive": self.young_modulus_cohesive,
+            "power_law_exponent_cohesive": self.power_law_exponent_cohesive,
+            "radius_cohesive_factor": self.radius_cohesive_factor,
         }
 
     def run_simulation(

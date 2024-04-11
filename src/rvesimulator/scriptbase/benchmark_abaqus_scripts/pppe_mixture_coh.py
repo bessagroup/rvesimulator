@@ -33,12 +33,15 @@ class PPPEMixtureCohesive:
                                  "paras_pe": None,
                                  "damage_stress": None,
                                  "damage_energy": None,
+                                 "power_law_exponent_cohesive": 1.0,
                                  "mesh_partition": None,
                                  "simulation_time": 100.0,
                                  "num_steps": None,
                                  "platform": "ubuntu",
                                  "record_time_step": 100,
+                                 "young_modulus_cohesive": None,
                                  "num_cpu": 1,
+                                 "radius_cohesive_factor": 1.02,
                                  "subroutine_path": None}):
         # ------------------------------ parameters ------------------------- #
         # names of model, part, instance
@@ -84,8 +87,9 @@ class PPPEMixtureCohesive:
         # damage parameters
         self.damage_stress = sim_info["damage_stress"]
         self.damage_energy = sim_info["damage_energy"]
-        self.cohesive_radius_factor = 1.02
-        self.power = 1.0
+        self.young_modulus_cohesive = sim_info["young_modulus_cohesive"]
+        self.cohesive_radius_factor = sim_info["radius_cohesive_factor"]
+        self.power = sim_info["power_law_exponent_cohesive"]
         # submit
         self.create_simulation_job()
         self.create_job()
@@ -430,7 +434,7 @@ class PPPEMixtureCohesive:
         material_cohesive = model.Material(name='material_cohesive')
         material_cohesive.Density(table=((7.9e-9, ), ))
         material_cohesive.Elastic(type=TRACTION, table=((
-            1e8, 1e8, 1e8), ))
+            self.young_modulus_cohesive, self.young_modulus_cohesive, 0.0), ))
         material_cohesive.MaxsDamageInitiation(table=((
             self.damage_stress, self.damage_stress, 0.0), ))
         material_cohesive.maxsDamageInitiation.DamageEvolution(
