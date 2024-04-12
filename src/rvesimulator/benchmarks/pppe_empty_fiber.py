@@ -25,7 +25,7 @@ __status__ = "Stable"
 # =============================================================================
 
 
-class PPPEMixtureNoCohesive(SimulationBase):
+class PPPEMixtureEmptyFiber(SimulationBase):
     """uni-axial tension for pp/pe Mixture/composite without cohesive elements
     in between fiber and matrix material phases"""
 
@@ -40,9 +40,9 @@ class PPPEMixtureNoCohesive(SimulationBase):
             "script_path": os.path.dirname(rvesimulator.__file__) +
             "/scriptbase/",
             "current_work_directory": "point_1",
-            "sim_path": "benchmark_abaqus_scripts.pppe_mixture_no_coh",
-            "sim_script": "PPPEMixtureNoCohesive",
-            "post_path": "benchmark_abaqus_scripts.pppe_mixture_no_coh",
+            "sim_path": "benchmark_abaqus_scripts.pppe_mixture_empty_fibers",
+            "sim_script": "PPPEMixtureEmptyFiber",
+            "post_path": "benchmark_abaqus_scripts.pppe_mixture_empty_fibers",
             "post_script": "PostProcess",
         }
         self.subroutine_path = self.folder_info["script_path"] + \
@@ -54,38 +54,9 @@ class PPPEMixtureNoCohesive(SimulationBase):
         radius_mu: float = 0.0031,
         radius_std: float = 0.0,
         vol_req: float = 0.30,
-        paras_pp: list = [
-            748.234,
-            0.45,
-            296.0,
-            0.1,
-            1.53e-02,
-            6.608e-01,
-            7.33e02,
-            2.51e08,
-            3.30e-26,
-            7.42e06,
-            2.67e-02,
-            4.826e1,
-            1.520,
-            1.303,
-        ],
-        paras_pe: list = [
-            611.6,
-            0.45,
-            296.0,
-            0.1,
-            4.40e-01,
-            5.1e-03,
-            772.1,
-            2.29e08,
-            9.94e-26,
-            5.01e06,
-            3.234e-01,
-            15.88,
-            13.52,
-            0.043,
-        ],
+        params_matrix: list = None,
+        youngs_fiber: float = 1.0,
+        poisson_fiber: float = 0.3,
         mesh_partition: int = 100,
         strain: list = [0.1, 0.0, 0.0],
         num_steps: int = 1000,
@@ -95,6 +66,7 @@ class PPPEMixtureNoCohesive(SimulationBase):
         seed: Any = None,
         print_info: bool = False,
         record_time_step: int = 5,
+        pre_given_matrial: str = "PP",
     ) -> None:
         """update simulation information
 
@@ -129,15 +101,27 @@ class PPPEMixtureNoCohesive(SimulationBase):
         print_info : bool, optional
             print simulation information to the screen or not, by default False
         """
+        # material parameters
+        if params_matrix is not None:
+            self.params_matrix = params_matrix
+        elif params_matrix is None and pre_given_matrial == "PP":
+            # parameters for PP
+            self.params_matrix = [748.234, 0.45, 296.0,  0.1, 1.53e-02, 6.608e-01, 7.33e02,
+                                  2.51e08, 3.30e-26, 7.42e06, 2.67e-02, 4.826e1, 1.520, 1.303,]
+        elif params_matrix is None and pre_given_matrial == "PE":
+            self.params_matrix = [611.6, 0.45, 296.0, 0.1, 4.40e-01, 5.1e-03, 772.1, 2.29e08,
+                                  9.94e-26, 5.01e06, 3.234e-01, 15.88, 13.52, 0.043,]
+        else:
+            raise ValueError("params_matrix is not provided")
+        self.youngs_fiber = youngs_fiber
+        self.poisson_fiber = poisson_fiber
         # micro_structure information
         self.seed = seed
         self.size = size
         self.radius_mu = radius_mu
         self.radius_std = radius_std
         self.vol_req = vol_req
-        # material properties
-        self.paras_pp = paras_pp
-        self.paras_pe = paras_pe
+
         # simulation information
         self.mesh_partition = mesh_partition
         self.strain = strain
@@ -157,8 +141,9 @@ class PPPEMixtureNoCohesive(SimulationBase):
         self.logger.info("radius_mu: {}".format(radius_mu))
         self.logger.info("radius_std: {}".format(radius_std))
         self.logger.info("vol_req: {}".format(vol_req))
-        self.logger.info("paras_pp: {}".format(paras_pp))
-        self.logger.info("paras_pe: {}".format(paras_pe))
+        self.logger.info("params_matrix: {}".format(params_matrix))
+        self.logger.info("youngs_fiber: {}".format(youngs_fiber))
+        self.logger.info("poisson_fiber: {}".format(poisson_fiber))
         self.logger.info("mesh_partition: {}".format(mesh_partition))
         self.logger.info("strain: {}".format(strain))
         self.logger.info("num_steps: {}".format(num_steps))
@@ -172,8 +157,9 @@ class PPPEMixtureNoCohesive(SimulationBase):
             "radius_mu": radius_mu,
             "radius_std": radius_std,
             "vol_req": vol_req,
-            "paras_pp": paras_pp,
-            "paras_pe": paras_pe,
+            "params_matrix": params_matrix,
+            "youngs_fiber": youngs_fiber,
+            "poisson_fiber": poisson_fiber,
             "mesh_partition": mesh_partition,
             "strain": strain,
             "num_steps": num_steps,
@@ -189,7 +175,7 @@ class PPPEMixtureNoCohesive(SimulationBase):
     def _get_sim_info(self) -> None:
         """get simulation information"""
         self.sim_info = {
-            "job_name": "veni_nocoh_rve",
+            "job_name": "empty_fiber",
             "location_information": self.microstructure.microstructure_info[
                 "location_information"
             ],
@@ -200,8 +186,9 @@ class PPPEMixtureNoCohesive(SimulationBase):
             "len_end": self.microstructure.microstructure_info["len_end"],
             "wid_start": self.microstructure.microstructure_info["wid_start"],
             "wid_end": self.microstructure.microstructure_info["wid_end"],
-            "paras_pp": self.paras_pp,
-            "paras_pe": self.paras_pe,
+            "params_matrix": self.params_matrix,
+            "youngs_fiber": self.youngs_fiber,
+            "poisson_fiber": self.poisson_fiber,
             "mesh_partition": self.mesh_partition,
             "num_steps": self.num_steps,
             "simulation_time": self.simulation_time,
