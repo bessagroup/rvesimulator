@@ -56,12 +56,13 @@ class CircleParticles(MicrostructureGenerator):
         radius_mu: float,
         radius_std: float,
         vol_req: float,
-        num_guess_max: int = 50000,
+        num_guess_max: int = 100000,
         num_inclusion_max: int = 750,
         num_cycle_max: int = 15,
-        dist_min_factor: float = 1.1,
+        dist_min_factor: float = 1.0,
         stirring_iters: int = 100,
         print_log: bool = False,
+        vol_frac_tol: float = 0.001,
     ) -> None:
         """Initialization
 
@@ -100,6 +101,17 @@ class CircleParticles(MicrostructureGenerator):
         self.num_inclusions_max = num_inclusion_max
         self.num_cycles_max = num_cycle_max
         self.stirring_iters = stirring_iters
+        self.vol_frac_tol = vol_frac_tol
+
+        # adjust the radius_mu for achieving the required volume fraction, only when the radius_std is zero:
+        if self.radius_std == 0:
+            num_particles = np.round(vol_req*length*width/(np.pi*radius_mu**2))
+            self.min_dis_threshold = max(np.sqrt(length*width/num_particles) -radius_mu, 2*radius_mu + 0.02)
+            current_vfrac = num_particles*np.pi*radius_mu**2/(length*width)
+            if abs(current_vfrac-vol_req) > vol_frac_tol:
+                radius_mu = np.sqrt(vol_req * length * width / (num_particles * np.pi))
+            self.radius_mu = radius_mu
+
 
 
     def _parameter_initialization(self) -> None:
@@ -175,6 +187,8 @@ class CircleParticles(MicrostructureGenerator):
             "width_start": self.wid_start,
             "length_end": self.len_end,
             "width_end": self.wid_end,
+            "vol_frac": self.vol_frac,
+            "seed": seed,
         }
 
 
@@ -254,7 +268,7 @@ class CircleParticles(MicrostructureGenerator):
 
         # the main loop of the algorithm
         while (
-            self.vol_frac < self.vol_req
+            abs(self.vol_frac - self.vol_req) > self.vol_frac_tol
             and self.num_cycle < self.num_cycles_max
         ):
             # ================================================================#
@@ -263,7 +277,7 @@ class CircleParticles(MicrostructureGenerator):
             self.num_trial = 1
             while (
                 self.num_trial < self.num_guess_max
-                and self.vol_frac < self.vol_req
+                and abs(self.vol_frac - self.vol_req) > self.vol_frac_tol
                 and self.num_inclusions < self.num_inclusions_max
             ):
                 # update the info of number trial
@@ -332,6 +346,7 @@ class CircleParticles(MicrostructureGenerator):
                     new_inclusion=new_inclusion,
                     inclusion_pos=self.inclusion_positions.copy(),
                     dist_factor=self.dist_min_factor,
+                    min_dis_threshold=self.min_dis_threshold
                 )
                 if overlap_status == 0:
                     self.inclusion_positions = np.vstack(
@@ -447,6 +462,7 @@ class CircleParticles(MicrostructureGenerator):
                         dist_factor=self.dist_min_factor,
                         stage="step_two",
                         inclusion_index=ii,
+                        min_dis_threshold=self.min_dis_threshold,
                     )
                     # check: if the new inclusions(cause it maybe more than
                     # 1 inclusion centers) will overlap with the
@@ -819,6 +835,7 @@ class CircleParticles(MicrostructureGenerator):
         new_inclusion: np.ndarray,
         inclusion_pos: np.ndarray,
         dist_factor: float,
+        min_dis_threshold: float,
         inclusion_index: int = 0,
         stage: str = "step_one",
     ) -> int:
@@ -848,9 +865,9 @@ class CircleParticles(MicrostructureGenerator):
         inclusion_pos = inclusion_pos.copy()
 
         if stage == "step_one":
-            min_dis_threshold = dist_factor * (
-                new_inclusion[0, 2] + inclusion_pos[:, 2]
-            ).reshape((-1, 1))
+            # min_dis_threshold = dist_factor * (
+            #     new_inclusion[0, 2] + inclusion_pos[:, 2]
+            # ).reshape((-1, 1))
             points_dis_temp = distance_matrix(
                 inclusion_pos[:, 0:2], new_inclusion[:, 0:2]
             )
@@ -859,9 +876,9 @@ class CircleParticles(MicrostructureGenerator):
 
         elif stage == "step_two":
             # calculate the minimum distance threshold
-            min_dis_threshold = dist_factor * (
-                new_inclusion[0, 2] + inclusion_pos[:, 2]
-            ).reshape((-1, 1))
+            # min_dis_threshold = dist_factor * (
+            #     new_inclusion[0, 2] + inclusion_pos[:, 2]
+            # ).reshape((-1, 1))
             points_dis_temp = distance_matrix(
                 inclusion_pos[:, 0:2], new_inclusion[:, 0:2]
             )
