@@ -23,8 +23,8 @@ def run_simulation(design: Design, config):
 
     # get the design paramters of this row
     displacement_gradient = [[design['dU11'], design['dU12']], [design['dU21'], design['dU22']]]
-    vol_req = [[design['vol_req']]]
-    seed = [[design['seed']]]
+    vol_req = design['vol_req']
+    seed = int(design['seed'])
                
 
     task = HyperelasticRVE()
@@ -35,12 +35,12 @@ def run_simulation(design: Design, config):
                          params_inclusion=[2.645e02, 1.745e-3],
                          mesh_division=300,
                          platform='cluster',
-                         num_cpu=12)
+                         vol_req=vol_req,
+                         num_cpu=12,
+                         seed=seed)
     
     try:
-        task.run_simulation(sample={'displacement_gradient': displacement_gradient,
-                                    'vol_req': vol_req,
-                                    'seed': seed},
+        task.run_simulation(sample={'displacement_gradient': displacement_gradient},
                             folder_index=design.job_number)
 
         # save status
