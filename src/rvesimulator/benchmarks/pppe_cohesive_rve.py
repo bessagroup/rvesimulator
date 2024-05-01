@@ -100,6 +100,7 @@ class PPPEMixtureCohesive(SimulationBase):
         young_modulus_cohesive: float = 1.0e5,
         power_law_exponent_cohesive: float = 1.0,
         radius_cohesive_factor: float = 1.02,
+        damage_onset_criteria: str = "MaxStress",
     ) -> None:
         """update simulation information
 
@@ -150,6 +151,7 @@ class PPPEMixtureCohesive(SimulationBase):
         self.paras_pp = paras_pp
         self.paras_pe = paras_pe
         # cohesive elements information
+        self.damage_onset_criteria = damage_onset_criteria
         self.damage_stress = damage_stress
         self.damage_energy = damage_energy
         self.young_modulus_cohesive = young_modulus_cohesive
@@ -190,6 +192,7 @@ class PPPEMixtureCohesive(SimulationBase):
         self.logger.info(("young_modulus_cohesive: {}".format(young_modulus_cohesive)))
         self.logger.info(("power_law_exponent_cohesive: {}".format(power_law_exponent_cohesive)))
         self.logger.info(("radius_cohesive_factor: {}".format(radius_cohesive_factor)))
+        self.logger.info("damage onset criteria: {}".format(damage_onset_criteria))
 
         self.sim_params = {
             "size": size,
@@ -209,7 +212,8 @@ class PPPEMixtureCohesive(SimulationBase):
             "record_time_step": record_time_step,
              "young_modulus_cohesive": young_modulus_cohesive,
              "power_law_exponent_cohesive": power_law_exponent_cohesive,
-             "radius_cohesive_factor": radius_cohesive_factor,}
+             "radius_cohesive_factor": radius_cohesive_factor,
+             "damage_onset_criteria": damage_onset_criteria,}
 
         # print simulation information to screen
         if print_info:
@@ -243,6 +247,7 @@ class PPPEMixtureCohesive(SimulationBase):
             "young_modulus_cohesive": self.young_modulus_cohesive,
             "power_law_exponent_cohesive": self.power_law_exponent_cohesive,
             "radius_cohesive_factor": self.radius_cohesive_factor,
+            "damage_onset_criteria": self.damage_onset_criteria,
         }
 
     def run_simulation(

@@ -42,6 +42,7 @@ class PPPEMixtureCohesive:
                                  "young_modulus_cohesive": None,
                                  "num_cpu": 1,
                                  "radius_cohesive_factor": 1.02,
+                                 "damage_onset_criteria": "MaxStress",
                                  "subroutine_path": None}):
         # ------------------------------ parameters ------------------------- #
         # names of model, part, instance
@@ -85,6 +86,7 @@ class PPPEMixtureCohesive:
         self.subroutine_path = str(sim_info["subroutine_path"])
 
         # damage parameters
+        self.damage_onset_criteria = sim_info["damage_onset_criteria"]
         self.damage_stress = sim_info["damage_stress"]
         self.damage_energy = sim_info["damage_energy"]
         self.young_modulus_cohesive = sim_info["young_modulus_cohesive"]
@@ -435,14 +437,27 @@ class PPPEMixtureCohesive:
         material_cohesive.Density(table=((7.9e-9, ), ))
         material_cohesive.Elastic(type=TRACTION, table=((
             self.young_modulus_cohesive, self.young_modulus_cohesive, 0.0), ))
-        material_cohesive.MaxsDamageInitiation(table=((
-            self.damage_stress, self.damage_stress, 0.0), ))
-        material_cohesive.maxsDamageInitiation.DamageEvolution(
-            type=ENERGY, mixedModeBehavior=POWER_LAW, power=self.power, table=((self.damage_energy, self.damage_energy,
-                                                                                0.0), ))
-        material_cohesive.maxsDamageInitiation.DamageStabilizationCohesive(
-            cohesiveCoeff=0.000001)
+        if self.damage_onset_criteria == "MaxStress":
+            material_cohesive.MaxsDamageInitiation(table=((
+                self.damage_stress, self.damage_stress, 0.0), ))
+            material_cohesive.maxsDamageInitiation.DamageEvolution(
+            type=ENERGY, mixedModeBehavior=POWER_LAW,
+            power=self.power,
+            table=((self.damage_energy, self.damage_energy,0.0), ))
+            material_cohesive.maxsDamageInitiation.DamageStabilizationCohesive(
+                cohesiveCoeff=0.000001)
+            
+        elif self.damage_onset_criteria == "QuadStress":
+            material_cohesive.QuadsDamageInitiation(table=((
+                self.damage_stress, self.damage_stress, 0.0), ))
 
+            material_cohesive.quadsDamageInitiation.DamageEvolution(
+            type=ENERGY, mixedModeBehavior=POWER_LAW,
+            power=self.power,
+            table=((self.damage_energy, self.damage_energy,0.0), ))
+            material_cohesive.quadsDamageInitiation.DamageStabilizationCohesive(
+                cohesiveCoeff=0.000001)
+            
         # create section and assign material property to corresponding section
         # matrix material
         model.HomogeneousSolidSection(
