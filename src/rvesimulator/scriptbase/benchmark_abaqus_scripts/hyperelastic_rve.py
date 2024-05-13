@@ -256,10 +256,10 @@ class HyperelasticRVE(object):
         # meshing ---------------------------------------------------------------------
         part.seedPart(deviationFactor=0.05,  minSizeFactor=0.05,size=self.mesh_size)
         # element type (plane strain element)
-        elemType1 = mesh.ElemType(elemCode=CPE4R, elemLibrary=STANDARD,
+        elemType1 = mesh.ElemType(elemCode=CPE8H, elemLibrary=STANDARD,
                                 secondOrderAccuracy=OFF, hourglassControl=ENHANCED,
                                 distortionControl=DEFAULT)
-        elemType2 = mesh.ElemType(elemCode=CPE3, elemLibrary=STANDARD)
+        elemType2 = mesh.ElemType(elemCode=CPE6H, elemLibrary=STANDARD)
         part.setElementType(
             regions=part.sets["inclusionface"], elemTypes=(elemType1, elemType2))
         part.setElementType(
@@ -459,10 +459,10 @@ class HyperelasticRVE(object):
         # steps (static-step, implicit solver) 
         model.StaticStep(name="Step-1", previous="Initial")
         step = model.StaticStep(
-                    initialInc=0.01,
-                    maxInc=1.0,
+                    initialInc=1e-2,
+                    maxInc=1e-2,
                     maxNumInc=100000,
-                    minInc=1e-20,
+                    minInc=1e-8,
                     name="Step-1",
                     previous="Initial",
                     timePeriod=self.simulation_time,
