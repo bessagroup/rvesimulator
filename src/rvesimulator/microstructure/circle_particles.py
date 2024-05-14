@@ -59,7 +59,7 @@ class CircleParticles(MicrostructureGenerator):
         num_guess_max: int = 1000000,
         num_inclusion_max: int = 750,
         num_cycle_max: int = 15,
-        dist_min_factor: float = 1.0,
+        dist_min_factor: float = 1.1,
         stirring_iters: int = 100,
         print_log: bool = False,
         vol_frac_tol: float = 0.001,
@@ -108,7 +108,7 @@ class CircleParticles(MicrostructureGenerator):
         # adjust the radius_mu for achieving the required volume fraction, only when the radius_std is zero:
         if self.radius_std == 0:
             num_particles = np.round(vol_req*length*width/(np.pi*radius_mu**2))
-            self.min_dis_threshold = max(np.sqrt(length*width/num_particles) - radius_mu, 2*radius_mu)
+            self.min_dis_threshold = max(np.sqrt(length*width/num_particles) - 0.5*radius_mu, 2*radius_mu)
             current_vfrac = num_particles*np.pi*radius_mu**2/(length*width)
             if abs(current_vfrac-vol_req) > vol_frac_tol:
                 radius_mu = np.sqrt(vol_req * length * width / (num_particles * np.pi))
@@ -253,10 +253,10 @@ class CircleParticles(MicrostructureGenerator):
         # generate the location of the first inclusion
         # the first inclusion is generated with one partition
         inclusion_temp = self.generate_random_inclusions(
-            len_start=self.radius_mu,
-            len_end=self.length - self.radius_mu,
-            wid_start=self.radius_mu,
-            wid_end=self.width - self.radius_mu,
+            len_start=self.radius_mu + self.distance_tol,
+            len_end=self.length - self.radius_mu - self.distance_tol,
+            wid_start=self.radius_mu + self.distance_tol,
+            wid_end=self.width - self.radius_mu - self.distance_tol,
             radius_mu=self.radius_mu,
             radius_std=0,
             rng=self.rng,
@@ -324,7 +324,7 @@ class CircleParticles(MicrostructureGenerator):
                             width=self.width,
                         )
                     self.logger.info("generate inclusion, vertex check pass")
-                elif new_inclusion[0, 3] == 2:
+                elif new_inclusion[0, 3] == 2 or new_inclusion[0, 3] == 1:
                     self.logger.info("generate inclusion, edge check ...")
                     # if the temp inclusion locates at un-proper location for mesh
                     while self.proper_edge_mesh_location(new_inclusion) == "fail":
@@ -483,6 +483,8 @@ class CircleParticles(MicrostructureGenerator):
                     del new_inclusion, new_inclusion_temp
             # end of one cycle
             self.num_cycle = self.num_cycle + 1
+            if self.num_cycle == self.num_cycles_max:
+                self.logger.error("The algorithm reached the maximum cycle number")
 
     def _update_inclusion_position(self, new_inclusion: np.ndarray, iter: int) -> int:
         """update the inclusion position
