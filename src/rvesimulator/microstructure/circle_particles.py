@@ -253,10 +253,10 @@ class CircleParticles(MicrostructureGenerator):
         # generate the location of the first inclusion
         # the first inclusion is generated with one partition
         inclusion_temp = self.generate_random_inclusions(
-            len_start=self.radius_mu + self.distance_tol,
-            len_end=self.length - self.radius_mu - self.distance_tol,
-            wid_start=self.radius_mu + self.distance_tol,
-            wid_end=self.width - self.radius_mu - self.distance_tol,
+            len_start=self.radius_mu + 2*self.distance_tol,
+            len_end=self.length - self.radius_mu - 2*self.distance_tol,
+            wid_start=self.radius_mu + 2*self.distance_tol,
+            wid_end=self.width - self.radius_mu - 2*self.distance_tol,
             radius_mu=self.radius_mu,
             radius_std=0,
             rng=self.rng,
@@ -614,7 +614,7 @@ class CircleParticles(MicrostructureGenerator):
         # for x edges
         dis_x = np.abs(np.array([inclusion[:, 0], self.width - inclusion[:, 0]]))
         # check minimum distance in the inside region
-        if dis_x.min() > radius + self.distance_tol:
+        if dis_x.min() > radius + 2*self.distance_tol:
             status_x = "pass"
         # check the minimum distance in the boundary region
         elif dis_x.min() < radius/2.0:
