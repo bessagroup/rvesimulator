@@ -77,7 +77,7 @@ def print_banner(message: str,
         + " "
         + sign * ((length - len(message) - 2) // 2)
     )
-    # print(sign * length)
+    print(sign * length)
 
 
 def make_new_script(

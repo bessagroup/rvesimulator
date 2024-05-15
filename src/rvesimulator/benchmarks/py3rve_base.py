@@ -6,7 +6,7 @@ Module for simulation base class
 # Standard
 import json
 import os
-from abc import ABC
+from abc import ABC, abstractmethod
 from typing import Any, Dict
 
 # local
@@ -32,6 +32,7 @@ class Py3RVEBase(ABC):
         self.sim_info = sim_info
         self.folder_info = folder_info
 
+    @abstractmethod
     def run_simulation(self) -> Any:
         """run simulation
 
@@ -42,6 +43,7 @@ class Py3RVEBase(ABC):
         """
         raise NotImplementedError("should be implemented in subclass")
 
+    @abstractmethod
     def update_sim_info(self) -> None:
         """update the required simulation information
 

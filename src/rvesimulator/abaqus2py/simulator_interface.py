@@ -12,23 +12,26 @@ __status__ = "Stable"
 #
 # =============================================================================
 
-
+from abc import ABC, abstractmethod
+from ..additions.utils import print_banner
 class Simulator:
     """Base class for a FEM simulator"""
 
+    @abstractmethod
     def pre_process(self,
                     py_script: str,
                     py_func: str) -> None:
         """Function that calls the FEM simulator the pre-processing"""
 
         raise NotImplementedError("should be implemented in subclass")
-
+    @abstractmethod
     def submit_job(self,
                    num_cpu: int) -> None:
         """Function that calls the FEM simulator to submit the job"""
 
         raise NotImplementedError("should be implemented in subclass")
 
+    @abstractmethod
     def post_process(self,
                      post_py_script: str,
                      post_py_func: str,
@@ -53,7 +56,7 @@ class Simulator:
                               post_py_func=post_py_func,
                               delete_odb=delete_odb)
         else:
-            print("running the simulation with three steps")
+            
             self.pre_process(py_script=py_script, py_func=py_func)
             self.submit_job(num_cpu=num_cpu)
             self.post_process(post_py_script=post_py_script,
@@ -62,21 +65,6 @@ class Simulator:
 
 
 class AssertInputs:
-    @classmethod
-    def is_inputs_proper_defined(
-        cls, folder_info: dict, sim_info: dict
-    ) -> None:
-        """ assert inputs are properly defined
-        """
-        cls.is_mwd_in_folder_info(folder_info=folder_info)
-        cls.is_script_path_in_folder_info(folder_info=folder_info)
-        cls.is_cwd_in_folder_info(folder_info=folder_info)
-        cls.is_sim_path_in_folder_info(folder_info=folder_info)
-        cls.is_sim_script_in_folder_info(folder_info=folder_info)
-        cls.is_post_path_in_folder_info(folder_info=folder_info)
-        cls.is_post_script_in_folder_info(folder_info=folder_info)
-        cls.is_job_name_in_sim_info(sim_info=sim_info)
-        cls.is_platform_in_sim_info(sim_info=sim_info)
 
     @classmethod
     def is_mwd_in_folder_info(cls, folder_info: dict) -> None:
@@ -104,31 +92,7 @@ class AssertInputs:
             "script_path" in folder_info.keys()
         ), "script_path should in folder_info dict"
 
-    @classmethod
-    def is_cwd_in_folder_info(cls, folder_info: dict) -> None:
-        """assert current_work_directory in folder_info dict
 
-        Parameters
-        ----------
-        folder_info : dict
-            dict that contains all folder information
-        """
-        assert (
-            "current_dir" in folder_info.keys()
-        ), "current_dir should in folder_info dict"
-
-    @classmethod
-    def is_sim_path_in_folder_info(cls, folder_info: dict) -> None:
-        """assert sim_path in folder_info dict
-
-        Parameters
-        ----------
-        folder_info : dict
-            dict that contains all folder information
-        """
-        assert (
-            "sim_path" in folder_info.keys()
-        ), "sim_path should in folder_info dict"
 
     @classmethod
     def is_sim_script_in_folder_info(cls, folder_info: dict) -> None:
@@ -142,19 +106,6 @@ class AssertInputs:
         assert (
             "sim_script" in folder_info.keys()
         ), "sim_script should in folder_info dict"
-
-    @classmethod
-    def is_post_path_in_folder_info(cls, folder_info: dict) -> None:
-        """assert post_path in folder_info dict
-
-        Parameters
-        ----------
-        folder_info : dict
-            dict that contains all folder information
-        """
-        assert (
-            "post_path" in folder_info.keys()
-        ), "post_path should in folder_info dict"
 
     @classmethod
     def is_post_script_in_folder_info(cls, folder_info: dict) -> None:
@@ -182,15 +133,3 @@ class AssertInputs:
             "job_name" in sim_info.keys()
         ), "job_name should in folder_info dict"
 
-    @classmethod
-    def is_platform_in_sim_info(cls, sim_info: dict) -> None:
-        """assert platform in the folder dict
-
-        Parameters
-        ----------
-        sim_info : dict
-            dict that contains all folder information
-        """
-        assert (
-            "platform" in sim_info.keys()
-        ), "platform should in folder_info dict"

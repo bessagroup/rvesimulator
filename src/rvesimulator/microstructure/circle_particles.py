@@ -306,7 +306,7 @@ class CircleParticles(MicrostructureGenerator):
                             width=self.width,
                         )
                     # self.logger.info("generate fiber, vertex check pass")
-                elif new_fiber[0, 3] == 2:
+                elif new_fiber[0, 3] == 2 or new_fiber[0, 3] == 1:
                     # self.logger.info("generate fiber, edge check ...")
                     # if the temp fiber locates at un-proper location for mesh
                     while self.proper_edge_mesh_location(new_fiber) == "fail":
@@ -411,7 +411,7 @@ class CircleParticles(MicrostructureGenerator):
                                 "stirring vertex check failed")
                         # else:
                             # self.logger.info("stirring vertex check pass")
-                    elif new_fiber[0, 3] == 2:
+                    elif new_fiber[0, 3] == 2 or new_fiber[0, 3] == 1:
                         # self.logger.info("stirring fiber, edge check ...")
                         # check proper location for mesh
                         while self.proper_edge_mesh_location(
@@ -559,7 +559,7 @@ class CircleParticles(MicrostructureGenerator):
             fiber[:, 0:2],
         )
         min_points_dis = points_dis_temp.min()
-        if 0.95*fiber[0, 2] < min_points_dis < np.sqrt(2)*fiber[0, 2]:
+        if 0.0*fiber[0, 2] < min_points_dis < np.sqrt(2)*fiber[0, 2]:
             return "fail"
         else:
             return "pass"
@@ -581,16 +581,16 @@ class CircleParticles(MicrostructureGenerator):
         fiber = fiber.reshape((-1, 4))
         # for x edges
         dis_x = np.abs(np.array([fiber[:, 0], self.width - fiber[:, 0]]))
-        if 0.95*fiber[0, 2] < dis_x.min() < fiber[0, 2]:
+        if 0.80*fiber[0, 2] < dis_x.min() < fiber[0, 2]:
             return "fail"
-        elif fiber[0, 2] < dis_x.min() < 1.05*fiber[0, 2]:
+        elif fiber[0, 2] < dis_x.min() < 1.2*fiber[0, 2]:
             return "fail"
         # for y edges
         dis_y = np.abs(np.array([fiber[:, 1], self.length - fiber[:, 1]]))
-        if 0.95*fiber[0, 2] < dis_y.min() < fiber[0, 2]:
+        if 0.8*fiber[0, 2] < dis_y.min() < fiber[0, 2]:
             return "fail"
-        elif fiber[0, 2] < dis_y.min() < 1.05*fiber[0, 2]:
-            return 0
+        elif fiber[0, 2] < dis_y.min() < 1.2*fiber[0, 2]:
+            return "fail"
 
         return "pass"
 
@@ -987,7 +987,7 @@ class CircleParticles(MicrostructureGenerator):
         fiber_temp = fiber_temp.reshape((1, 3))
         ref_point = ref_point.reshape((1, 3))
         # generate the random factor for fiber stirring
-        delta = np.random.uniform(0, 1, 1)
+        delta = rng.uniform(0, 1, 1)
         dist_min = dist_factor * (fiber_temp[0, 2] + ref_point[0, 2])
         fiber_loc = fiber_temp[0, 0:2].reshape((1, 2)).copy()
         ref_loc = ref_point[0, 0:2].reshape((1, 2)).copy()
@@ -1078,7 +1078,7 @@ class CircleParticles(MicrostructureGenerator):
         y = rng.uniform(wid_start, wid_end, 1)
         r = rng.normal(radius_mu, radius_std, 1)
         # the radius is too small for mesh
-        while r <= 0.01*(len_end - len_start - 2*radius_mu):
+        while r <= 0.02*(len_end - len_start - 2*radius_mu):
             r = rng.normal(radius_mu, radius_std, 1)
         fiber = np.array([x, y, r])
         return fiber
