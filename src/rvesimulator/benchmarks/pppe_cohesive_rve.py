@@ -12,7 +12,7 @@ import rvesimulator
 
 from ..abaqus2py.abaqus_simulator import AbaqusSimulator
 from ..microstructure.circle_particles import CircleParticles
-from .shared_functionalities import SimulationBase
+from .py3rve_base import Py3RVEBase
 
 #                                                         Authorship & Credits
 # =============================================================================
@@ -25,7 +25,7 @@ __status__ = "Stable"
 # =============================================================================
 
 
-class PPPEMixtureCohesive(SimulationBase):
+class PPPEMixtureCohesive(Py3RVEBase):
     """uni-axial tension for pp/pe Mixture/composite without cohesive elements
     in between fiber and matrix material phases"""
 
@@ -189,10 +189,14 @@ class PPPEMixtureCohesive(SimulationBase):
         self.logger.info("num_cpu: {}".format(num_cpu))
         self.logger.info("platform: {}".format(platform))
         self.logger.info("record_time_step: {}".format(record_time_step))
-        self.logger.info(("young_modulus_cohesive: {}".format(young_modulus_cohesive)))
-        self.logger.info(("power_law_exponent_cohesive: {}".format(power_law_exponent_cohesive)))
-        self.logger.info(("radius_cohesive_factor: {}".format(radius_cohesive_factor)))
-        self.logger.info("damage onset criteria: {}".format(damage_onset_criteria))
+        self.logger.info(
+            ("young_modulus_cohesive: {}".format(young_modulus_cohesive)))
+        self.logger.info(
+            ("power_law_exponent_cohesive: {}".format(power_law_exponent_cohesive)))
+        self.logger.info(
+            ("radius_cohesive_factor: {}".format(radius_cohesive_factor)))
+        self.logger.info(
+            "damage onset criteria: {}".format(damage_onset_criteria))
 
         self.sim_params = {
             "size": size,
@@ -210,10 +214,10 @@ class PPPEMixtureCohesive(SimulationBase):
             "num_cpu": num_cpu,
             "platform": platform,
             "record_time_step": record_time_step,
-             "young_modulus_cohesive": young_modulus_cohesive,
-             "power_law_exponent_cohesive": power_law_exponent_cohesive,
-             "radius_cohesive_factor": radius_cohesive_factor,
-             "damage_onset_criteria": damage_onset_criteria,}
+            "young_modulus_cohesive": young_modulus_cohesive,
+            "power_law_exponent_cohesive": power_law_exponent_cohesive,
+            "radius_cohesive_factor": radius_cohesive_factor,
+            "damage_onset_criteria": damage_onset_criteria, }
 
         # print simulation information to screen
         if print_info:

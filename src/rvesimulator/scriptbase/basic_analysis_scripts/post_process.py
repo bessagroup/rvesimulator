@@ -27,8 +27,8 @@ __status__ = "Stable"
 
 class PostProcess2D(object):
 
-    def __init__(self, job_name):
-        self.job_name = job_name
+    def __init__(self, dict={"job_name": "job_name"}):
+        self.job_name = str(dict["job_name"])
         self._rve_results()
 
     def _rve_results(self):

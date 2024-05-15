@@ -12,7 +12,7 @@ import rvesimulator
 
 from ..abaqus2py.abaqus_simulator import AbaqusSimulator
 from ..microstructure.circle_particles import CircleParticles
-from .shared_functionalities import SimulationBase
+from .py3rve_base import Py3RVEBase
 
 #                                                         Authorship & Credits
 # =============================================================================
@@ -25,7 +25,7 @@ __status__ = "Stable"
 # =============================================================================
 
 
-class PPPEMixtureNoCohesive(SimulationBase):
+class PPPEMixtureNoCohesive(Py3RVEBase):
     """uni-axial tension for pp/pe Mixture/composite without cohesive elements
     in between fiber and matrix material phases"""
 

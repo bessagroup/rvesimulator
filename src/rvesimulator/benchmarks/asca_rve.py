@@ -7,6 +7,7 @@ Class for ASCA RVE case
 import logging
 import os
 import time
+from pathlib import Path
 from typing import Any
 
 # local
@@ -15,7 +16,7 @@ from rvesimulator.abaqus2py.abaqus_simulator import AbaqusSimulator
 from rvesimulator.additions.hardening_law import LinearHardeningLaw
 from rvesimulator.microstructure.circle_particles import CircleParticles
 
-from .shared_functionalities import SimulationBase
+from .py3rve_base import Py3RVEBase
 
 #                                                          Authorship & Credits
 # =============================================================================
@@ -24,7 +25,8 @@ __credits__ = ["Jiaxiang Yi"]
 __status__ = "Stable"
 # =============================================================================
 
-class ASCA_RVE(SimulationBase):
+
+class ASCA_RVE(Py3RVEBase):
     """Interface between python and abaqus of the ASCA RVE case
 
     Parameters
@@ -32,24 +34,24 @@ class ASCA_RVE(SimulationBase):
     SimulationBase : class
         base class for simulation
     """
+
     def __init__(self) -> None:
         """Interface between python and abaqus of the ASCA case"""
 
         logging.basicConfig(level=logging.INFO, filename="asca_rve.log")
         self.logger = logging.getLogger("abaqus_simulation")
 
-        self.main_folder = os.getcwd()
+        self.main_folder = Path.cwd()
         self.folder_info = {
-            "main_work_directory": os.path.join(os.getcwd(), "Data"),
-            "script_path": os.path.dirname(rvesimulator.__file__) + \
-                "/scriptbase",
-            "current_work_directory": "point_1",
-            "sim_path": "benchmark_abaqus_scripts.two_materials_rve",
-            "sim_script": "VonMisesPlasticElasticRegularLoads",
-            "post_path": "basic_analysis_scripts.post_process",
-            "post_script": "PostProcess2D",
+            "main_dir": Path(self.main_folder, str("Data")),
+            "script_path": Path(rvesimulator.__file__).parent.as_posix() +
+            "/scriptbase",
+            "current_dir": "point_1",
+            "sim_script": "benchmark_abaqus_scripts.two_materials_rve",
+            "sim_func": "VonMisesPlasticElasticRegularLoads",
+            "post_script": "basic_analysis_scripts.post_process",
+            "post_func": "PostProcess2D",
         }
-
 
     def update_sim_info(
         self,
@@ -66,7 +68,6 @@ class ASCA_RVE(SimulationBase):
         num_steps: int = 100,
         simulation_time: float = 1.0,
         num_cpu: int = 1,
-        platform: str = "ubuntu",
         hardening_law: Any = LinearHardeningLaw(),
         seed: Any = None,
         print_info: bool = False,
@@ -125,7 +126,6 @@ class ASCA_RVE(SimulationBase):
         self.num_steps = num_steps
         self.simulation_time = simulation_time
         self.num_cpu = num_cpu
-        self.platform = platform
         self.hardening_law = hardening_law
         self.seed = seed
         # get hardening law
@@ -145,8 +145,7 @@ class ASCA_RVE(SimulationBase):
             "strain": strain,
             "num_steps": num_steps,
             "simulation_time": simulation_time,
-            "num_cpu": num_cpu,
-            "platform": platform, }
+            "num_cpu": num_cpu, }
 
         # print simulation information to screen
         if print_info:
@@ -176,15 +175,13 @@ class ASCA_RVE(SimulationBase):
             "simulation_time": self.simulation_time,
             "strain": self.strain,
             "num_cpu": self.num_cpu,
-            "platform": self.platform,
         }
 
     def run_simulation(
         self,
         sample: dict = None,
-        folder_index: int = None,
-        sub_folder_index: int = None,
-        third_folder_index: int = None,
+        folder_index: int = 0,
+        delete_odb: bool = False,
     ) -> dict:
         """run single simulation
 
@@ -205,12 +202,8 @@ class ASCA_RVE(SimulationBase):
             all the simulation results from abaqus
         """
         # number of samples
-        self._create_working_folder(
-            folder_index,
-            sub_folder_index,
-            third_folder_index,
-        )
-        os.chdir(self.working_folder)
+        self._create_working_folder(folder_index)
+
         self.logger.info("working folder: {}".format(self.working_folder))
         # create microstructure
         self.microstructure = CircleParticles(
@@ -243,7 +236,11 @@ class ASCA_RVE(SimulationBase):
             sim_info=self.sim_info, folder_info=self.folder_info
         )
         # run abaqus simulation
-        simulator.run()
+        simulator.run(py_func=self.folder_info["sim_func"],
+                      py_script=self.folder_info["sim_script"],
+                      post_py_func=self.folder_info["post_func"],
+                      post_py_script=self.folder_info["post_script"],
+                      delete_odb=delete_odb)
         # get the simulation results back
         results = simulator.read_back_results()
         end_time = time.time()

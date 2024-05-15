@@ -6,7 +6,8 @@ and path loading"""
 import logging
 import os
 import time
-from typing import Any
+from pathlib import Path, PurePath
+from typing import Any, Dict
 
 # third-party
 import numpy as np
@@ -16,8 +17,8 @@ import rvesimulator
 from rvesimulator.abaqus2py.abaqus_simulator import AbaqusSimulator
 from rvesimulator.additions.hardening_law import LinearHardeningLaw
 
-from .shared_functionalities import SimulationBase
-from .utils import rve_microstructure_plot
+from ..additions.utils import rve_microstructure_plot
+from .py3rve_base import Py3RVEBase
 
 #                                                          Authorship & Credits
 # =============================================================================
@@ -30,7 +31,7 @@ __status__ = "Stable"
 # =============================================================================
 
 
-class HollowPlateBase(SimulationBase):
+class HollowPlateBase(Py3RVEBase):
 
     def _get_sim_info(self) -> None:
         """get simulation info
@@ -39,11 +40,10 @@ class HollowPlateBase(SimulationBase):
 
     def run_simulation(
         self,
-        sample: dict = None,
-        folder_index: int = None,
-        sub_folder_index: int = None,
-        third_folder_index: int = None,
-    ) -> dict:
+        sample: Dict = None,
+        folder_index: int = 0,
+        delete_odb: bool = True,
+    ) -> Dict:
         """run single simulation
 
         Parameters
@@ -63,12 +63,9 @@ class HollowPlateBase(SimulationBase):
             all the simulation results from abaqus
         """
         # number of samples
-        self._create_working_folder(
-            folder_index,
-            sub_folder_index,
-            third_folder_index,
-        )
-        os.chdir(self.working_folder)
+        self._create_working_folder(folder_index)
+
+        # log the working folder
         self.logger.info("working folder: {}".format(self.working_folder))
 
         # update simulation information
@@ -92,8 +89,12 @@ class HollowPlateBase(SimulationBase):
         simulator = AbaqusSimulator(
             sim_info=self.sim_info, folder_info=self.folder_info
         )
-        # run abaqus simulation
-        simulator.run()
+        # run abaqus simulation (in one goal, without submit inp separately)
+        simulator.run(py_func=self.folder_info["sim_func"],
+                      py_script=self.folder_info["sim_script"],
+                      post_py_func=self.folder_info["post_func"],
+                      post_py_script=self.folder_info["post_script"],
+                      delete_odb=delete_odb)
         # get the simulation results back
         results = simulator.read_back_results()
         end_time = time.time()
@@ -105,22 +106,23 @@ class HollowPlateBase(SimulationBase):
 
         return results
 
+
 class ElasticRegularLoads(HollowPlateBase):
     def __init__(self) -> None:
         """Interface between python and abaqus of the Hollow plate case"""
         logging.basicConfig(level=logging.INFO,
                             filename="hollow_plate_simulation.log",)
         self.logger = logging.getLogger("abaqus_simulation")
-        self.main_folder = os.getcwd()
+        self.main_folder = Path.cwd()
         self.folder_info = {
-            "main_work_directory": os.path.join(self.main_folder, "Data"),
-            "script_path": os.path.dirname(rvesimulator.__file__) + \
-                "/scriptbase",
-            "current_work_directory": "point_1",
-            "sim_path": "benchmark_abaqus_scripts.hollow_plate_sve",
-            "sim_script": "ElasticRegularLoads",
-            "post_path": "basic_analysis_scripts.post_process",
-            "post_script": "PostProcess2D",
+            "main_dir": Path(self.main_folder, str("Data")),
+            "script_path": Path(rvesimulator.__file__).parent.as_posix() +
+            "/scriptbase",
+            "current_dir": "point_1",
+            "sim_script": "benchmark_abaqus_scripts.hollow_plate_sve",
+            "sim_func": "ElasticRegularLoads",
+            "post_script": "basic_analysis_scripts.post_process",
+            "post_func": "PostProcess2D",
         }
 
     def update_sim_info(
@@ -132,7 +134,6 @@ class ElasticRegularLoads(HollowPlateBase):
         mesh_partition: int = 30,
         strain: list = [0.1, 0.0, 0.0],
         num_cpu: int = 1,
-        platform: str = "ubuntu",
         print_info: bool = False,
     ) -> None:
         """update simulation information
@@ -166,7 +167,6 @@ class ElasticRegularLoads(HollowPlateBase):
         self.mesh_partition = mesh_partition
         self.strain = strain
         self.num_cpu = num_cpu
-        self.platform = platform
 
         # update simulation information to logger
         self.logger.info("============== Simulation information ============")
@@ -177,7 +177,6 @@ class ElasticRegularLoads(HollowPlateBase):
         self.logger.info("mesh_partition: {}".format(self.mesh_partition))
         self.logger.info("strain: {}".format(self.strain))
         self.logger.info("num_cpu: {}".format(self.num_cpu))
-        self.logger.info("platform: {}".format(self.platform))
 
         # have the simulation paras
         self.sim_paras = {
@@ -189,7 +188,6 @@ class ElasticRegularLoads(HollowPlateBase):
             "mesh_partition": mesh_partition,
             "strain": strain,
             "num_cpu": num_cpu,
-            "platform": platform,
         }
 
         # print simulation information to screen
@@ -208,14 +206,14 @@ class VonMisesPlasticRegularLoads(HollowPlateBase):
         self.logger = logging.getLogger("abaqus_simulation")
         self.main_folder = os.getcwd()
         self.folder_info = {
-            "main_work_directory": os.path.join(os.getcwd(), "Data"),
-            "script_path": os.path.dirname(rvesimulator.__file__) + \
-                "/scriptbase",
-            "current_work_directory": "point_1",
-            "sim_path": "benchmark_abaqus_scripts.hollow_plate_sve",
-            "sim_script": "VonMisesPlasticRegularLoads",
-            "post_path": "basic_analysis_scripts.post_process",
-            "post_script": "PostProcess2D",
+            "main_dir": Path(self.main_folder, str("Data")),
+            "script_path": Path(rvesimulator.__file__).parent.as_posix() +
+            "/scriptbase",
+            "current_dir": "point_1",
+            "sim_script": "benchmark_abaqus_scripts.hollow_plate_sve",
+            "sim_func": "VonMisesPlasticRegularLoads",
+            "post_script": "basic_analysis_scripts.post_process",
+            "post_func": "PostProcess2D",
         }
 
     def update_sim_info(
@@ -230,7 +228,6 @@ class VonMisesPlasticRegularLoads(HollowPlateBase):
         num_steps: int = 100,
         simulation_time: float = 1.0,
         num_cpu: int = 1,
-        platform: str = "ubuntu",
         print_info: bool = False,
     ) -> None:
         """update simulation information
@@ -273,7 +270,6 @@ class VonMisesPlasticRegularLoads(HollowPlateBase):
         self.num_steps = num_steps
         self.simulation_time = simulation_time
         self.num_cpu = num_cpu
-        self.platform = platform
 
         # get hardening table
         self.hardening_table = self.hardening_law.calculate_hardening_table()
@@ -291,7 +287,6 @@ class VonMisesPlasticRegularLoads(HollowPlateBase):
         self.logger.info("num_steps: {}".format(num_steps))
         self.logger.info("simulation_time: {}".format(simulation_time))
         self.logger.info("num_cpu: {}".format(num_cpu))
-        self.logger.info("platform: {}".format(platform))
 
         # have the simulation paras
 
@@ -305,8 +300,7 @@ class VonMisesPlasticRegularLoads(HollowPlateBase):
                           "strain": strain,
                           "num_steps": num_steps,
                           "simulation_time": simulation_time,
-                          "num_cpu": num_cpu,
-                          "platform": platform, }
+                          "num_cpu": num_cpu, }
 
         # print simulation information to screen
         if print_info:
@@ -322,6 +316,7 @@ class VonMisesPlasticPathLoads(HollowPlateBase):
     HollowplateBase : class
         base class of hollow plate simulation case
     """
+
     def __init__(self) -> None:
         """Interface between python and abaqus of the Hollow plate case"""
         # define the logger
@@ -330,18 +325,17 @@ class VonMisesPlasticPathLoads(HollowPlateBase):
         self.logger = logging.getLogger("abaqus_simulation")
 
         # folder information
-        self.main_folder = os.getcwd()
+        self.main_folder = Path.cwd()
         self.folder_info = {
-            "main_work_directory": os.path.join(self.main_folder, "Data"),
-            "script_path": os.path.dirname(rvesimulator.__file__) + \
-                "/scriptbase",
-            "current_work_directory": "point_1",
-            "sim_path": "benchmark_abaqus_scripts.hollow_plate_sve",
-            "sim_script": "VonMisesPlasticPathLoads",
-            "post_path": "basic_analysis_scripts.post_process",
-            "post_script": "PostProcess2D",
+            "main_dir":  Path(self.main_folder, str("Data")),
+            "script_path": Path(rvesimulator.__file__).parent.as_posix() +
+            "/scriptbase",
+            "current_dir": "point_1",
+            "sim_script": "benchmark_abaqus_scripts.hollow_plate_sve",
+            "sim_func": "VonMisesPlasticPathLoads",
+            "post_script": "basic_analysis_scripts.post_process",
+            "post_func": "PostProcess2D",
         }
-
 
     def update_sim_info(
         self,
@@ -355,7 +349,6 @@ class VonMisesPlasticPathLoads(HollowPlateBase):
         num_steps: int = 100,
         simulation_time: float = 1.0,
         num_cpu: int = 1,
-        platform: str = "ubuntu",
         hardening_law: Any = LinearHardeningLaw(),
         print_info: bool = False,
     ) -> None:
@@ -383,8 +376,6 @@ class VonMisesPlasticPathLoads(HollowPlateBase):
             simulation time, by default 1.0
         num_cpu : int, optional
             number of cpu been used, by default 1
-        platform : str, optional
-            simulation platform, by default "ubuntu"
         hardening_law : Any, optional
             hardening law, by default LinearHardeningLaw()
         print_info : bool, optional
@@ -402,10 +393,8 @@ class VonMisesPlasticPathLoads(HollowPlateBase):
         self.num_steps = num_steps
         self.simulation_time = simulation_time
         self.num_cpu = num_cpu
-        self.platform = platform
         self.hardening_law = hardening_law
         self.hardening_table = self.hardening_law.calculate_hardening_table()
-
 
         # update simulation information to logger
         self.logger.info("============== Simulation information ============")
@@ -421,7 +410,6 @@ class VonMisesPlasticPathLoads(HollowPlateBase):
         self.logger.info("num_steps: {}".format(num_steps))
         self.logger.info("simulation_time: {}".format(simulation_time))
         self.logger.info("num_cpu: {}".format(num_cpu))
-        self.logger.info("platform: {}".format(platform))
 
         # have the simulation paras
         self.sim_paras = {"job_name": "hollow_plate",
@@ -435,8 +423,7 @@ class VonMisesPlasticPathLoads(HollowPlateBase):
                           "strain_amplitude": strain_amplitude,
                           "num_steps": num_steps,
                           "simulation_time": simulation_time,
-                          "num_cpu": num_cpu,
-                          "platform": platform, }
+                          "num_cpu": num_cpu}
 
         # print simulation information to screen
         if print_info:
