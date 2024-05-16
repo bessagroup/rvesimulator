@@ -34,7 +34,6 @@ class PPPEMixtureNoCohesive(object):
                                  "mesh_partition": None,
                                  "simulation_time": 100.0,
                                  "num_steps": None,
-                                 "platform": "ubuntu",
                                  "num_cpu": 1,
                                  "record_time_step": 5,
                                  "subroutine_path": None}):
@@ -44,7 +43,6 @@ class PPPEMixtureNoCohesive(object):
         self.part_name = "Final_Stuff"
         self.instance_name = "Final_Stuff"
         self.job_name = str(sim_info["job_name"])
-        self.platform = sim_info["platform"]
         self.num_cpu = sim_info["num_cpu"]
 
         # information of geometry of RVE
@@ -81,14 +79,16 @@ class PPPEMixtureNoCohesive(object):
 
         # record time step
         self.record_time_step = sim_info["record_time_step"]
-        # submit
+        # create the model
         self.create_simulation_job()
+        # create the job and write it into inp file
         self.create_job()
-        self.submit_job()
-        # post process
-        if sim_info["platform"] == "cluster" or sim_info["platform"] == "windows":
-            PostProcess(job_name=self.job_name,
-                        record_time_step=self.record_time_step)
+        #
+        # self.submit_job()
+        # # post process
+        # if sim_info["platform"] == "cluster" or sim_info["platform"] == "windows":
+        #     PostProcess(job_name=self.job_name,
+        #                 record_time_step=self.record_time_step)
 
     def create_simulation_job(self):
 
@@ -587,6 +587,8 @@ class PPPEMixtureNoCohesive(object):
                            modelPrint=OFF, contactPrint=OFF, historyPrint=OFF, userSubroutine=self.subroutine_path,
                            scratch='', resultsFormat=ODB, multiprocessingMode=DEFAULT, numCpus=self.num_cpu,
                            numDomains=self.num_cpu, numGPUs=0)
+        # write the job into inp file
+        self.job.writeInput(consistencyChecking=OFF)
 
     def data_check(self):
         """check if there is error in the model
@@ -595,28 +597,21 @@ class PPPEMixtureNoCohesive(object):
         self.job.waitForCompletion()
 
     def submit_job(self):
-        # submit the job
+        # submit the job (in the new version of rvesimulator,
+        # we will submit the inp file so that we can release the CAE license)
         self.job.submit(consistencyChecking=OFF)
         self.job.waitForCompletion()
 
 
 class PostProcess:
 
-    def __init__(self, job_name, record_time_step=5):
+    def __init__(self, dict):
         # job name
-        self.job_name = str(job_name)
+        self.job_name = str(dict["job_name"])
         # record time step (fir saving memory)
-        self.record_time_step = record_time_step
-        # post process
-        if job_name == "error":
-            results = {
-                "mesh": "error"
-            }
-            # Save the results to a pickle file
-            with open("results.pkl", "wb") as fp:
-                pickle.dump(results, fp)
-        else:
-            self.post_process()
+        self.record_time_step = dict["record_time_step"]
+        #  do post processing to extract the results
+        self.post_process()
 
     def post_process(self):
         # Define name of this .odb file

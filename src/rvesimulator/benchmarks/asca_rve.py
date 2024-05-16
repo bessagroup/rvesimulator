@@ -239,6 +239,7 @@ class ASCA_RVE(Py3RVEBase):
         simulator.run(py_func=self.folder_info["sim_func"],
                       py_script=self.folder_info["sim_script"],
                       post_py_func=self.folder_info["post_func"],
+                      num_cpu=self.num_cpu,
                       post_py_script=self.folder_info["post_script"],
                       delete_odb=delete_odb)
         # get the simulation results back

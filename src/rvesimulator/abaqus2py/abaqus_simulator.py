@@ -114,7 +114,10 @@ class AbaqusSimulator(Simulator, AssertInputs):
         print_banner("submit .inp to abaqus solver")
 
         file_name = self.job_name + ".inp"
-        command = f"abaqus job={file_name} cpus={num_cpu} interactive"
+        if "subroutine_path" not in self.sim_info.keys():
+            command = f"abaqus job={file_name} cpus={num_cpu}  -interactive"
+        else:
+            command = f"abaqus job={file_name} cpus={num_cpu} user={self.sim_info['subroutine_path']} -interactive"
         start_time = time.perf_counter()
         os.system(command)
         end_time = time.perf_counter()
@@ -131,7 +134,7 @@ class AbaqusSimulator(Simulator, AssertInputs):
         delete_odb : bool, optional
             delete odb file to save memory, by default True
         """
-        print_banner("start post processing")
+        print_banner("start post processing ")
         if post_py_func is not None and post_py_script is not None:
             # path with the python-script
             post_process_script = "getResults.py"
@@ -218,7 +221,8 @@ class AbaqusSimulator(Simulator, AssertInputs):
         odb_exist = Path(self.job_name + ".odb").exists()
 
         if inp_exist and odb_exist:
-            print(f"post process finished with  :{(end_time - start_time):2f} s")
+            print(
+                f"post process finished with  :{(end_time - start_time):2f} s")
         elif not odb_exist and inp_exist:
             print(
                 f"inp generation finished with  :{(end_time - start_time):2f} s")

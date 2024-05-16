@@ -5,7 +5,8 @@
 import logging
 import os
 import time
-from typing import Any
+from pathlib import Path
+from typing import Any, Dict
 
 # local
 import rvesimulator
@@ -34,19 +35,19 @@ class PPPEMixtureCohesive(Py3RVEBase):
         logging.basicConfig(level=logging.INFO,
                             filename='rve_simulation.log', filemode='w')
         self.logger = logging.getLogger("abaqus_simulation")
-        self.main_folder = os.getcwd()
+        self.main_folder = Path.cwd()
         self.folder_info = {
-            "main_work_directory": os.path.join(self.main_folder, "Data"),
-            "script_path": os.path.dirname(rvesimulator.__file__) +
-            "/scriptbase/",
-            "current_work_directory": "point_1",
-            "sim_path": "benchmark_abaqus_scripts.pppe_mixture_coh",
-            "sim_script": "PPPEMixtureCohesive",
-            "post_path": "benchmark_abaqus_scripts.pppe_mixture_coh",
-            "post_script": "PostProcess",
+            "main_dir": Path(self.main_folder, str("Data")),
+            "script_path":  Path(rvesimulator.__file__).parent.as_posix() +
+            "/scriptbase",
+            "current_dir": "point_1",
+            "sim_script": "benchmark_abaqus_scripts.pppe_mixture_coh",
+            "sim_func": "PPPEMixtureCohesive",
+            "post_script": "benchmark_abaqus_scripts.pppe_mixture_coh",
+            "post_func": "PostProcess",
         }
         self.subroutine_path = self.folder_info["script_path"] + \
-            "benchmark_abaqus_scripts/vevp_leonov_model.f"
+            "/benchmark_abaqus_scripts/vevp_leonov_model.f"
 
     def update_sim_info(
         self,
@@ -93,7 +94,6 @@ class PPPEMixtureCohesive(Py3RVEBase):
         damage_stress: float = 20.0,
         damage_energy: float = 0.5,
         num_cpu: int = 8,
-        platform: str = "ubuntu",
         seed: Any = None,
         print_info: bool = False,
         record_time_step: int = 100,
@@ -132,8 +132,6 @@ class PPPEMixtureCohesive(Py3RVEBase):
             damage energy for the cohesive elements, by default 0.5
         num_cpu : int, optional
             number of cpu, by default 8
-        platform : str, optional
-            platform, by default "ubuntu"
         seed : Any, optional
             seed, by default None
         print_info : bool, optional
@@ -165,7 +163,6 @@ class PPPEMixtureCohesive(Py3RVEBase):
         self.simulation_time = simulation_time
         # parallel information and platform
         self.num_cpu = num_cpu
-        self.platform = platform
         # get the micro_structure information
         self.seed = seed
 
@@ -187,7 +184,6 @@ class PPPEMixtureCohesive(Py3RVEBase):
         self.logger.info("num_steps: {}".format(num_steps))
         self.logger.info("simulation_time: {}".format(simulation_time))
         self.logger.info("num_cpu: {}".format(num_cpu))
-        self.logger.info("platform: {}".format(platform))
         self.logger.info("record_time_step: {}".format(record_time_step))
         self.logger.info(
             ("young_modulus_cohesive: {}".format(young_modulus_cohesive)))
@@ -212,7 +208,6 @@ class PPPEMixtureCohesive(Py3RVEBase):
             "num_steps": num_steps,
             "simulation_time": simulation_time,
             "num_cpu": num_cpu,
-            "platform": platform,
             "record_time_step": record_time_step,
             "young_modulus_cohesive": young_modulus_cohesive,
             "power_law_exponent_cohesive": power_law_exponent_cohesive,
@@ -245,7 +240,6 @@ class PPPEMixtureCohesive(Py3RVEBase):
             "simulation_time": self.simulation_time,
             "strain": self.strain,
             "num_cpu": self.num_cpu,
-            "platform": self.platform,
             "subroutine_path": self.subroutine_path,
             "record_time_step": self.record_time_step,
             "young_modulus_cohesive": self.young_modulus_cohesive,
@@ -256,24 +250,18 @@ class PPPEMixtureCohesive(Py3RVEBase):
 
     def run_simulation(
         self,
-        sample: dict = None,
+        sample: Dict = None,
         folder_index: int = None,
-        sub_folder_index: int = None,
-        third_folder_index: int = None,
         delete_odb: bool = True,
-    ) -> dict:
+    ) -> Dict:
         """run single simulation
 
         Parameters
         ----------
-        sample : dict, optional
+        sample : Dict, optional
             a dict contains the information of design variables
         folder_index : int, optional
             first folder index, by default None
-        sub_folder_index : int, optional
-            second folder index, by default None
-        third_folder_index : int, optional
-            third folder index, by default None
         delete_odb : bool, optional
             delete odb file or not, by default True
 
@@ -283,12 +271,8 @@ class PPPEMixtureCohesive(Py3RVEBase):
             all the simulation results from abaqus
         """
         # number of samples
-        self._create_working_folder(
-            folder_index,
-            sub_folder_index,
-            third_folder_index,
-        )
-        os.chdir(self.working_folder)
+        self._create_working_folder(folder_index, )
+
         self.logger.info("working folder: {}".format(self.working_folder))
         # create microstructure
         self.microstructure = CircleParticles(
@@ -319,18 +303,14 @@ class PPPEMixtureCohesive(Py3RVEBase):
             sim_info=self.sim_info, folder_info=self.folder_info
         )
         # run abaqus simulation
-        try:
-            simulator.execute()
-            simulator.post_process(delete_odb=delete_odb)
-            # get the simulation results back
-            results = simulator.read_back_results()
-            self.logger.info("simulation finished")
-        except FileNotFoundError:
-            # if the results file is not found, then we assume that there is an
-            # error occurs in the simulation, return None and continue the
-            # simulation
-            self.logger.info("simulation failed")
-            results = None
+        simulator.run(py_func=self.folder_info["sim_func"],
+                      py_script=self.folder_info["sim_script"],
+                      post_py_func=self.folder_info["post_func"],
+                      num_cpu=self.num_cpu,
+                      post_py_script=self.folder_info["post_script"],
+                      delete_odb=delete_odb)
+        # get the simulation results back
+        results = simulator.read_back_results()
         end_time = time.time()
         self.logger.info("time used: {} s".format(end_time - start_time))
         self.logger.info("============== End abaqus simulation ============")

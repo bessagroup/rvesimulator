@@ -94,6 +94,7 @@ class HollowPlateBase(Py3RVEBase):
                       py_script=self.folder_info["sim_script"],
                       post_py_func=self.folder_info["post_func"],
                       post_py_script=self.folder_info["post_script"],
+                      num_cpu=self.num_cpu,
                       delete_odb=delete_odb)
         # get the simulation results back
         results = simulator.read_back_results()
