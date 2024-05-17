@@ -244,14 +244,19 @@ class PPPEMixtureEmptyFiber(Py3RVEBase):
             sim_info=self.sim_info, folder_info=self.folder_info
         )
         # run abaqus simulation
-        simulator.run(py_func=self.folder_info["sim_func"],
-                      py_script=self.folder_info["sim_script"],
-                      post_py_func=self.folder_info["post_func"],
-                      num_cpu=self.num_cpu,
-                      post_py_script=self.folder_info["post_script"],
-                      delete_odb=delete_odb)
-        # get the simulation results back
-        results = simulator.read_back_results()
+        try:
+            simulator.run(py_func=self.folder_info["sim_func"],
+                          py_script=self.folder_info["sim_script"],
+                          post_py_func=self.folder_info["post_func"],
+                          num_cpu=self.num_cpu,
+                          post_py_script=self.folder_info["post_script"],
+                          delete_odb=delete_odb)
+            # get the simulation results back
+            results = simulator.read_back_results()
+            self.logger.info("Abaqus simulation finished")
+        except FileNotFoundError:
+            self.logger.error("Abaqus simulation failed")
+            results = None
         end_time = time.time()
         self.logger.info("time used: {} s".format(end_time - start_time))
         self.logger.info("============== End abaqus simulation ============")
