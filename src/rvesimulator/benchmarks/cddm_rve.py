@@ -71,6 +71,7 @@ class CDDM_RVE(Py3RVEBase):
         num_cpu: int = 1,
         hardening_law: Any = LinearHardeningLaw(),
         seed: Any = None,
+        mini_dist_factor: float = 1.3,
         print_info: bool = False,
     ) -> None:
         """path dependent rve for cddm
@@ -132,6 +133,7 @@ class CDDM_RVE(Py3RVEBase):
         self.num_cpu = num_cpu
         self.hardening_law = hardening_law
         self.seed = seed
+        self.mini_dist_factor = mini_dist_factor
         # get hardening law
         self.hardening_table = hardening_law.calculate_hardening_table()
 
@@ -149,7 +151,8 @@ class CDDM_RVE(Py3RVEBase):
             "strain": strain,
             "num_steps": num_steps,
             "simulation_time": simulation_time,
-            "num_cpu": num_cpu, }
+            "num_cpu": num_cpu,
+            "mini_dist_factor": mini_dist_factor, }
 
         # print simulation information to screen
         if print_info:
@@ -180,6 +183,7 @@ class CDDM_RVE(Py3RVEBase):
             "strain": self.strain,
             "strain_amplitude": self.strain_amplitude,
             "num_cpu": self.num_cpu,
+            "mini_dist_factor": self.mini_dist_factor,
         }
 
     def run_simulation(
@@ -219,7 +223,7 @@ class CDDM_RVE(Py3RVEBase):
             radius_mu=self.radius_mu,
             radius_std=self.radius_std,
             vol_req=self.vol_req,
-            dist_min_factor=1.2,
+            dist_min_factor=self.mini_dist_factor,
         )
         self.microstructure.generate_microstructure(seed=self.seed)
         self.microstructure.to_abaqus_format()
