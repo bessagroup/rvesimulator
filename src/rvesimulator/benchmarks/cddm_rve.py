@@ -219,6 +219,7 @@ class CDDM_RVE(Py3RVEBase):
             radius_mu=self.radius_mu,
             radius_std=self.radius_std,
             vol_req=self.vol_req,
+            dist_min_factor=1.2,
         )
         self.microstructure.generate_microstructure(seed=self.seed)
         self.microstructure.to_abaqus_format()
