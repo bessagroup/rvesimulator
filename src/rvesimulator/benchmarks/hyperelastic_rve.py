@@ -4,13 +4,14 @@
 import logging
 import os
 import time
+from pathlib import Path
 from typing import Any
 
 import rvesimulator
 
 from ..abaqus2py.abaqus_simulator import AbaqusSimulator
 from ..microstructure.circle_particles import CircleParticles
-from .shared_functionalities import SimulationBase
+from .py3rve_base import Py3RVEBase
 
 #                                                         Authorship & Credits
 # =============================================================================
@@ -22,7 +23,7 @@ __status__ = "In progress"
 # =============================================================================
 
 
-class HyperelasticRVE(SimulationBase):
+class HyperelasticRVE(Py3RVEBase):
     """uni-axial tension for pp/pe composite without cohesive elements in
     between inclusion and matrix material phases"""
 
@@ -31,17 +32,16 @@ class HyperelasticRVE(SimulationBase):
         logging.basicConfig(level=logging.INFO,
                             filename='rve_simulation.log', filemode='w')
         self.logger = logging.getLogger("abaqus_simulation")
-        self.main_folder = os.getcwd()
+        self.main_folder = Path.cwd()
         self.folder_info = {
-            "main_work_directory": os.path.join(self.main_folder,
-                                                "hyperelastic_data"),
-            "script_path": os.path.dirname(rvesimulator.__file__) + \
-                "/scriptbase/",
-            "current_work_directory": "point_1",
-            "sim_path": "benchmark_abaqus_scripts.hyperelastic_rve",
-            "sim_script": "HyperelasticRVE",
-            "post_path": "benchmark_abaqus_scripts.hyperelastic_rve",
-            "post_script": "PostProcess",
+            "main_dir": Path(self.main_folder, str("Data")),
+            "script_path":  Path(rvesimulator.__file__).parent.as_posix() +
+            "/scriptbase",
+            "current_dir": "point_1",
+            "sim_script": "benchmark_abaqus_scripts.hyperelastic_rve",
+            "sim_func": "HyperelasticRVE",
+            "post_script": "benchmark_abaqus_scripts.hyperelastic_rve",
+            "post_func": "PostProcess",
         }
 
     def update_sim_info(
@@ -61,7 +61,6 @@ class HyperelasticRVE(SimulationBase):
         part_name: str = "rve_2phase",
         instance_name: str = "rve_2phase",
         job_name: str = "hyperelastic_rve",
-        platform: str = "ubuntu",
         seed: Any = None,
         print_info: bool = False,
     ) -> None:
@@ -86,7 +85,6 @@ class HyperelasticRVE(SimulationBase):
         self.job_name = job_name
         # parallel information and platform
         self.num_cpu = num_cpu
-        self.platform = platform
         # get the micro_structure information
         self.seed = seed
 
@@ -104,7 +102,6 @@ class HyperelasticRVE(SimulationBase):
             "num_pseudo_time_steps: {}".format(num_pseudo_time_steps))
         self.logger.info("simulation_time: {}".format(simulation_time))
         self.logger.info("num_cpu: {}".format(num_cpu))
-        self.logger.info("platform: {}".format(platform))
 
         self.sim_paras = {
             "size": size,
@@ -117,8 +114,7 @@ class HyperelasticRVE(SimulationBase):
             "displacement_gradient": displacement_gradient,
             "num_pseudo_time_steps": num_pseudo_time_steps,
             "simulation_time": simulation_time,
-            "num_cpu": num_cpu,
-            "platform": platform, }
+            "num_cpu": num_cpu}
 
         # print simulation information to screen
         if print_info:
@@ -150,7 +146,6 @@ class HyperelasticRVE(SimulationBase):
             "mesh_division": self.mesh_division,
             "num_pseudo_time_steps": self.num_pseudo_time_steps,
             "simulation_time": self.simulation_time,
-            "platform": self.platform,
             "num_cpu": self.num_cpu
             }
 
@@ -158,8 +153,7 @@ class HyperelasticRVE(SimulationBase):
         self,
         sample: dict = None,
         folder_index: int = None,
-        sub_folder_index: int = None,
-        third_folder_index: int = None,
+        delete_odb: bool = True,
     ) -> dict:
         """run single simulation
 
@@ -169,10 +163,7 @@ class HyperelasticRVE(SimulationBase):
             a dict contains the information of design variables
         folder_index : int, optional
             first folder index, by default None
-        sub_folder_index : int, optional
-            second folder index, by default None
-        third_folder_index : int, optional
-            third folder index, by default None
+        delete_odb : bool, optional
 
         Returns
         -------
@@ -180,12 +171,8 @@ class HyperelasticRVE(SimulationBase):
             all the simulation results from abaqus
         """
         # number of samples
-        self._create_working_folder(
-            folder_index,
-            sub_folder_index,
-            third_folder_index,
-        )
-        os.chdir(self.working_folder)
+        self._create_working_folder(folder_index)
+
         self.logger.info("working folder: {}".format(self.working_folder))
         # create microstructure
         self.microstructure = CircleParticles(
@@ -215,10 +202,19 @@ class HyperelasticRVE(SimulationBase):
             sim_info=self.sim_info, folder_info=self.folder_info
         )
         # run abaqus simulation
-        simulator.execute()
-        simulator.post_process(delete_odb=True)
-        # get the simulation results back
-        results = simulator.read_back_results()
+        try:
+            simulator.run(py_func=self.folder_info["sim_func"],
+                          py_script=self.folder_info["sim_script"],
+                          post_py_func=self.folder_info["post_func"],
+                          num_cpu=self.num_cpu,
+                          post_py_script=self.folder_info["post_script"],
+                          delete_odb=delete_odb)
+            # get the simulation results back
+            results = simulator.read_back_results()
+            self.logger.info("abaqus simulation finished")
+        except FileNotFoundError:
+            self.logger.error("simulation failed")
+            results = None
         end_time = time.time()
         self.logger.info("time used: {} s".format(end_time - start_time))
         self.logger.info("============== End abaqus simulation ============")

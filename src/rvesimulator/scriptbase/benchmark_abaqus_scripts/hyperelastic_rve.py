@@ -37,7 +37,6 @@ class HyperelasticRVE(object):
                                  "mesh_division": None,
                                  "simulation_time": 1.0,
                                  "num_pseudo_time_steps": None,
-                                 "platform": "ubuntu",
                                  "num_cpu": 1}):
 
         # ----------------------------parameters----------------------------- #
@@ -48,7 +47,6 @@ class HyperelasticRVE(object):
         self.part_name = str(sim_info["part_name"])
         self.instance_name = str(sim_info["instance_name"])
         self.job_name = str(sim_info["job_name"])
-        self.platform = sim_info["platform"]
         self.num_cpu = sim_info["num_cpu"]
 
         # information for creating geometry of the RVE
@@ -86,11 +84,11 @@ class HyperelasticRVE(object):
         # submit # This is a strange way of implementing the code
         self.create_model()
         self.create_job()
-        self.submit_job()
+        # self.submit_job()
 
         # post process
-        if sim_info["platform"] == "cluster":
-            PostProcess(job_name = self.job_name)
+        # if sim_info["platform"] == "cluster":
+        #     PostProcess(job_name = self.job_name)
 
     def create_model(self):
         # get delta 
@@ -557,6 +555,8 @@ class HyperelasticRVE(object):
             scratch='', resultsFormat=ODB, multiprocessingMode=DEFAULT, numCpus=self.num_cpu,
             numDomains=self.num_cpu, numGPUs=0)
         
+        self.job.writeInput(consistencyChecking=OFF)
+        
     def data_check(self):
         """check if there is error in the model
         """
@@ -571,21 +571,13 @@ class HyperelasticRVE(object):
 
 class PostProcess:
 
-    def __init__(self, job_name):
+    def __init__(self, dict):
         # job name
-        self.job_name = str(job_name)
+        self.job_name = str(dict["job_name"])
         # record time step (fir saving memory)
-        self.record_time_step = 1
+        # self.record_time_step = dict["record_time_step"]
         # post process
-        if job_name == "error":
-            results = {
-                "mesh": "error"
-            }
-            # Save the results to a pickle file
-            with open("results.p", "wb") as fp:
-                pickle.dump(results, fp)
-        else: 
-            self.post_process()
+        self.post_process()
 
     def post_process(self):
         # Define name of this .odb file
