@@ -1,0 +1,26 @@
+# Author: Suryanarayanan M S
+# This config file is used to run the benchmarking experiments.
+# The config file is divided into 3 sections:
+# 1. Dataset creation parameters -> for sampling
+
+hydra:
+  job:
+    name: "hyperelastic_rve"
+    chdir: True
+  sweeper:
+    params:
+      resol_index: range(2)
+
+# defaults:
+#   - override /hydra/job_logging: custom
+# =============================================================================
+# Common settings
+hpc: # Needed by f3dasm for parallel jb submission in HPC
+  jobid: 0
+# =============================================================================
+# 1. Dataset creation parameters
+# =============================================================================
+dataset:
+  model: 'rve'
+  rerun: False
+  store_path_access: ${hydra:runtime.cwd}
