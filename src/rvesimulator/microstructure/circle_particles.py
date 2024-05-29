@@ -114,7 +114,10 @@ class CircleParticles(MicrostructureGenerator):
                 radius_mu = np.sqrt(vol_req * length * width / (num_particles * np.pi))
             self.radius_mu = radius_mu
         else:
+            num_particles = np.round(vol_req*length*width/(np.pi*radius_mu**2))
             self.min_dis_threshold = None
+            self.dist_min_factor = 1 + 2*0.01*(np.sqrt(length*width/num_particles) - 0.5*radius_mu)/(radius_mu*vol_req)
+            print(f"dist_min_factor: {self.dist_min_factor}")
 
 
 
