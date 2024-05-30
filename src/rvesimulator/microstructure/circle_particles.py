@@ -617,11 +617,14 @@ class CircleParticles(MicrostructureGenerator):
         # for x edges
         dis_x = np.abs(np.array([inclusion[:, 0], self.width - inclusion[:, 0]]))
         # check minimum distance in the inside region
-        if dis_x.min() > radius + self.distance_tol:
+        if dis_x.min() > radius + 2*self.distance_tol:
             status_x = "pass"
+
+        # making exception for the volume fraction larger than 0.4
+        # if self.vol_req > 0.4:
         # check the minimum distance in the boundary region
-        # elif dis_x.min() < radius/2.0:
-        #     status_x = "pass"
+            # if dis_x.min() < radius/2.0:
+            #     status_x = "pass"
 
         # if 0.95*inclusion[0, 2] < dis_x.min() < inclusion[0, 2]:
         #     return "fail"
@@ -632,11 +635,14 @@ class CircleParticles(MicrostructureGenerator):
         status_y = "fail"
         dis_y = np.abs(np.array([inclusion[:, 1], self.length - inclusion[:, 1]]))
         # check minimum distance in the inside region
-        if dis_y.min() > radius + self.distance_tol:
+        if dis_y.min() > radius + 2*self.distance_tol:
             status_y = "pass"
+
+        # making exception for the volume fraction larger than 0.4
+        # if self.vol_req > 0.4:
         # check the minimum distance in the boundary region
-        # elif dis_y.min() < radius/2.0:
-        #     status_y = "pass"
+            # if dis_y.min() < radius/2.0:
+            #     status_y = "pass"
 
         if status_x == "pass" and status_y == "pass":
             return "pass"
