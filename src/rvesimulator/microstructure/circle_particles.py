@@ -108,7 +108,7 @@ class CircleParticles(MicrostructureGenerator):
         # adjust the radius_mu for achieving the required volume fraction, only when the radius_std is zero:
         if self.radius_std == 0:
             num_particles = np.round(vol_req*length*width/(np.pi*radius_mu**2))
-            self.min_dis_threshold = max(np.sqrt(length*width/num_particles) - 0.5*radius_mu, 2*radius_mu)
+            self.min_dis_threshold = max(np.sqrt(length*width/num_particles) - radius_mu, 2*radius_mu)
             current_vfrac = num_particles*np.pi*radius_mu**2/(length*width)
             if abs(current_vfrac-vol_req) > vol_frac_tol:
                 radius_mu = np.sqrt(vol_req * length * width / (num_particles * np.pi))
@@ -617,11 +617,11 @@ class CircleParticles(MicrostructureGenerator):
         # for x edges
         dis_x = np.abs(np.array([inclusion[:, 0], self.width - inclusion[:, 0]]))
         # check minimum distance in the inside region
-        if dis_x.min() > radius + 2*self.distance_tol:
+        if dis_x.min() > radius + self.distance_tol:
             status_x = "pass"
         # check the minimum distance in the boundary region
-        elif dis_x.min() < radius/2.0:
-            status_x = "pass"
+        # elif dis_x.min() < radius/2.0:
+        #     status_x = "pass"
 
         # if 0.95*inclusion[0, 2] < dis_x.min() < inclusion[0, 2]:
         #     return "fail"
@@ -632,11 +632,11 @@ class CircleParticles(MicrostructureGenerator):
         status_y = "fail"
         dis_y = np.abs(np.array([inclusion[:, 1], self.length - inclusion[:, 1]]))
         # check minimum distance in the inside region
-        if dis_y.min() > radius + 2*self.distance_tol:
+        if dis_y.min() > radius + self.distance_tol:
             status_y = "pass"
         # check the minimum distance in the boundary region
-        elif dis_y.min() < radius/2.0:
-            status_y = "pass"
+        # elif dis_y.min() < radius/2.0:
+        #     status_y = "pass"
 
         if status_x == "pass" and status_y == "pass":
             return "pass"
