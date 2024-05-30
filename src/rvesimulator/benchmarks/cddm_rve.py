@@ -8,7 +8,7 @@ import logging
 import os
 import time
 from pathlib import Path
-from typing import Any
+from typing import Any, Dict
 
 # local
 import rvesimulator
@@ -188,10 +188,10 @@ class CDDM_RVE(Py3RVEBase):
 
     def run_simulation(
         self,
-        sample: dict = None,
+        sample: Dict = None,
         folder_index: int = None,
         delete_odb: bool = True,
-    ) -> dict:
+    ) -> Dict:
         """run single simulation
 
         Parameters
@@ -214,7 +214,6 @@ class CDDM_RVE(Py3RVEBase):
         self._create_working_folder(
             folder_index,
         )
-        os.chdir(self.working_folder)
         self.logger.info("working folder: {}".format(self.working_folder))
         # create microstructure
         self.microstructure = CircleParticles(
@@ -248,14 +247,18 @@ class CDDM_RVE(Py3RVEBase):
             sim_info=self.sim_info, folder_info=self.folder_info
         )
         # run abaqus simulation
-        simulator.run(py_func=self.folder_info["sim_func"],
-                      py_script=self.folder_info["sim_script"],
-                      post_py_func=self.folder_info["post_func"],
-                      post_py_script=self.folder_info["post_script"],
-                      num_cpu=self.num_cpu,
-                      delete_odb=delete_odb)
-        results = simulator.read_back_results()
-
+        try:
+            simulator.run(py_func=self.folder_info["sim_func"],
+                          py_script=self.folder_info["sim_script"],
+                          post_py_func=self.folder_info["post_func"],
+                          post_py_script=self.folder_info["post_script"],
+                          num_cpu=self.num_cpu,
+                          delete_odb=delete_odb)
+            results = simulator.read_back_results()
+            self.logger.info("simulation finished")
+        except FileExistsError:
+            self.logger.info("simulation failed")
+            results = None
         # get the simulation results back
         end_time = time.time()
         self.logger.info("time used: {} s".format(end_time - start_time))

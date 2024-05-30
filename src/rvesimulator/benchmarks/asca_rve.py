@@ -8,7 +8,7 @@ import logging
 import os
 import time
 from pathlib import Path
-from typing import Any
+from typing import Any, Dict
 
 # local
 import rvesimulator
@@ -179,10 +179,10 @@ class ASCA_RVE(Py3RVEBase):
 
     def run_simulation(
         self,
-        sample: dict = None,
+        sample: Dict = None,
         folder_index: int = 0,
         delete_odb: bool = False,
-    ) -> dict:
+    ) -> Dict:
         """run single simulation
 
         Parameters
@@ -191,14 +191,12 @@ class ASCA_RVE(Py3RVEBase):
             a dict contains the information of design variables
         folder_index : int, optional
             first folder index, by default None
-        sub_folder_index : int, optional
-            second folder index, by default None
-        third_folder_index : int, optional
-            third folder index, by default None
+        delete_odb : bool, optional
+            delete odb file or not, by default False
 
         Returns
         -------
-        dict
+        Dict
             all the simulation results from abaqus
         """
         # number of samples
@@ -236,14 +234,19 @@ class ASCA_RVE(Py3RVEBase):
             sim_info=self.sim_info, folder_info=self.folder_info
         )
         # run abaqus simulation
-        simulator.run(py_func=self.folder_info["sim_func"],
-                      py_script=self.folder_info["sim_script"],
-                      post_py_func=self.folder_info["post_func"],
-                      num_cpu=self.num_cpu,
-                      post_py_script=self.folder_info["post_script"],
-                      delete_odb=delete_odb)
-        # get the simulation results back
-        results = simulator.read_back_results()
+        try:
+            simulator.run(py_func=self.folder_info["sim_func"],
+                          py_script=self.folder_info["sim_script"],
+                          post_py_func=self.folder_info["post_func"],
+                          num_cpu=self.num_cpu,
+                          post_py_script=self.folder_info["post_script"],
+                          delete_odb=delete_odb)
+            # get the simulation results back
+            results = simulator.read_back_results()
+            self.logger.info("simulation finished")
+        except FileNotFoundError:
+            self.logger.error("simulation failed")
+            results = None
         end_time = time.time()
         self.logger.info("time used: {} s".format(end_time - start_time))
         self.logger.info("============== End abaqus simulation ============")
