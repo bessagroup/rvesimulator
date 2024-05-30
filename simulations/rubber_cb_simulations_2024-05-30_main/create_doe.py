@@ -96,4 +96,7 @@ if __name__ == '__main__':
                                     columns=['vol_req', 'seed', 'dU11', 'dU12', 'dU21', 'dU22']).round(4)
         full_input_dataframe = pd.concat([full_input_dataframe, input_dataframe], axis=0)
     
+    # reset index and keep it in the csv file
+    full_input_dataframe = full_input_dataframe.reset_index(drop=True)
+    
     full_input_dataframe.to_csv('doe_rubber_cb_all_vf.csv', index=True)
