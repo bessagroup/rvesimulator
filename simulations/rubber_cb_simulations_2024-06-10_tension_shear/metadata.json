@@ -1,0 +1,14 @@
+We have made changes to the element formulation and modified the min, max time step size to 1e-2 and 1e-8 respectively.
+We have made changes to the microstructure generator so that the geometric structure is now more sensible (avoids weird meshes), esp at the boundaries.
+Plus more spaced and uniform sized particles. The seed problems are fixed as well
+
+Intial increment possible to 1e-2  for the time stepping.
+The pseudo time step is set to 20 points
+
+We have made changes to the matrix parameter such that the poisson ratio is reduced from 0.48 to 0.45
+The particles are 100 times stiffer (Young's modulus) than the matrix
+
+Generating the test data for the latest case
+
+
+
