@@ -6,7 +6,7 @@ import numpy
 
 try:
     import cPickle as pickle  # Improve speed
-except ValueError:
+except:
     import pickle
 
 # abaqus

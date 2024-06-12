@@ -11,7 +11,7 @@ from odbAccess import *
 try:
     import cPickle as pickle
 
-except ValueError:
+except:
     import pickle
 
 # import local functions
