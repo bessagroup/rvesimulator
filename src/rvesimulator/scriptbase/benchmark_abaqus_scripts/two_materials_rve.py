@@ -62,24 +62,57 @@ class TwoMaterialsRVEBase(CommonProcedure,
         faces = self.model.parts[self.part_name].faces[:]
         # for all faces
         self.part.Set(faces=faces, name="all_faces")
-        fiberface = self.part.faces.getByBoundingCylinder(
-            (self.circles_information[0][0],
-             self.circles_information[0][1], 0.0),
-            (self.circles_information[0][0],
-             self.circles_information[0][1], 1.0),
+        # fiberface = self.part.faces.getByBoundingCylinder(
+        #     (self.circles_information[0][0],
+        #      self.circles_information[0][1], 0.0),
+        #     (self.circles_information[0][0],
+        #      self.circles_information[0][1], 1.0),
+        #     self.circles_information[0][2] + 0.001 *
+        #     self.circles_information[0][2],
+        # )
+        fiberface = self.part.faces.getByBoundingBox(
+            xMin=self.circles_information[0][0] -
+            self.circles_information[0][2] - 0.001 *
+            self.circles_information[0][2],
+            xMax=self.circles_information[0][0] +
             self.circles_information[0][2] + 0.001 *
             self.circles_information[0][2],
+            yMin=self.circles_information[0][1] -
+            self.circles_information[0][2] - 0.001 *
+            self.circles_information[0][2],
+            yMax=self.circles_information[0][1] +
+            self.circles_information[0][2] + 0.001 *
+            self.circles_information[0][2],
+            zMin=0.0,
+            zMax=1.0,
         )
+
         # fiber faces
         self.part.Set(faces=fiberface, name="fiberface")
         for ii in range(1, len(self.circles_information)):
-            fiberface_1 = self.part.faces.getByBoundingCylinder(
-                (self.circles_information[ii][0],
-                 self.circles_information[ii][1], 0.0),
-                (self.circles_information[ii][0],
-                 self.circles_information[ii][1], 1.0),
-                self.circles_information[ii][2] +
-                0.001 * self.circles_information[ii][2],
+            # fiberface_1 = self.part.faces.getByBoundingCylinder(
+            #     (self.circles_information[ii][0],
+            #      self.circles_information[ii][1], 0.0),
+            #     (self.circles_information[ii][0],
+            #      self.circles_information[ii][1], 1.0),
+            #     self.circles_information[ii][2] +
+            #     0.001 * self.circles_information[ii][2],
+            # )
+            fiberface_1 = self.part.faces.getByBoundingBox(
+                xMin=self.circles_information[ii][0] -
+                self.circles_information[ii][2] - 0.001 *
+                self.circles_information[ii][2],
+                xMax=self.circles_information[ii][0] +
+                self.circles_information[ii][2] + 0.001 *
+                self.circles_information[ii][2],
+                yMin=self.circles_information[ii][1] -
+                self.circles_information[ii][2] - 0.001 *
+                self.circles_information[ii][2],
+                yMax=self.circles_information[ii][1] +
+                self.circles_information[ii][2] + 0.001 *
+                self.circles_information[ii][2],
+                zMin=0.0,
+                zMax=1.0,
             )
             self.part.Set(faces=fiberface_1, name="fiberface_1")
             self.part.SetByBoolean(

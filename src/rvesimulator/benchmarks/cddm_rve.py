@@ -255,9 +255,9 @@ class CDDM_RVE(Py3RVEBase):
                           num_cpu=self.num_cpu,
                           delete_odb=delete_odb)
             results = simulator.read_back_results()
-            self.logger.info("simulation finished")
-        except FileExistsError:
-            self.logger.info("simulation failed")
+            self.logger.info("abaqus simulation finished")
+        except FileNotFoundError:
+            self.logger.info("abaqus simulation failed")
             results = None
         # get the simulation results back
         end_time = time.time()
