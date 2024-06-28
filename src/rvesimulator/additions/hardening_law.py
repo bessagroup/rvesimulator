@@ -98,6 +98,7 @@ class SwiftHardeningLaw(HardeningLaw):
         yield_stress = self.yield_stress
         a = self.a
         b = self.b
+        eps = 1e-5
         # define the table for hardening law
         hardening_law_table = np.zeros((101, 2))
         hardening_law_table[:, 1] = np.linspace(0, 1, 101)
@@ -107,7 +108,7 @@ class SwiftHardeningLaw(HardeningLaw):
         )
         hardening_law_table[-1, 1] = 10.0
         hardening_law_table[-1, 0] = (
-            yield_stress + a * (hardening_law_table[-1, 1]) ** b
+            yield_stress + a * (hardening_law_table[-1, 1] + eps) ** b
         )
         self.hardening_law_table = hardening_law_table.T
         return self.hardening_law_table.tolist()
