@@ -17,8 +17,8 @@ except:
     import pickle
 
 
-class PPPEMixtureNoCohesive(object):
-    """ PP and PE 2D SVE without cohesive elements"""
+class PPPEMixtureCohesive:
+    """ PP and PE 2D RVE with cohesive elements"""
 
     def __init__(self, sim_info={"location_information": None,
                                  "radius_mu": None,
@@ -27,24 +27,30 @@ class PPPEMixtureNoCohesive(object):
                                  "len_end": None,
                                  "wid_start": None,
                                  "wid_end": None,
-                                 "job_name": "veni_nocoh_rve",
+                                 "job_name": "pp_pe_cohesive_2d",
                                  "strain": [0.10, 0.0, 0.0],
                                  "paras_pp": None,
                                  "paras_pe": None,
+                                 "damage_stress": None,
+                                 "damage_energy": None,
+                                 "power_law_exponent_cohesive": 1.0,
                                  "mesh_partition": None,
                                  "simulation_time": 100.0,
                                  "num_steps": None,
+                                 "record_time_step": 100,
+                                 "young_modulus_cohesive": None,
                                  "num_cpu": 1,
-                                 "record_time_step": 5,
+                                 "radius_cohesive_factor": 1.02,
+                                 "damage_onset_criteria": "MaxStress",
                                  "subroutine_path": None}):
         # ------------------------------ parameters ------------------------- #
         # names of model, part, instance
-        self.model_name = "veni_sve"
+        self.model_name = "pp_pe_cohesive_2d"
         self.part_name = "Final_Stuff"
         self.instance_name = "Final_Stuff"
         self.job_name = str(sim_info["job_name"])
         self.num_cpu = sim_info["num_cpu"]
-
+        self.record_time_step = sim_info["record_time_step"]
         # information of geometry of RVE
         self.loc_info = sim_info
         # mech and sets information
@@ -77,16 +83,21 @@ class PPPEMixtureNoCohesive(object):
         self.paras_pe = sim_info["paras_pe"]
         self.subroutine_path = str(sim_info["subroutine_path"])
 
-        # record time step
-        self.record_time_step = sim_info["record_time_step"]
-        # create the model
+        # damage parameters
+        self.damage_onset_criteria = sim_info["damage_onset_criteria"]
+        self.damage_stress = sim_info["damage_stress"]
+        self.damage_energy = sim_info["damage_energy"]
+        self.young_modulus_cohesive = sim_info["young_modulus_cohesive"]
+        self.cohesive_radius_factor = sim_info["radius_cohesive_factor"]
+        self.power = sim_info["power_law_exponent_cohesive"]
+        # submit
         self.create_simulation_job()
-        # create the job and write it into inp file
         self.create_job()
-        #
         # self.submit_job()
+
         # # post process
         # if sim_info["platform"] == "cluster" or sim_info["platform"] == "windows":
+        #     # post process for getting the results
         #     PostProcess(job_name=self.job_name,
         #                 record_time_step=self.record_time_step)
 
@@ -134,6 +145,13 @@ class PPPEMixtureNoCohesive(object):
                 point1=(self.circles_information[ii][0] +
                         self.circles_information[ii][2], self.circles_information[ii][1]),
             )
+            # cohesive zone
+            sketch.CircleByCenterPerimeter(
+                center=(self.circles_information[ii][0],
+                        self.circles_information[ii][1]),
+                point1=(self.circles_information[ii][0] + self.cohesive_radius_factor *
+                        self.circles_information[ii][2], self.circles_information[ii][1]),
+            )
         part.PartitionFaceBySketch(faces=faces[:], sketch=sketch)
         del sketch
 
@@ -172,12 +190,50 @@ class PPPEMixtureNoCohesive(object):
         # delete fiber face 1
         del part.sets["fiberface_1"]
 
+        # create set for cohesive and fibers
+        cohesive_fiber = part.faces.getByBoundingCylinder(
+            (self.circles_information[0][0],
+             self.circles_information[0][1], 0.0),
+            (self.circles_information[0][0],
+             self.circles_information[0][1], 1.0),
+            self.circles_information[0][2]*self.cohesive_radius_factor +
+            0.001 * self.circles_information[0][2],
+        )
+
+        part.Set(faces=cohesive_fiber, name="cohesive_fiber")
+        for ii in range(1, len(self.circles_information)):
+            cohesive_fiber_1 = part.faces.getByBoundingCylinder(
+                (self.circles_information[ii][0],
+                 self.circles_information[ii][1], 0.0),
+                (self.circles_information[ii][0],
+                 self.circles_information[ii][1], 1.0),
+                self.circles_information[ii][2]*self.cohesive_radius_factor +
+                0.001 * self.circles_information[ii][2],
+            )
+            part.Set(faces=cohesive_fiber_1, name="cohesive_fiber_1")
+            part.SetByBoolean(
+                name="cohesive_fiber",
+                sets=(part.sets["cohesive_fiber_1"],
+                      part.sets["cohesive_fiber"]),
+                operation=UNION,
+            )
+        # delete fiber face 1
+        del part.sets["cohesive_fiber_1"]
+
         # create set for matrix
         part.SetByBoolean(
             name="matrixface",
-            sets=(part.sets["all_faces"], part.sets["fiberface"]),
+            sets=(part.sets["all_faces"], part.sets["cohesive_fiber"]),
             operation=DIFFERENCE,
         )
+
+        part.SetByBoolean(
+            name="cohesive_face",
+            sets=(part.sets["cohesive_fiber"], part.sets["fiberface"]),
+            operation=DIFFERENCE,
+        )
+
+        del part.sets["cohesive_fiber"]
 
         # create sets for edges
         s = part.edges
@@ -218,6 +274,44 @@ class PPPEMixtureNoCohesive(object):
         )
         part.Set(edges=edgesBOT, name="edgesBOT")
         name_edges = ["edgesLEFT", "edgesRIGHT", "edgesTOP", "edgesBOT"]
+
+        # create set for cohesive edges
+        cohesive_edges = s.getByBoundingCylinder(
+            (self.circles_information[0][0],
+             self.circles_information[0][1], 0.0),
+            (self.circles_information[0][0],
+             self.circles_information[0][1], 1.0),
+            self.circles_information[0][2]*self.cohesive_radius_factor +
+            0.001 * self.circles_information[0][2],
+        )
+        part.Set(edges=cohesive_edges, name="cohesive_edges")
+
+        for ii in range(1, len(self.circles_information)):
+            cohesive_edges_1 = s.getByBoundingCylinder(
+                (self.circles_information[ii][0],
+                 self.circles_information[ii][1], 0.0),
+                (self.circles_information[ii][0],
+                 self.circles_information[ii][1], 1.0),
+                self.circles_information[ii][2]*self.cohesive_radius_factor +
+                0.001 * self.circles_information[ii][2],
+            )
+            part.Set(edges=cohesive_edges_1, name="cohesive_edges_1")
+            part.SetByBoolean(
+                name="cohesive_edges",
+                sets=(part.sets["cohesive_edges_1"],
+                      part.sets["cohesive_edges"]),
+                operation=UNION,
+            )
+        # delete fiber face 1
+        del part.sets["cohesive_edges_1"]
+
+        # boolean opration to delete edges belong to matrix
+        for ii in range(len(name_edges)):
+            part.SetByBoolean(
+                name="cohesive_edges",
+                sets=(part.sets["cohesive_edges"],  part.sets[name_edges[ii]]),
+                operation=DIFFERENCE,
+            )
 
         # create set for vertices
         v = part.vertices
@@ -260,8 +354,26 @@ class PPPEMixtureNoCohesive(object):
         vertices_name = ["VertexLB", "VertexLT", "VertexRB", "VertexRT"]
 
         # meshing ---------------------------------------------------------------------
-        part.seedPart(deviationFactor=0.05,
+        # calculate
+
+        part.seedPart(deviationFactor=0.1,
                       minSizeFactor=0.05, size=self.mesh_size)
+        # part.seedEdgeBySize(constraint=FINER, edges=part.sets['cohesive_edges'].edges,size=self.mesh_size/2.0)
+
+        # mesh control
+        part.setMeshControls(
+            elemShape=QUAD, regions=part.sets['cohesive_face'].faces, technique=SWEEP)
+        #
+
+        elemType1 = mesh.ElemType(
+            elemCode=COH2D4, elemLibrary=STANDARD, viscosity=0.0001)
+        elemType2 = mesh.ElemType(elemCode=UNKNOWN_TRI, elemLibrary=STANDARD)
+
+        part.setElementType(
+            regions=part.sets["cohesive_face"], elemTypes=(
+                elemType1, elemType2)
+        )
+
         # element type (plane strain element)
         elemType1 = mesh.ElemType(elemCode=CPE4R, elemLibrary=STANDARD,
                                   secondOrderAccuracy=OFF, hourglassControl=ENHANCED,
@@ -318,6 +430,32 @@ class PPPEMixtureNoCohesive(object):
                 self.paras_pe[13],
             )
         )
+        # cohesive material (parameters needs to be tuned)
+        material_cohesive = model.Material(name='material_cohesive')
+        material_cohesive.Density(table=((7.9e-9, ), ))
+        material_cohesive.Elastic(type=TRACTION, table=((
+            self.young_modulus_cohesive, self.young_modulus_cohesive, 0.0), ))
+        if self.damage_onset_criteria == "MaxStress":
+            material_cohesive.MaxsDamageInitiation(table=((
+                self.damage_stress, self.damage_stress, 0.0), ))
+            material_cohesive.maxsDamageInitiation.DamageEvolution(
+                type=ENERGY, mixedModeBehavior=POWER_LAW,
+                power=self.power,
+                table=((self.damage_energy, self.damage_energy, 0.0), ))
+            material_cohesive.maxsDamageInitiation.DamageStabilizationCohesive(
+                cohesiveCoeff=0.000001)
+
+        elif self.damage_onset_criteria == "QuadStress":
+            material_cohesive.QuadsDamageInitiation(table=((
+                self.damage_stress, self.damage_stress, 0.0), ))
+
+            material_cohesive.quadsDamageInitiation.DamageEvolution(
+                type=ENERGY, mixedModeBehavior=POWER_LAW,
+                power=self.power,
+                table=((self.damage_energy, self.damage_energy, 0.0), ))
+            material_cohesive.quadsDamageInitiation.DamageStabilizationCohesive(
+                cohesiveCoeff=0.000001)
+
         # create section and assign material property to corresponding section
         # matrix material
         model.HomogeneousSolidSection(
@@ -329,6 +467,14 @@ class PPPEMixtureNoCohesive(object):
         model.HomogeneousSolidSection(
             name='fiber', material='material_fiber', thickness=None)
         part.SectionAssignment(region=part.sets['fiberface'], sectionName='fiber', offset=0.0,
+                               offsetType=MIDDLE_SURFACE, offsetField='',
+                               thicknessAssignment=FROM_SECTION)
+
+        # cohesive material
+        model.CohesiveSection(name='cohesive',
+                              material='material_cohesive', response=TRACTION_SEPARATION,
+                              outOfPlaneThickness=None)
+        part.SectionAssignment(region=part.sets['cohesive_face'], sectionName='cohesive', offset=0.0,
                                offsetType=MIDDLE_SURFACE, offsetField='',
                                thicknessAssignment=FROM_SECTION)
 
@@ -496,11 +642,15 @@ class PPPEMixtureNoCohesive(object):
             initialInc=0.01,
             maxInc=1.0,
             maxNumInc=100000,
-            minInc=1e-20,
+            minInc=1e-05,
             name="Step-1",
             previous="Initial",
             timePeriod=self.time_period,
+            stabilizationMethod=DISSIPATED_ENERGY_FRACTION,
+            continueDampingFactors=True,
+            adaptiveDampingRatio=0.0001
         )
+        # # define filed output
         model.fieldOutputRequests["F-Output-1"].setValues(
             variables=(
                 "S",
@@ -511,6 +661,8 @@ class PPPEMixtureNoCohesive(object):
                 "ELEDEN",
                 "EVOL",
                 "IVOL",
+                'SDEG',
+                'STATUS',
                 'SDV'
             ),
             timeInterval=self.time_interval,
@@ -587,7 +739,6 @@ class PPPEMixtureNoCohesive(object):
                            modelPrint=OFF, contactPrint=OFF, historyPrint=OFF, userSubroutine=self.subroutine_path,
                            scratch='', resultsFormat=ODB, multiprocessingMode=DEFAULT, numCpus=self.num_cpu,
                            numDomains=self.num_cpu, numGPUs=0)
-        # write the job into inp file
         self.job.writeInput(consistencyChecking=OFF)
 
     def data_check(self):
@@ -597,8 +748,7 @@ class PPPEMixtureNoCohesive(object):
         self.job.waitForCompletion()
 
     def submit_job(self):
-        # submit the job (in the new version of rvesimulator,
-        # we will submit the inp file so that we can release the CAE license)
+        # submit the job
         self.job.submit(consistencyChecking=OFF)
         self.job.waitForCompletion()
 
@@ -610,7 +760,7 @@ class PostProcess:
         self.job_name = str(dict["job_name"])
         # record time step (fir saving memory)
         self.record_time_step = dict["record_time_step"]
-        #  do post processing to extract the results
+        # post process
         self.post_process()
 
     def post_process(self):
@@ -622,6 +772,8 @@ class PostProcess:
         entire_element_set = rve_odb.rootAssembly.elementSets[" ALL ELEMENTS"]
         fiber_element_set = rve_odb.rootAssembly.instances["FINAL_STUFF"].elementSets['FIBERFACE']
         matrix_element_set = rve_odb.rootAssembly.instances["FINAL_STUFF"].elementSets["MATRIXFACE"]
+        cohesive_element_set = rve_odb.rootAssembly.instances[
+            "FINAL_STUFF"].elementSets["COHESIVE_FACE"]
 
         ref1_node_set = rve_odb.rootAssembly.nodeSets["REF-R"]
         ref2_node_set = rve_odb.rootAssembly.nodeSets["REF-T"]
@@ -634,7 +786,7 @@ class PostProcess:
         for ii in range(len(my_steps)):
             total_frames = total_frames + \
                 len(my_steps[my_steps.keys()[ii]].frames)
-        # self.record_time_step = ceil(total_frames / self.record_frames)
+
         # get the variables that do not change with time steps
         rve_frame = rve_odb.steps[my_steps.keys()[0]].frames[0]
 
@@ -645,6 +797,8 @@ class PostProcess:
         self.ivol_fibers = self.get_ivol(ivol_field, fiber_element_set)
         # get the filed output for matrix
         self.ivol_matrix = self.get_ivol(ivol_field, matrix_element_set)
+        # get the filed output for cohesive region
+        self.ivol_cohesive = self.get_ivol(ivol_field, cohesive_element_set)
 
         # define required variables
         self.deformation_gradient = numpy.zeros((total_frames, 2, 2))
@@ -715,12 +869,12 @@ class PostProcess:
 
                 # save the results every 10 frames to save memory
                 if jj % self.record_time_step == 0:
+
                     plastic_strain_field = frame.fieldOutputs["SDV17"].getSubset(
                         region=matrix_element_set, position=INTEGRATION_POINT)
                     for kk in range(0, len(plastic_strain_field.values)):
                         self.plastic_strain[ii * len(step_frames) +
                                             jj / self.record_time_step][kk] = plastic_strain_field.values[kk].data
-
                 # get deformation gradient
                 for i in range(0, 2):
                     # get deformation gradient
@@ -797,6 +951,7 @@ class PostProcess:
             "strain": self.strain,
             "fiber_volume": self.ivol_fibers,
             "matrix_volume": self.ivol_matrix,
+            "cohesive_volume": self.ivol_cohesive,
             "plastic_strain": self.plastic_strain,
         }
         # Save the results to a pickle file

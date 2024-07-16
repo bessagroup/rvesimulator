@@ -6,7 +6,7 @@ import numpy
 
 try:
     import cPickle as pickle  # Improve speed
-except ValueError:
+except:
     import pickle
 
 # abaqus
@@ -27,8 +27,8 @@ __status__ = "Stable"
 
 class PostProcess2D(object):
 
-    def __init__(self, job_name):
-        self.job_name = job_name
+    def __init__(self, dict={"job_name": "job_name"}):
+        self.job_name = str(dict["job_name"])
         self._rve_results()
 
     def _rve_results(self):
@@ -218,5 +218,5 @@ class PostProcess2D(object):
         }
 
         # Save post-processing information to pkl file:
-        with open("results.pkl", "w") as fp:
+        with open("results.pkl", "wb") as fp:
             pickle.dump(results, fp)

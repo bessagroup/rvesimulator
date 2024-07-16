@@ -1,5 +1,5 @@
-# abaqus modulus 
-# system and standard python packages 
+# abaqus modulus
+# system and standard python packages
 import sys
 
 import numpy
@@ -11,10 +11,8 @@ from odbAccess import *
 try:
     import cPickle as pickle
 
-except ValueError:
+except:
     import pickle
-
-
 
 
 # import local functions
@@ -59,6 +57,8 @@ class HollowPlateBase:
         return faces_name, edges_name, vertices_name
 
 # =============================================================================
+
+
 class ElasticRegularLoads(
     CommonProcedure,
     MaterialLib,
@@ -82,7 +82,6 @@ class ElasticRegularLoads(
             "mesh_partition": None,
             "strain": None,
             "num_cpu": None,
-            "platform": None,
         },
     ):
         """
@@ -93,7 +92,6 @@ class ElasticRegularLoads(
         self.part_name = "Final_Stuff"
         self.instance_name = "Final_Stuff"
         self.job_name = str(sim_info["job_name"])
-        self.platform = sim_info["platform"]
         self.num_cpu = sim_info["num_cpu"]
 
         # define the import elements of RVE
@@ -151,11 +149,9 @@ class ElasticRegularLoads(
         # create job
         self.create_sequential_job(subroutine_path="")
 
-        # post process
-        if self.platform == "cluster" or self.platform == "windows":
-            PostProcess2D(self.job_name)
-
 # =============================================================================
+
+
 class VonMisesPlasticRegularLoads(CommonProcedure,
                                   MaterialLib,
                                   Mesh2D,
@@ -178,7 +174,6 @@ class VonMisesPlasticRegularLoads(CommonProcedure,
             "mesh_partition": None,
             "strain": None,
             "num_cpu": None,
-            "platform": None,
             "num_steps": None,
             "simulation_time": None},
     ):
@@ -190,7 +185,6 @@ class VonMisesPlasticRegularLoads(CommonProcedure,
         self.part_name = "Final_Stuff"
         self.instance_name = "Final_Stuff"
         self.job_name = str(sim_info["job_name"])
-        self.platform = sim_info["platform"]
         self.num_cpu = sim_info["num_cpu"]
 
         # define the import elements of RVE
@@ -257,20 +251,22 @@ class VonMisesPlasticRegularLoads(CommonProcedure,
         # create job
         self.create_sequential_job(subroutine_path="")
 
-        # post process
-        if self.platform == "cluster" or self.platform == "windows":
-            PostProcess2D(self.job_name)
+        # # post process
+        # if self.platform == "cluster" or self.platform == "windows":
+        #     PostProcess2D(self.job_name)
 
 # =============================================================================
+
+
 class VonMisesPlasticPathLoads(CommonProcedure,
-                                MaterialLib,
-                                Mesh2D,
-                                HollowPlate,
-                                PeriodicalBoundaryCondition2D,
-                                HistoryDependentDisplacement2D,
-                                LargeDeformationSteps,
-                                Jobs,
-                                HollowPlateBase):
+                               MaterialLib,
+                               Mesh2D,
+                               HollowPlate,
+                               PeriodicalBoundaryCondition2D,
+                               HistoryDependentDisplacement2D,
+                               LargeDeformationSteps,
+                               Jobs,
+                               HollowPlateBase):
     def __init__(
         self,
         sim_info={
@@ -284,7 +280,6 @@ class VonMisesPlasticPathLoads(CommonProcedure,
             "strain": None,
             "strain_amplitude": None,
             "num_cpu": None,
-            "platform": None,
             "num_steps": None,
             "simulation_time": None},
     ):
@@ -296,7 +291,6 @@ class VonMisesPlasticPathLoads(CommonProcedure,
         self.part_name = "Final_Stuff"
         self.instance_name = "Final_Stuff"
         self.job_name = str(sim_info["job_name"])
-        self.platform = sim_info["platform"]
         self.num_cpu = sim_info["num_cpu"]
 
         # define the import elements of RVE
@@ -305,7 +299,6 @@ class VonMisesPlasticPathLoads(CommonProcedure,
         self.part = None
         self.assembly = None
         self.material = None
-
 
         #  define the geometry information
         self.length = sim_info["size"]
@@ -317,16 +310,15 @@ class VonMisesPlasticPathLoads(CommonProcedure,
         )
 
         # loading condition
-        # strain 
+        # strain
         self.strain = sim_info["strain"]
 
-        # strain amplitude 
+        # strain amplitude
         self.strain_amplitude = numpy.zeros(
             (len(sim_info["strain_amplitude"][0]), 3)
         )
         for ii in range(3):
-            self.strain_amplitude[:, ii] = sim_info["strain_amplitude"][ii]        
-
+            self.strain_amplitude[:, ii] = sim_info["strain_amplitude"][ii]
 
         # simulation time information
         self.time_period = sim_info["simulation_time"]
@@ -341,7 +333,7 @@ class VonMisesPlasticPathLoads(CommonProcedure,
         )
         for ii in range(2):
             self.hardening_table[:, ii] = sim_info["hardening_table"][ii]
-        
+
         # execute the simulation
         self.script_generator()
 
@@ -375,6 +367,6 @@ class VonMisesPlasticPathLoads(CommonProcedure,
         # create job
         self.create_sequential_job(subroutine_path="")
 
-        # post process
-        if self.platform == "cluster" or self.platform == "windows":
-            PostProcess2D(self.job_name)
+        # # post process
+        # if self.platform == "cluster" or self.platform == "windows":
+        #     PostProcess2D(self.job_name)

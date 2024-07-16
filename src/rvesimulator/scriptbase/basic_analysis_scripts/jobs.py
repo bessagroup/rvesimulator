@@ -39,5 +39,8 @@ class Jobs:
             numCpus=self.num_cpu,
             numGPUs=0,
             numDomains=self.num_cpu)
+        mdb.jobs[self.job_name].writeInput(consistencyChecking=OFF)
+
+    def submit_job(self):
         mdb.jobs[self.job_name].submit(consistencyChecking=OFF)
         mdb.jobs[self.job_name].waitForCompletion()

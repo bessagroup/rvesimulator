@@ -17,8 +17,8 @@ except:
     import pickle
 
 
-class PPPEMixtureNoCohesive(object):
-    """ PP and PE 2D SVE without cohesive elements"""
+class PPPEMixtureEmptyFiber(object):
+    """ PP and PE 2D RVE, where the fibers are filled with no material"""
 
     def __init__(self, sim_info={"location_information": None,
                                  "radius_mu": None,
@@ -27,10 +27,11 @@ class PPPEMixtureNoCohesive(object):
                                  "len_end": None,
                                  "wid_start": None,
                                  "wid_end": None,
-                                 "job_name": "veni_nocoh_rve",
+                                 "job_name": "empty_fiber",
                                  "strain": [0.10, 0.0, 0.0],
-                                 "paras_pp": None,
-                                 "paras_pe": None,
+                                 "params_matrix": None,
+                                 "youngs_fiber": 1.0,
+                                 "poisson_fiber": 0.3,
                                  "mesh_partition": None,
                                  "simulation_time": 100.0,
                                  "num_steps": None,
@@ -39,7 +40,7 @@ class PPPEMixtureNoCohesive(object):
                                  "subroutine_path": None}):
         # ------------------------------ parameters ------------------------- #
         # names of model, part, instance
-        self.model_name = "veni_sve"
+        self.model_name = "empty_fiber"
         self.part_name = "Final_Stuff"
         self.instance_name = "Final_Stuff"
         self.job_name = str(sim_info["job_name"])
@@ -73,22 +74,17 @@ class PPPEMixtureNoCohesive(object):
         )
 
         # material properties
-        self.paras_pp = sim_info["paras_pp"]
-        self.paras_pe = sim_info["paras_pe"]
+        self.youngs_fiber = sim_info["youngs_fiber"]
+        self.poisson_fiber = sim_info["poisson_fiber"]
+        # this
+        self.params_matrix = sim_info["params_matrix"]
         self.subroutine_path = str(sim_info["subroutine_path"])
 
         # record time step
         self.record_time_step = sim_info["record_time_step"]
-        # create the model
+        # submit
         self.create_simulation_job()
-        # create the job and write it into inp file
         self.create_job()
-        #
-        # self.submit_job()
-        # # post process
-        # if sim_info["platform"] == "cluster" or sim_info["platform"] == "windows":
-        #     PostProcess(job_name=self.job_name,
-        #                 record_time_step=self.record_time_step)
 
     def create_simulation_job(self):
 
@@ -277,45 +273,28 @@ class PPPEMixtureNoCohesive(object):
         # material properties ---------------------------------------------------------
         # material property for top part
         material_fiber = model.Material(name="material_fiber")
-        material_fiber.Depvar(n=44)
-        material_fiber.Density(table=((7.9e-9, ), ))
-        material_fiber.UserMaterial(
-            mechanicalConstants=(
-                self.paras_pp[0],
-                self.paras_pp[1],
-                self.paras_pp[2],
-                self.paras_pp[3],
-                self.paras_pp[4],
-                self.paras_pp[5],
-                self.paras_pp[6],
-                self.paras_pp[7],
-                self.paras_pp[8],
-                self.paras_pp[9],
-                self.paras_pp[10],
-                self.paras_pp[11],
-                self.paras_pp[12],
-                self.paras_pp[13],
-            )
-        )
+        material_fiber.Elastic(
+            table=((self.youngs_fiber, self.poisson_fiber),))
+
         material_matrix = model.Material(name="material_matrix")
         material_matrix.Depvar(n=44)
         material_matrix.Density(table=((7.9e-9, ), ))
         material_matrix.UserMaterial(
             mechanicalConstants=(
-                self.paras_pe[0],
-                self.paras_pe[1],
-                self.paras_pe[2],
-                self.paras_pe[3],
-                self.paras_pe[4],
-                self.paras_pe[5],
-                self.paras_pe[6],
-                self.paras_pe[7],
-                self.paras_pe[8],
-                self.paras_pe[9],
-                self.paras_pe[10],
-                self.paras_pe[11],
-                self.paras_pe[12],
-                self.paras_pe[13],
+                self.params_matrix[0],
+                self.params_matrix[1],
+                self.params_matrix[2],
+                self.params_matrix[3],
+                self.params_matrix[4],
+                self.params_matrix[5],
+                self.params_matrix[6],
+                self.params_matrix[7],
+                self.params_matrix[8],
+                self.params_matrix[9],
+                self.params_matrix[10],
+                self.params_matrix[11],
+                self.params_matrix[12],
+                self.params_matrix[13],
             )
         )
         # create section and assign material property to corresponding section
@@ -587,7 +566,6 @@ class PPPEMixtureNoCohesive(object):
                            modelPrint=OFF, contactPrint=OFF, historyPrint=OFF, userSubroutine=self.subroutine_path,
                            scratch='', resultsFormat=ODB, multiprocessingMode=DEFAULT, numCpus=self.num_cpu,
                            numDomains=self.num_cpu, numGPUs=0)
-        # write the job into inp file
         self.job.writeInput(consistencyChecking=OFF)
 
     def data_check(self):
@@ -597,8 +575,7 @@ class PPPEMixtureNoCohesive(object):
         self.job.waitForCompletion()
 
     def submit_job(self):
-        # submit the job (in the new version of rvesimulator,
-        # we will submit the inp file so that we can release the CAE license)
+        # submit the job
         self.job.submit(consistencyChecking=OFF)
         self.job.waitForCompletion()
 
@@ -610,7 +587,7 @@ class PostProcess:
         self.job_name = str(dict["job_name"])
         # record time step (fir saving memory)
         self.record_time_step = dict["record_time_step"]
-        #  do post processing to extract the results
+        # post process
         self.post_process()
 
     def post_process(self):

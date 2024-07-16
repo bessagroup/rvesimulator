@@ -7,7 +7,8 @@ CDDM RVE case
 import logging
 import os
 import time
-from typing import Any
+from pathlib import Path
+from typing import Any, Dict
 
 # local
 import rvesimulator
@@ -15,7 +16,7 @@ from rvesimulator.abaqus2py.abaqus_simulator import AbaqusSimulator
 from rvesimulator.additions.hardening_law import LinearHardeningLaw
 from rvesimulator.microstructure.circle_particles import CircleParticles
 
-from .shared_functionalities import SimulationBase
+from .py3rve_base import Py3RVEBase
 
 #                                                          Authorship & Credits
 # =============================================================================
@@ -24,7 +25,8 @@ __credits__ = ["Jiaxiang Yi"]
 __status__ = "Stable"
 # =============================================================================
 
-class CDDM_RVE(SimulationBase):
+
+class CDDM_RVE(Py3RVEBase):
     """Interface between python and abaqus of the CDDM RVE case
 
     Parameters
@@ -32,25 +34,24 @@ class CDDM_RVE(SimulationBase):
     SimulationBase : class
         base class for simulation
     """
+
     def __init__(self) -> None:
         """Interface between python and abaqus of the Hollow plate case"""
 
         logging.basicConfig(level=logging.INFO, filename="cddm_rve.log")
         self.logger = logging.getLogger("abaqus_simulation")
 
-        self.main_folder = os.getcwd()
+        self.main_folder = Path.cwd()
         self.folder_info = {
-            "main_work_directory": os.path.join(os.getcwd(), "Data"),
-            "script_path": os.path.dirname(rvesimulator.__file__) + \
-                "/scriptbase",
-            "current_work_directory": "point_1",
-            "sim_path": "benchmark_abaqus_scripts.two_materials_rve",
-            "sim_script": "VonMisesPlasticElasticPathLoads",
-            "post_path": "basic_analysis_scripts.post_process",
-            "post_script": "PostProcess2D",
+            "main_dir": Path(self.main_folder, str("Data")),
+            "script_path": Path(rvesimulator.__file__).parent.as_posix() +
+            "/scriptbase",
+            "current_dir": "point_1",
+            "sim_script": "benchmark_abaqus_scripts.two_materials_rve",
+            "sim_func": "VonMisesPlasticElasticPathLoads",
+            "post_script": "basic_analysis_scripts.post_process",
+            "post_func": "PostProcess2D",
         }
-
-
 
     def update_sim_info(
         self,
@@ -68,9 +69,9 @@ class CDDM_RVE(SimulationBase):
         num_steps: int = 100,
         simulation_time: float = 1.0,
         num_cpu: int = 1,
-        platform: str = "ubuntu",
         hardening_law: Any = LinearHardeningLaw(),
         seed: Any = None,
+        mini_dist_factor: float = 1.3,
         print_info: bool = False,
     ) -> None:
         """path dependent rve for cddm
@@ -130,9 +131,9 @@ class CDDM_RVE(SimulationBase):
         self.num_steps = num_steps
         self.simulation_time = simulation_time
         self.num_cpu = num_cpu
-        self.platform = platform
         self.hardening_law = hardening_law
         self.seed = seed
+        self.mini_dist_factor = mini_dist_factor
         # get hardening law
         self.hardening_table = hardening_law.calculate_hardening_table()
 
@@ -151,7 +152,7 @@ class CDDM_RVE(SimulationBase):
             "num_steps": num_steps,
             "simulation_time": simulation_time,
             "num_cpu": num_cpu,
-            "platform": platform, }
+            "mini_dist_factor": mini_dist_factor, }
 
         # print simulation information to screen
         if print_info:
@@ -182,16 +183,15 @@ class CDDM_RVE(SimulationBase):
             "strain": self.strain,
             "strain_amplitude": self.strain_amplitude,
             "num_cpu": self.num_cpu,
-            "platform": self.platform,
+            "mini_dist_factor": self.mini_dist_factor,
         }
 
     def run_simulation(
         self,
-        sample: dict = None,
+        sample: Dict = None,
         folder_index: int = None,
-        sub_folder_index: int = None,
-        third_folder_index: int = None,
-    ) -> dict:
+        delete_odb: bool = True,
+    ) -> Dict:
         """run single simulation
 
         Parameters
@@ -213,10 +213,7 @@ class CDDM_RVE(SimulationBase):
         # number of samples
         self._create_working_folder(
             folder_index,
-            sub_folder_index,
-            third_folder_index,
         )
-        os.chdir(self.working_folder)
         self.logger.info("working folder: {}".format(self.working_folder))
         # create microstructure
         self.microstructure = CircleParticles(
@@ -225,6 +222,7 @@ class CDDM_RVE(SimulationBase):
             radius_mu=self.radius_mu,
             radius_std=self.radius_std,
             vol_req=self.vol_req,
+            dist_min_factor=self.mini_dist_factor,
         )
         self.microstructure.generate_microstructure(seed=self.seed)
         self.microstructure.to_abaqus_format()
@@ -250,13 +248,16 @@ class CDDM_RVE(SimulationBase):
         )
         # run abaqus simulation
         try:
-            simulator.execute()
-            simulator.post_process(delete_odb=True)
+            simulator.run(py_func=self.folder_info["sim_func"],
+                          py_script=self.folder_info["sim_script"],
+                          post_py_func=self.folder_info["post_func"],
+                          post_py_script=self.folder_info["post_script"],
+                          num_cpu=self.num_cpu,
+                          delete_odb=delete_odb)
             results = simulator.read_back_results()
-            self.logger.info("simulation finished")
-        except Exception as e:
-            self.logger.info("simulation failed")
-            self.logger.info(e)
+            self.logger.info("abaqus simulation finished")
+        except FileNotFoundError:
+            self.logger.info("abaqus simulation failed")
             results = None
         # get the simulation results back
         end_time = time.time()
