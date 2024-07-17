@@ -3,6 +3,7 @@
 # =============================================================================
 # standard
 import json
+import logging
 import math
 import time
 from typing import Any, Tuple
@@ -31,6 +32,20 @@ class SphereParticles(MicrostructureGenerator):
     ----------
     MicrostructureGenerator : class
         parent class of microstructure generator
+
+    Examples
+    --------
+    >>> from rvesimulator.microstructure import SphereParticles
+    >>> sphere_particles = SphereParticles(
+    ...     length=1.0,
+    ...     width=1.0,
+    ...     height=1.0,
+    ...     radius_mu=0.05,
+    ...     radius_std=0.01,
+    ...     vol_req=0.3,)
+    >>> sphere_particles.generate_microstructure()
+    >>> sphere_particles.plot_microstructure()
+
     """
 
     def __init__(
@@ -41,10 +56,12 @@ class SphereParticles(MicrostructureGenerator):
         radius_mu: float,
         radius_std: float,
         vol_req: float,
-        num_guess_max: int = 50000,
-        num_fiber_max: int = 750,
-        num_cycle_max: int = 15,
+        num_guess_max: int = 100000,
+        num_fiber_max: int = 1000,
+        num_cycle_max: int = 20,
         dist_min_factor: float = 1.1,
+        stirring_iters: int = 100,
+        print_log: bool = False,
     ) -> None:
         """Initialization
 
@@ -78,6 +95,7 @@ class SphereParticles(MicrostructureGenerator):
         self.radius_mu = radius_mu
         self.radius_std = radius_std
         self.vol_req = vol_req
+        self.print_log = print_log
 
         # Initialization of the algorithm
         # Number of guesses in the random generation of fibre position
@@ -85,6 +103,8 @@ class SphereParticles(MicrostructureGenerator):
         self.num_guess_max = num_guess_max
         self.num_fibers_max = num_fiber_max
         self.num_cycles_max = num_cycle_max
+        self.stirring_iters = stirring_iters
+
 
     def _parameter_initialization(self) -> None:
         """Initialize the parameters"""
@@ -118,6 +138,19 @@ class SphereParticles(MicrostructureGenerator):
 
         # decide to use seed or not
         self.rng = np.random.default_rng(seed=seed)
+        logging.basicConfig(level=logging.INFO,
+                            filename="microstructure.log",
+                            filemode="w",)
+        self.logger = logging.getLogger("microstructure")
+        self.logger.info("Start to generate the micro-structure")
+        self.logger.info(f"Seed: {seed}")
+        self.logger.info(f"Length: {self.length}")
+        self.logger.info(f"Width: {self.width}")
+        self.logger.info(f"Height: {self.height}")
+        self.logger.info(f"Radius_mu: {self.radius_mu}")
+        self.logger.info(f"Radius_std: {self.radius_std}")
+        self.logger.info(f"Volume fraction: {self.vol_req}")
+
         # counting time generating an RVE
         start_time = time.time()
         self._parameter_initialization()
@@ -125,24 +158,25 @@ class SphereParticles(MicrostructureGenerator):
         self._core_iteration()
         end_time = time.time()
         self.time_usage = end_time - start_time
+        self.logger.info(f"time usage: {self.time_usage}")
+        self.logger.info("End generating microstructure")
+        self.logger.info("==================================================")
+        if self.print_log:
+            file_handler = logging.FileHandler("microstructure.log")
+            file_handler.setLevel(logging.INFO)
+            # Create a logging format
+            formatter = logging.Formatter(
+                "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+            )
+            file_handler.setFormatter(formatter)
+            # Add the handlers to the logger
+            self.logger.addHandler(file_handler)
 
-    def to_abaqus_format(self,
-                         file_name: str = "micro_structure_info.json") -> dict:
-        """convert the micro-structure to abaqus format
-
-        Parameters
-        ----------
-        file_name : str, optional
-            name of the file, by default "micro_structure_info.json"
-
-        Returns
-        -------
-        dict
-            a dict that contains the information of micro-structure
-        """
-
-        microstructure_info = {
+        # get microstructure info
+        self.microstructure_info = {
             "location_information": self.fiber_positions.tolist(),
+            "radius_mu": self.radius_mu,
+            "radius_std": self.radius_std,
             "len_start": self.len_start,
             "wid_start": self.wid_start,
             "hei_start": self.hei_start,
@@ -150,13 +184,29 @@ class SphereParticles(MicrostructureGenerator):
             "wid_end": self.wid_end,
             "hei_end": self.hei_end,
         }
-        with open(file_name, "w") as fp:
-            json.dump(microstructure_info, fp)
 
-        return microstructure_info
+
+    def to_abaqus_format(self,
+                         file_name: str = "micro_structure_info.json") -> None:
+        """convert the micro-structure to abaqus format
+
+        Parameters
+        ----------
+        file_name : str, optional
+            name of the file, by default "micro_structure_info.json"
+
+        """
+
+        with open(file_name, "w") as fp:
+            json.dump(self.microstructure_info, fp)
+
+
 
     def plot_microstructure(
-        self, save_figure: bool = False, fig_name: str = "RVE.png"
+        self,
+        save_figure: bool = False,
+        fig_name: str = "mircostructure.png",
+        **kwargs,
     ) -> None:
         """plot the micro-structure if needed
 
@@ -391,6 +441,120 @@ class SphereParticles(MicrostructureGenerator):
                         self.rgmsh[ii, jj, kk] = 1
 
         return self.rgmsh.T
+    
+    def vertices_mesh_loc(self, fiber: np.ndarray) -> str:
+        """identify proper vertices location for meshing
+
+        Parameters
+        ----------
+        fiber : np.ndarray
+            temp fiber
+
+        Returns
+        -------
+        int
+            status of the fiber(0: improper, 1: proper)
+        """
+        # reformat the fiber location
+        fiber = fiber.reshape((-1, 5))
+        # eight vertices of the RVE
+        vertices = np.array([[0, 0, 0],
+                            [self.length, 0, 0],
+                            [0, self.width, 0],
+                            [self.length, self.width, 0],
+                            [0, 0, self.height],
+                            [self.length, 0, self.height],
+                            [0, self.width, self.height],
+                            [self.length, self.width, self.height]])
+        # calculate the distance between the fiber and the vertices
+        points_dis_temp = distance_matrix(
+            vertices,
+            fiber[:, 0:3],
+        )
+        min_points_dis = points_dis_temp.min()
+        if 0.0*fiber[0, 3] < min_points_dis < np.sqrt(3)*fiber[0, 2]:
+            return "fail"
+        else:
+            return "pass"
+    
+    def face_mesh_location(self,
+                           fiber: np.ndarray) -> str:
+        """identify the proper face location for meshing
+
+        Parameters
+        ----------
+        fiber : np.ndarray
+            temp fiber
+        
+        Returns
+        -------
+        str
+            status of the fiber
+        """
+        # reformat the fiber location
+        fiber = fiber.reshape((-1, 5))
+
+        # for x direction faces (check for x coordinate)
+        dis_x = np.abs([fiber[:, 0] - 0.0, fiber[:, 0] - self.length])
+        if 0.0 < dis_x.min() < 0.2*fiber[0, 3]:
+            return "fail"
+        elif self.length - 0.0 < dis_x.min() < 0.2*fiber[0, 3]:
+            return "fail"
+        
+        # for y direction faces (check for y coordinate)
+        dis_y = np.abs([fiber[:, 1] - 0.0, fiber[:, 1] - self.width])
+        if 0.0 < dis_y.min() < 0.2*fiber[0, 3]:
+            return "fail"
+        elif self.width - 0.0 < dis_y.min() < 0.2*fiber[0, 3]:
+            return "fail"
+        
+        # for z direction faces (check for z coordinate)
+        dis_z = np.abs([fiber[:, 2] - 0.0, fiber[:, 2] - self.height])
+        if 0.0 < dis_z.min() < 0.2*fiber[0, 3]:
+            return "fail"
+        elif self.height - 0.0 < dis_z.min() < 0.2*fiber[0, 3]:
+            return "fail"
+        
+        return "pass"
+
+    # def edge_mesh_location(self, fiber: np.ndarray) -> str:
+    #     """identify the proper edge location for meshing
+
+    #     Parameters
+    #     ----------
+    #     fiber : np.ndarray
+    #         temp fiber
+        
+    #     Returns
+    #     -------
+    #     str
+    #         status of the fiber
+    #     """
+    #     # reformat the fiber location
+    #     fiber = fiber.reshape((-1, 5))
+
+    #     # for edges paralle to X axis, check for y, z coordinates
+    #     edges = np.array([[ 0, 0],
+    #                       [ 0, self.height],
+    #                         [ self.width, 0],
+    #                         [ self.width, self.height]])
+    #     # calculate the distance 
+    #     points_dis_temp = distance_matrix(
+    #         edges,
+    #         fiber[:, 1:3],
+    #     )
+    #     min_points_dis = points_dis_temp.min()
+    #     if 0.0*fiber[0, 3] < min_points_dis < np.sqrt(2)*fiber[0, 2]:
+    #         return "fail"
+    #     else:
+    #         return "pass"
+
+
+
+
+        
+    #     return "pass"
+
 
     @staticmethod
     def fiber_volume(radius: float) -> float:
@@ -418,7 +582,7 @@ class SphereParticles(MicrostructureGenerator):
         hei_end: float,
         radius_mu: float,
         radius_std: float,
-        rng: any,
+        rng,
     ) -> np.ndarray:
         """generate random fibers with different radiis
 
@@ -451,7 +615,7 @@ class SphereParticles(MicrostructureGenerator):
         y = rng.uniform(wid_start, wid_end, 1)
         z = rng.uniform(hei_start, hei_end, 1)
         r = rng.normal(radius_mu, radius_std, 1)
-        while r <= 0:
+        while r <= 0.02*(len_end - len_start - 2*radius_mu):
             r = rng.normal(radius_mu, radius_std, 1)
         fiber = np.array([x, y, z, r])
 
@@ -1901,6 +2065,10 @@ class SphereParticles(MicrostructureGenerator):
         else:
             raise Exception(
                 "The location of the original point was wrong!!! \n")
+        # check the length of the new fiber should be same as the value of the
+        # 5th column
+        if new_fiber.shape[0] != new_fiber[0, 4]:
+            raise Exception("The length of the fiber is wrong!!! \n")
 
         return new_fiber
 

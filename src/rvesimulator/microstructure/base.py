@@ -246,7 +246,7 @@ class MicrostructureGenerator:
                 raise ValueError("Spltting number is wrong!\n")
         axes = [int(length), int(width), int(height)]
         data = np.ones(axes, dtype=np.bool_)
-        alpha = 0.6
+        alpha = 0.2
         colors = np.empty(axes + [4], dtype=np.float32)
         colors[:] = [1, 1, 1, alpha]
         ax.voxels(data, facecolors=colors)

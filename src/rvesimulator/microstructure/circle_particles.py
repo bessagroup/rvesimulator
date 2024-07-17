@@ -6,7 +6,7 @@ import json
 import logging
 import math
 import time
-from typing import Any, Tuple
+from typing import Any, Dict, Tuple
 
 # Third party
 import numpy as np
@@ -180,7 +180,7 @@ class CircleParticles(MicrostructureGenerator):
 
     def to_abaqus_format(
         self, file_name: str = "micro_structure_info.json"
-    ) -> dict:
+    ) -> None:
         """save rve microstructure to abaqus format
 
         Parameters
@@ -190,7 +190,7 @@ class CircleParticles(MicrostructureGenerator):
 
         Returns
         -------
-        dict
+        Dict
             a dict contains all info of rve microstructure
         """
         with open(file_name, "w") as fp:
@@ -534,7 +534,7 @@ class CircleParticles(MicrostructureGenerator):
 
         return self.rgmsh.T
 
-    def vertices_mesh_loc(self, fiber: np.ndarray) -> int:
+    def vertices_mesh_loc(self, fiber: np.ndarray) -> str:
         """identify proper vertices location for meshing
 
         Parameters
@@ -564,7 +564,7 @@ class CircleParticles(MicrostructureGenerator):
         else:
             return "pass"
 
-    def proper_edge_mesh_location(self, fiber: np.ndarray) -> int:
+    def proper_edge_mesh_location(self, fiber: np.ndarray) -> str:
         """identify proper edge location for meshing
 
         Parameters
@@ -581,13 +581,13 @@ class CircleParticles(MicrostructureGenerator):
         fiber = fiber.reshape((-1, 4))
         # for x edges
         dis_x = np.abs(np.array([fiber[:, 0], self.width - fiber[:, 0]]))
-        if 0.80*fiber[0, 2] < dis_x.min() < fiber[0, 2]:
+        if 0 < dis_x.min() < 0.2*fiber[0, 2]:
             return "fail"
         elif fiber[0, 2] < dis_x.min() < 1.2*fiber[0, 2]:
             return "fail"
         # for y edges
         dis_y = np.abs(np.array([fiber[:, 1], self.length - fiber[:, 1]]))
-        if 0.8*fiber[0, 2] < dis_y.min() < fiber[0, 2]:
+        if 0.0 < dis_y.min() < 0.2*fiber[0, 2]:
             return "fail"
         elif fiber[0, 2] < dis_y.min() < 1.2*fiber[0, 2]:
             return "fail"
