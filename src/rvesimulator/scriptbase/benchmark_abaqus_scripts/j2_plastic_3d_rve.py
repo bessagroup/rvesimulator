@@ -14,6 +14,7 @@ from abaqus import *
 from abaqusConstants import *
 from caeModules import *
 from driverUtils import executeOnCaeStartup
+from odbAccess import *
 
 # create a new model
 def create_sphere(model, sphere_center, radius, index):
@@ -73,9 +74,33 @@ def find_node_pair(face_nodes_list_1, face_nodes_list_2):
 def get_node_label(node):
     return node.label
 
+def get_node_x(node):
+    return node.coordinates[0]
+    
+def get_node_y(node):
+    return node.coordinates[1]
+
 def get_node_z(node):
     return node.coordinates[2]
 
+def create_random_path(model, path_table, path_name):
+    """create a tabular amplitude for history dependent loading path
+
+    Parameters
+    ----------
+    path_table : list
+        a table contains the amplitude
+    path_name : str
+        name of the amplitude
+    """
+
+    # generate the table
+    model.TabularAmplitude(
+        name=path_name,
+        timeSpan=TOTAL,
+        smooth=SOLVER_DEFAULT,
+        data=(path_table),
+    )
 
 def j2_plastic_3d_rve(dict):
     # read the json file using python 2.7 by default
@@ -89,6 +114,18 @@ def j2_plastic_3d_rve(dict):
     height_end = dict["hei_end"]
     radius_mu = dict["radius_mu"]
     radius_std = dict["radius_std"]
+
+    # path dependent information 
+    if "strain_amplitude" in dict.keys():
+        strain_amplitude = np.zeros(
+            (len(dict["strain_amplitude"][0]), 6)
+        )
+        for ii in range(6):
+            strain_amplitude[:, ii] = dict["strain_amplitude"][ii]
+        print("path dependent load is applied")
+    else:
+        print("regular load is applied ")
+        strain_amplitude = None
 
     # material properties (j2 plasticity for both matrix and fibre)
     # matrix
@@ -567,7 +604,7 @@ def j2_plastic_3d_rve(dict):
             assembly.SetFromNodeLabels(name='BACKRIGHT_' + str(ii), nodeLabels=(('RVE', tuple([edgesBACK_RIGHT_nodes_sorted[ii].label])),), unsorted=True)
             for jj in range(1, 4):
                 model.Equation(name='FRONTLEFT_BACKRIGHT_' + str(ii) + '_' + str(jj),
-                                terms=((1, 'FRONTLEFT_' + str(ii), jj), (-1, 'BACKRIGHT_' + str(ii), jj), (-1*length, 'Ref-X', jj), (1*length, 'Ref-Y', jj)))
+                                terms=((1, 'FRONTLEFT_' + str(ii), jj), (-1, 'BACKRIGHT_' + str(ii), jj), (-1*length, 'Ref-X', jj), (1*width, 'Ref-Y', jj)))
     else:
         print ("The number of nodes between the two sides are not the same")
         print (f"edgesFRONT_LEFT_nodes: {len(edgesFRONT_LEFT_nodes_sorted)}, edgesBACK_RIGHT_nodes:{len(edgesBACK_RIGHT_nodes_sorted)}")
@@ -591,11 +628,10 @@ def j2_plastic_3d_rve(dict):
             assembly.SetFromNodeLabels(name='BACKRIGHT_' + str(ii), nodeLabels=(('RVE', tuple([edgesBACK_RIGHT_nodes_sorted[ii].label])),), unsorted=True)
             for jj in range(1, 4):
                 model.Equation(name='FRONTLEFT_BACKRIGHT_' + str(ii) + '_' + str(jj),
-                                terms=((1, 'FRONTLEFT_' + str(ii), jj), (-1, 'BACKRIGHT_' + str(ii), jj), (-1*length, 'Ref-X', jj), (1*length, 'Ref-Y', jj)))
+                                terms=((1, 'FRONTLEFT_' + str(ii), jj), (-1, 'BACKRIGHT_' + str(ii), jj), (-1*length, 'Ref-X', jj), (1*width, 'Ref-Y', jj)))
                 
 
-    def get_node_y(node):
-        return node.coordinates[1]
+
 
 
     # part 3: equations for edges 6 (edgesFRONT_TOP) and 8 (edgesBACK_BOTTOM)
@@ -684,9 +720,6 @@ def j2_plastic_3d_rve(dict):
                 model.Equation(name='FRONTBOTTOM_BACKTOP_' + str(ii) + '_' + str(jj),
                                 terms=((1, 'FRONTBOTTOM_' + str(ii), jj), (-1, 'BACKTOP_' + str(ii), jj), (-1*length, 'Ref-X', jj), (1*height, 'Ref-Z', jj)))
 
-
-    def get_node_x(node):
-        return node.coordinates[0]
 
     # part 5: equations for edges 11 (edgesRIGHT_TOP) and 9 (edgesLEFT_BOTTOM)
     edgesRIGHT_TOP_nodes = part.sets['edgesRIGHT_TOP'].nodes
@@ -1038,8 +1071,8 @@ def j2_plastic_3d_rve(dict):
     model.StaticStep(
                      initialInc=0.01,
                         maxInc=1.0,
-                        maxNumInc=1000000,
-                        minInc=1e-20,
+                        maxNumInc=1000,
+                        minInc=1e-5,
                         name="Step-1",
                         previous="Initial",
                         timePeriod=time_period,
@@ -1076,38 +1109,86 @@ def j2_plastic_3d_rve(dict):
             ),
             timeInterval=time_interval,
         )
-    ### strain for the first dummy point(the front one E11,E12,E13)
-    model.DisplacementBC(name='E_11', createStepName='Step-1',
-                            region=assembly.sets['Ref-X'], u1=strain[0], u2=UNSET, u3=UNSET, amplitude=UNSET, fixed=OFF,
-                            distributionType=UNIFORM, fieldName='', localCsys=None)
-    model.DisplacementBC(name='E_12', createStepName='Step-1',
-                            region=assembly.sets['Ref-X'], u1=UNSET, u2=strain[3], u3=UNSET, amplitude=UNSET, fixed=OFF,
-                            distributionType=UNIFORM, fieldName='', localCsys=None)
-    model.DisplacementBC(name='E_13', createStepName='Step-1',
-                            region=assembly.sets['Ref-X'], u1=UNSET, u2=UNSET, u3=strain[5], amplitude=UNSET, fixed=OFF,
-                            distributionType=UNIFORM, fieldName='', localCsys=None)
+    ### strain for the first dummy point(the front one E11,E12,E13) 
+
+    if strain_amplitude is None:
     
-    #### strain for the second dummy point(the front one E21,E22,E23)
-    model.DisplacementBC(name='E_21', createStepName='Step-1',
-                            region=assembly.sets['Ref-Y'], u1=strain[3], u2=UNSET, u3=UNSET, amplitude=UNSET, fixed=OFF,
-                            distributionType=UNIFORM, fieldName='', localCsys=None)
-    model.DisplacementBC(name='E_22', createStepName='Step-1',
-                            region=assembly.sets['Ref-Y'], u1=UNSET, u2=strain[1], u3=UNSET, amplitude=UNSET, fixed=OFF,
-                            distributionType=UNIFORM, fieldName='', localCsys=None)
-    model.DisplacementBC(name='E_23', createStepName='Step-1',
-                            region=assembly.sets['Ref-Y'], u1=UNSET, u2=UNSET, u3=strain[4], amplitude=UNSET, fixed=OFF,
-                            distributionType=UNIFORM, fieldName='', localCsys=None)
-    
-    #### strain for the third dummy point(the top one E31 E32 E33)
-    model.DisplacementBC(name='E_31', createStepName='Step-1',
-                            region=assembly.sets['Ref-Z'], u1=strain[5], u2=UNSET, u3=UNSET, amplitude=UNSET, fixed=OFF,
-                            distributionType=UNIFORM, fieldName='', localCsys=None)
-    model.DisplacementBC(name='E_32', createStepName='Step-1',
-                            region=assembly.sets['Ref-Z'], u1=UNSET, u2=strain[4], u3=UNSET, amplitude=UNSET, fixed=OFF,
-                            distributionType=UNIFORM, fieldName='', localCsys=None)
-    model.DisplacementBC(name='E_33', createStepName='Step-1',
-                            region=assembly.sets['Ref-Z'], u1=UNSET, u2=UNSET, u3=strain[2], amplitude=UNSET, fixed=OFF,
-                            distributionType=UNIFORM, fieldName='', localCsys=None)
+        model.DisplacementBC(name='E_11', createStepName='Step-1',
+                                region=assembly.sets['Ref-X'], u1=strain[0], u2=UNSET, u3=UNSET, amplitude=UNSET, fixed=OFF,
+                                distributionType=UNIFORM, fieldName='', localCsys=None)
+        model.DisplacementBC(name='E_12', createStepName='Step-1',
+                                region=assembly.sets['Ref-X'], u1=UNSET, u2=strain[3], u3=UNSET, amplitude=UNSET, fixed=OFF,
+                                distributionType=UNIFORM, fieldName='', localCsys=None)
+        model.DisplacementBC(name='E_13', createStepName='Step-1',
+                                region=assembly.sets['Ref-X'], u1=UNSET, u2=UNSET, u3=strain[5], amplitude=UNSET, fixed=OFF,
+                                distributionType=UNIFORM, fieldName='', localCsys=None)
+        
+        #### strain for the second dummy point(the front one E21,E22,E23)
+        model.DisplacementBC(name='E_21', createStepName='Step-1',
+                                region=assembly.sets['Ref-Y'], u1=strain[3], u2=UNSET, u3=UNSET, amplitude=UNSET, fixed=OFF,
+                                distributionType=UNIFORM, fieldName='', localCsys=None)
+        model.DisplacementBC(name='E_22', createStepName='Step-1',
+                                region=assembly.sets['Ref-Y'], u1=UNSET, u2=strain[1], u3=UNSET, amplitude=UNSET, fixed=OFF,
+                                distributionType=UNIFORM, fieldName='', localCsys=None)
+        model.DisplacementBC(name='E_23', createStepName='Step-1',
+                                region=assembly.sets['Ref-Y'], u1=UNSET, u2=UNSET, u3=strain[4], amplitude=UNSET, fixed=OFF,
+                                distributionType=UNIFORM, fieldName='', localCsys=None)
+        
+        #### strain for the third dummy point(the top one E31 E32 E33)
+        model.DisplacementBC(name='E_31', createStepName='Step-1',
+                                region=assembly.sets['Ref-Z'], u1=strain[5], u2=UNSET, u3=UNSET, amplitude=UNSET, fixed=OFF,
+                                distributionType=UNIFORM, fieldName='', localCsys=None)
+        model.DisplacementBC(name='E_32', createStepName='Step-1',
+                                region=assembly.sets['Ref-Z'], u1=UNSET, u2=strain[4], u3=UNSET, amplitude=UNSET, fixed=OFF,
+                                distributionType=UNIFORM, fieldName='', localCsys=None)
+        model.DisplacementBC(name='E_33', createStepName='Step-1',
+                                region=assembly.sets['Ref-Z'], u1=UNSET, u2=UNSET, u3=strain[2], amplitude=UNSET, fixed=OFF,
+                                distributionType=UNIFORM, fieldName='', localCsys=None)
+    else:
+        # create strain path 
+        num_point = strain_amplitude.shape[0]
+        names = ['E_11', 'E_22', 'E_33', 'E_12', 'E_23', 'E_13']
+        for ii, name in enumerate(names):
+            path_table_temp = np.zeros((num_point, 2))
+            path_table_temp[:, 0] = np.linspace(
+                0, time_period, num_point, endpoint=True
+            )
+            path_table_temp[:, 1] = strain_amplitude[:, ii]
+            create_random_path(model=model, path_table=path_table_temp, path_name=name)
+        
+        # apply the strain path to the model
+        #### strain for the first dummy point(the front one E11,E12,E13)
+        model.DisplacementBC(name='E_11', createStepName='Step-1',
+                                region=assembly.sets['Ref-X'], u1=strain[0], u2=UNSET, u3=UNSET, amplitude='E_11', fixed=OFF,
+                                distributionType=UNIFORM, fieldName='', localCsys=None)
+        model.DisplacementBC(name='E_12', createStepName='Step-1',
+                                region=assembly.sets['Ref-X'], u1=UNSET, u2=strain[3], u3=UNSET, amplitude='E_12', fixed=OFF,
+                                distributionType=UNIFORM, fieldName='', localCsys=None)
+        model.DisplacementBC(name='E_13', createStepName='Step-1',
+                                region=assembly.sets['Ref-X'], u1=UNSET, u2=UNSET, u3=strain[5], amplitude='E_13', fixed=OFF,
+                                distributionType=UNIFORM, fieldName='', localCsys=None)
+        
+        #### strain for the second dummy point(the front one E21,E22,E23)
+        model.DisplacementBC(name='E_21', createStepName='Step-1',
+                                region=assembly.sets['Ref-Y'], u1=strain[3], u2=UNSET, u3=UNSET, amplitude='E_12', fixed=OFF,   
+                                distributionType=UNIFORM, fieldName='', localCsys=None)
+        model.DisplacementBC(name='E_22', createStepName='Step-1',
+                                region=assembly.sets['Ref-Y'], u1=UNSET, u2=strain[1], u3=UNSET, amplitude='E_22', fixed=OFF,
+                                distributionType=UNIFORM, fieldName='', localCsys=None)
+        model.DisplacementBC(name='E_23', createStepName='Step-1',
+                                region=assembly.sets['Ref-Y'], u1=UNSET, u2=UNSET, u3=strain[4], amplitude='E_23', fixed=OFF,
+                                distributionType=UNIFORM, fieldName='', localCsys=None)
+
+        #### strain for the third dummy point(the top one E31 E32 E33)
+        model.DisplacementBC(name='E_31', createStepName='Step-1',
+                                region=assembly.sets['Ref-Z'], u1=strain[5], u2=UNSET, u3=UNSET, amplitude='E_13', fixed=OFF,
+                                distributionType=UNIFORM, fieldName='', localCsys=None)
+        model.DisplacementBC(name='E_32', createStepName='Step-1',
+                                region=assembly.sets['Ref-Z'], u1=UNSET, u2=strain[4], u3=UNSET, amplitude='E_23', fixed=OFF,
+                                distributionType=UNIFORM, fieldName='', localCsys=None)
+        model.DisplacementBC(name='E_33', createStepName='Step-1',
+                                region=assembly.sets['Ref-Z'], u1=UNSET, u2=UNSET, u3=strain[2], amplitude='E_33', fixed=OFF,
+                                distributionType=UNIFORM, fieldName='', localCsys=None)
 
     # create job
     mdb.Job(name=job_name, model=model_name, description='', type=ANALYSIS, 

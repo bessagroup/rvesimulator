@@ -73,6 +73,8 @@ class Ti6Al4V_3D(Py3RVEBase):
         seed: Any = None,
         print_info: bool = False,
         min_dist_factor: float = 1.025,
+        regular_load: bool = False,
+        strain_amplitude: list = None,
     ) -> None:
         """regular rve for Ti6Al4V 3D case
 
@@ -131,26 +133,47 @@ class Ti6Al4V_3D(Py3RVEBase):
         self.hardening_law_fiber = hardening_law_fiber
         self.hardening_law_matrix = hardening_law_matrix
         self.seed = seed
+        # loading 
+        self.regular_load = regular_load
+        self.strain_amplitude = strain_amplitude
         # get hardening law
         self.hardening_table_fiber = hardening_law_fiber.calculate_hardening_table()
         self.hardening_table_matrix = hardening_law_matrix.calculate_hardening_table()
-
-        self.sim_paras = {
-            "size": size,
-            "radius_mu": radius_mu,
-            "radius_std": radius_std,
-            "vol_req": vol_req,
-            "youngs_modulus_matrix": youngs_modulus_matrix,
-            "poisson_ratio_matrix": poisson_ratio_matrix,
-            "youngs_modulus_fiber": youngs_modulus_fiber,
-            "poisson_ratio_fiber": poisson_ratio_fiber,
-            "hardening_table_fiber": self.hardening_table_fiber,
-            "hardening_table_matrix": self.hardening_table_matrix,
-            "mesh_partition": mesh_partition,
-            "strain": strain,
-            "num_steps": num_steps,
-            "simulation_time": simulation_time,
-            "num_cpu": num_cpu }
+        if self.regular_load:
+            self.sim_paras = {
+                "size": size,
+                "radius_mu": radius_mu,
+                "radius_std": radius_std,
+                "vol_req": vol_req,
+                "youngs_modulus_matrix": youngs_modulus_matrix,
+                "poisson_ratio_matrix": poisson_ratio_matrix,
+                "youngs_modulus_fiber": youngs_modulus_fiber,
+                "poisson_ratio_fiber": poisson_ratio_fiber,
+                "hardening_table_fiber": self.hardening_table_fiber,
+                "hardening_table_matrix": self.hardening_table_matrix,
+                "mesh_partition": mesh_partition,
+                "strain": strain,
+                "num_steps": num_steps,
+                "simulation_time": simulation_time,
+                "num_cpu": num_cpu }
+        else:
+            self.sim_paras = {
+                "size": size,
+                "radius_mu": radius_mu,
+                "radius_std": radius_std,
+                "vol_req": vol_req,
+                "youngs_modulus_matrix": youngs_modulus_matrix,
+                "poisson_ratio_matrix": poisson_ratio_matrix,
+                "youngs_modulus_fiber": youngs_modulus_fiber,
+                "poisson_ratio_fiber": poisson_ratio_fiber,
+                "hardening_table_fiber": self.hardening_table_fiber,
+                "hardening_table_matrix": self.hardening_table_matrix,
+                "mesh_partition": mesh_partition,
+                "strain": strain,
+                "num_steps": num_steps,
+                "simulation_time": simulation_time,
+                "num_cpu": num_cpu,
+                "strain_amplitude": strain_amplitude }
         
         self.mini_dist_factor = min_dist_factor
 
@@ -160,32 +183,61 @@ class Ti6Al4V_3D(Py3RVEBase):
 
     def _get_sim_info(self) -> None:
         """get simulation information"""
-        self.sim_info = {
-            "job_name": "Ti6Al4V_3D",
-            "location_information": self.microstructure.microstructure_info[
-                "location_information"
-            ],
-            "radius_mu": self.microstructure.microstructure_info["radius_mu"],
-            "radius_std": self.microstructure.microstructure_info[
-                "radius_std"],
-            "len_start": self.microstructure.microstructure_info["len_start"],
-            "len_end": self.microstructure.microstructure_info["len_end"],
-            "wid_start": self.microstructure.microstructure_info["wid_start"],
-            "wid_end": self.microstructure.microstructure_info["wid_end"],
-            "hei_start": self.microstructure.microstructure_info["hei_start"],
-            "hei_end": self.microstructure.microstructure_info["hei_end"],
-            "youngs_modulus_matrix": self.youngs_modulus_matrix,
-            "poisson_ratio_matrix": self.poisson_ratio_matrix,
-            "youngs_modulus_fiber": self.youngs_modulus_fiber,
-            "poisson_ratio_fiber": self.poisson_ratio_fiber,
-            "mesh_partition": self.mesh_partition,
-            "hardening_table_fiber": self.hardening_table_fiber,
-            "hardening_table_matrix": self.hardening_table_matrix,
-            "num_steps": self.num_steps,
-            "simulation_time": self.simulation_time,
-            "strain": self.strain,
-            "num_cpu": self.num_cpu,
-        }
+        if self.regular_load:
+            self.sim_info = {
+                "job_name": "Ti6Al4V_3D",
+                "location_information": self.microstructure.microstructure_info[
+                    "location_information"
+                ],
+                "radius_mu": self.microstructure.microstructure_info["radius_mu"],
+                "radius_std": self.microstructure.microstructure_info[
+                    "radius_std"],
+                "len_start": self.microstructure.microstructure_info["len_start"],
+                "len_end": self.microstructure.microstructure_info["len_end"],
+                "wid_start": self.microstructure.microstructure_info["wid_start"],
+                "wid_end": self.microstructure.microstructure_info["wid_end"],
+                "hei_start": self.microstructure.microstructure_info["hei_start"],
+                "hei_end": self.microstructure.microstructure_info["hei_end"],
+                "youngs_modulus_matrix": self.youngs_modulus_matrix,
+                "poisson_ratio_matrix": self.poisson_ratio_matrix,
+                "youngs_modulus_fiber": self.youngs_modulus_fiber,
+                "poisson_ratio_fiber": self.poisson_ratio_fiber,
+                "mesh_partition": self.mesh_partition,
+                "hardening_table_fiber": self.hardening_table_fiber,
+                "hardening_table_matrix": self.hardening_table_matrix,
+                "num_steps": self.num_steps,
+                "simulation_time": self.simulation_time,
+                "strain": self.strain,
+                "num_cpu": self.num_cpu,
+            }
+        else:
+            self.sim_info = {
+                "job_name": "Ti6Al4V_3D",
+                "location_information": self.microstructure.microstructure_info[
+                    "location_information"
+                ],
+                "radius_mu": self.microstructure.microstructure_info["radius_mu"],
+                "radius_std": self.microstructure.microstructure_info[
+                    "radius_std"],
+                "len_start": self.microstructure.microstructure_info["len_start"],
+                "len_end": self.microstructure.microstructure_info["len_end"],
+                "wid_start": self.microstructure.microstructure_info["wid_start"],
+                "wid_end": self.microstructure.microstructure_info["wid_end"],
+                "hei_start": self.microstructure.microstructure_info["hei_start"],
+                "hei_end": self.microstructure.microstructure_info["hei_end"],
+                "youngs_modulus_matrix": self.youngs_modulus_matrix,
+                "poisson_ratio_matrix": self.poisson_ratio_matrix,
+                "youngs_modulus_fiber": self.youngs_modulus_fiber,
+                "poisson_ratio_fiber": self.poisson_ratio_fiber,
+                "mesh_partition": self.mesh_partition,
+                "hardening_table_fiber": self.hardening_table_fiber,
+                "hardening_table_matrix": self.hardening_table_matrix,
+                "num_steps": self.num_steps,
+                "simulation_time": self.simulation_time,
+                "strain": self.strain,
+                "num_cpu": self.num_cpu,
+                "strain_amplitude": self.strain_amplitude,
+            }
 
     def run_simulation(
         self,
