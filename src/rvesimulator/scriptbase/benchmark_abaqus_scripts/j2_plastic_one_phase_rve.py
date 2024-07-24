@@ -16,43 +16,6 @@ from caeModules import *
 from driverUtils import executeOnCaeStartup
 from odbAccess import *
 
-# create a new model
-def create_sphere(model, sphere_center, radius, index):
-    # center 
-    # create a sphere
-    sketch = model.ConstrainedSketch(name='__profile__', sheetSize=1.0)
-    # create a construction line
-    sketch.ConstructionLine(point1=(0.0, -0.5), point2=(0.0, 0.5))
-    sketch.FixedConstraint(entity=sketch.geometry[2])
-    # information of the sphere (create it at the (0, 0, 0))
-    sketch.ArcByCenterEnds(center=(0.0, 0.0), point1=(0.0, -radius), point2=(0.0, radius), 
-        direction=CLOCKWISE)
-    # create a line to close the sketch
-    sketch.Line(point1=(0.0, -radius), point2=(0.0, radius))
-    # revolve the sketch to create a sphere (360 degree)
-    sketch.VerticalConstraint(entity=sketch.geometry[4], addUndoState=False)
-    # create a new part for the sphere
-    part = model.Part(name=f'Sphere-{index}', dimensionality=THREE_D, 
-        type=DEFORMABLE_BODY)
-    part.BaseSolidRevolve(sketch=sketch, angle=360.0, flipRevolveDirection=OFF)
-    # divide the part into four subparts for meshing
-    part.DatumPlaneByPrincipalPlane(offset=0.0, principalPlane=YZPLANE)
-    # create a partition
-    part.PartitionCellByDatumPlane(datumPlane=part.datums[2], cells=part.cells[:])
-    part.DatumPlaneByPrincipalPlane(offset=0.0, principalPlane=XZPLANE)
-    # create a partition
-    part.PartitionCellByDatumPlane(datumPlane=part.datums[4], cells=part.cells[:])
-    part.DatumPlaneByPrincipalPlane(offset=0.0, principalPlane=XYPLANE)
-    # create a partition
-    part.PartitionCellByDatumPlane(datumPlane=part.datums[6], cells=part.cells[:])
-
-
-    del sketch
-    assembly = model.rootAssembly
-    instance = assembly.Instance(name=f'Sphere-{index}', part=part, dependent=ON)
-    assembly.translate(instanceList=(f'Sphere-{index}', ), vector=sphere_center)
-
-    return instance
 
 def transfer_node_to_array(nodes):
     # transfer the nodes to a numpy array
@@ -71,6 +34,7 @@ def find_node_pair(face_nodes_list_1, face_nodes_list_2):
     row_ind, col_ind = linear_sum_assignment(distance_matrix)
     mapping_pairs = list(zip(row_ind, col_ind))
     return mapping_pairs 
+
 def get_node_label(node):
     return node.label
 
@@ -105,7 +69,6 @@ def create_random_path(model, path_table, path_name):
 def j2_plastic_3d_rve(dict):
     # read the json file using python 2.7 by default
 
-    sphere_info = dict["location_information"]
     len_start = dict["len_start"]
     len_end = dict["len_end"]
     wid_start = dict["wid_start"]
@@ -113,7 +76,6 @@ def j2_plastic_3d_rve(dict):
     height_start = dict["hei_start"]
     height_end = dict["hei_end"]
     radius_mu = dict["radius_mu"]
-    radius_std = dict["radius_std"]
 
     # path dependent information 
     if "strain_amplitude" in dict.keys():
@@ -127,20 +89,12 @@ def j2_plastic_3d_rve(dict):
         print("regular load is applied ")
         strain_amplitude = None
 
-    # material properties (j2 plasticity for both matrix and fibre)
-    # matrix
-    young_modulus_matrix = dict["youngs_modulus_matrix"]
-    poisson_ratio_matrix = dict["poisson_ratio_matrix"]
-    hardening_table_matrix = np.zeros((len(dict["hardening_table_matrix"][0]), 2))
+    # material properties
+    young_modulus = dict["youngs_modulus"]
+    poisson_ratio = dict["poisson_ratio"]
+    hardening_table = np.zeros((len(dict["hardening_table"][0]), 2))
     for ii in range(2):
-        hardening_table_matrix[:, ii] = dict["hardening_table_matrix"][ii]
-
-    # fiber
-    young_modulus_fibre = dict["youngs_modulus_fiber"]
-    poisson_ratio_fibre = dict["poisson_ratio_fiber"]
-    hardening_table_fibre = np.zeros((len(dict["hardening_table_fiber"][0]), 2))
-    for ii in range(2):
-        hardening_table_fibre[:, ii] = dict["hardening_table_fiber"][ii]
+        hardening_table[:, ii] = dict["hardening_table"][ii]
 
     # simulation parameters
     time_period = dict["simulation_time"]
@@ -175,86 +129,17 @@ def j2_plastic_3d_rve(dict):
         del mdb.models['Model-1']
 
     sketch = model.ConstrainedSketch(name='__profile__', sheetSize=1.0)
-
     sketch.rectangle(point1=(0.0, 0.0), point2=(length, width))
-    part = model.Part(name='Matrix', dimensionality=THREE_D, type=DEFORMABLE_BODY)
+    part = model.Part(name='RVE', dimensionality=THREE_D, type=DEFORMABLE_BODY)
     part.BaseSolidExtrude(sketch=sketch, depth=height)
     del sketch
     # create a new assembly for the matrix
     assembly = model.rootAssembly
-    instance = assembly.Instance(name='Matrix', part=part, dependent=ON)
-
-    # have a tuple will instance of matrix 
-    instance_temp = (instance, )
-    # create the spheres and translate them into the corrsponding locations
-    for ii  in range(len(sphere_info)):
-        sphere_center = (sphere_info[ii][0], sphere_info[ii][1], sphere_info[ii][2])
-        shpere_instance = create_sphere(model, sphere_center, sphere_info[ii][3], ii)
-        # append the instance to a tuple
-        instance_temp = instance_temp + (shpere_instance, )
-
-    # boolean operation to merge the spheres with matrix 
-    assembly.InstanceFromBooleanMerge(name="RVE_temp", instances = instance_temp ,
-        keepIntersections=ON,  originalInstances=SUPPRESS, domain=GEOMETRY)
-    # change name of the instance
-    assembly.features.changeKey(fromName='RVE_temp-1',  toName='RVE_temp')
-
-    # create a new part to cut the RVE
-    sketch = model.ConstrainedSketch(name='__profile__', sheetSize=1.0)
-    sketch.rectangle(point1=(0.0, 0.0), point2=(length, width))
-    sketch.rectangle(point1=(-length,-width), point2=(2*length, 2*width))
-    part = model.Part(name='Matrix_cut_xoy', dimensionality=THREE_D, type=DEFORMABLE_BODY)
-    part.BaseSolidExtrude(sketch=sketch, depth=2*height)
-    del sketch
-    # create a new assembly for the matrix
-    assembly = model.rootAssembly
-    instance = assembly.Instance(name='Matrix_cut_xoy', part=part, dependent=ON)
-    # translate the part to the right position 
-    assembly.translate(instanceList=(f'Matrix_cut_xoy', ), vector=(0, 0, -0.5*height))
-    assembly.InstanceFromBooleanCut(name="RVE_cut", instanceToBeCut=assembly.instances['RVE_temp'],
-        cuttingInstances=(assembly.instances['Matrix_cut_xoy'], ), originalInstances=SUPPRESS)
-    assembly.features.changeKey(fromName='RVE_cut-1',  toName='RVE_cut')
-    # use the cutting part again to cut the RVE
-    assembly.Instance(name='Matrix_cut_xoy-rotate', part=part, dependent=ON)
-    assembly.rotate(instanceList=('Matrix_cut_xoy-rotate', ), axisPoint=(0.0, 0.0, 0.0), 
-        axisDirection=(1.0, 0.0, 0.0), angle=90.0)
-    # translate the part to the right position
-    assembly.translate(instanceList=('Matrix_cut_xoy-rotate', ), vector=(0.0, 1.5*height, 0.0))
-
-    # cut the RVE again
-    assembly.InstanceFromBooleanCut(name="RVE", instanceToBeCut=assembly.instances['RVE_cut'],
-        cuttingInstances=(assembly.instances['Matrix_cut_xoy-rotate'], ), originalInstances=SUPPRESS)
-    assembly.features.changeKey(fromName='RVE-1',  toName='RVE')
-
-    # delete the unnecessary parts and instances
-    for ii, key in enumerate(assembly.features.keys()):
-        if key  != 'RVE':
-            del assembly.features[key]
-
-    for ii, key in enumerate(model.parts.keys()):
-        if key  != 'RVE':
-            del model.parts[key]
-    part  = model.parts['RVE']
+    instance = assembly.Instance(name='RVE', part=part, dependent=ON)
 
     # create the sets for the RVE
     c = part.cells
     part.Set(cells=c[:], name='All_cells')
-    # goes to the cells and find the cell with largest volume
-    max_volume = 0
-    max_volume_cell_index = 0
-    for ii in range(len(c)):
-        volume = c[ii].getSize()
-        if volume > max_volume:
-            max_volume = volume
-            max_volume_cell_index = ii
-    # create a set for the cell with exculde largest volume
-    part.Set(cells=(c[max_volume_cell_index:max_volume_cell_index+1],), name='Matrix')
-    # the remaining cells are the spheres using boolean operation
-    part.SetByBoolean(
-                name="Fibres",
-                sets=(part.sets["All_cells"], part.sets["Matrix"]),
-                operation=DIFFERENCE,
-            )
 
     # # create sets for every faces
     f = part.faces
@@ -451,24 +336,21 @@ def j2_plastic_3d_rve(dict):
     # set all regions to be tet mesh
     pickedRegions = part.cells[:]
     part.setMeshControls(regions=pickedRegions, elemShape=TET, technique=FREE)
-    part.seedPart(size=Mesh_size, deviationFactor=0.1, minSizeFactor=0.1)
+    # import mesh
+    part.seedPart(size=Mesh_size, deviationFactor=0.4, minSizeFactor=0.4)
+    # elemType1 = mesh.ElemType(elemCode=C3D20R, elemLibrary=STANDARD)
+    # elemType2 = mesh.ElemType(elemCode=C3D15, elemLibrary=STANDARD)
+    # elemType3 = mesh.ElemType(elemCode=C3D10, elemLibrary=STANDARD)
+    # part.setElementType(regions=part.sets["All_cells"], elemTypes=(elemType1, elemType2, 
+    #     elemType3))
     part.generateMesh()
 
     # ## define the material and assign material sections
-    # 
-    model.Material(name='fiber')
-    model.materials['fiber'].Elastic(table=((young_modulus_fibre, poisson_ratio_fibre), ))
-    model.materials['fiber'].Plastic(table=(hardening_table_fibre))
-    model.HomogeneousSolidSection(name='fiber', material='fiber', thickness=None)
-    part.SectionAssignment(region=part.sets['Fibres'], sectionName='fiber', offset=0.0,
-                        offsetType= MIDDLE_SURFACE, offsetField='', thicknessAssignment=FROM_SECTION)
-    
-    # define the material for the matrix
-    model.Material(name='matrix')
-    model.materials['matrix'].Elastic(table=((young_modulus_matrix, poisson_ratio_matrix), ))
-    model.materials['matrix'].Plastic(table=(hardening_table_matrix))
-    model.HomogeneousSolidSection(name='matrix', material='matrix', thickness=None)
-    part.SectionAssignment(region=part.sets['Matrix'], sectionName='matrix', offset=0.0,
+    model.Material(name='j2_plastic')
+    model.materials['j2_plastic'].Elastic(table=((young_modulus, poisson_ratio), ))
+    model.materials['j2_plastic'].Plastic(table=(hardening_table))
+    model.HomogeneousSolidSection(name='rve', material='j2_plastic', thickness=None)
+    part.SectionAssignment(region=part.sets['All_cells'], sectionName='rve', offset=0.0,
                         offsetType= MIDDLE_SURFACE, offsetField='', thicknessAssignment=FROM_SECTION)
     
     # # pbs: trying to realize the pbc
@@ -500,39 +382,40 @@ def j2_plastic_3d_rve(dict):
     vertex_BRB = part.sets['vertex_BRB'].nodes
     assembly.SetFromNodeLabels(name='vertex_BRB', nodeLabels=(('RVE', (vertex_BRB[0].label,)),), unsorted=True)
 
-    # define the pbc for vertices ========================================
-    # # part 1: equations for vertices 3(FRT) and 5(BLB)
-    # for ii in range(1, 4):
-    #     model.Equation(name='FRT_BLB_'+str(ii), 
-    #                 terms=((1, 'vertex_FRT', ii),
-    #                         (-1, 'vertex_BLB', ii),
-    #                         (-1*length, 'Ref-X', ii),
-    #                         (-1*width, 'Ref-Y', ii),
-    #                         (-1*height, 'Ref-Z', ii)))
-    # # part 2: equations for vertices 2(FRB) and 8 (BLT)
-    # for ii in range(1, 4):
-    #     model.Equation(name='FRB_BLT_'+str(ii), 
-    #                 terms=((1, 'vertex_FRB', ii), 
-    #                         (-1, 'vertex_BLT', ii), 
-    #                         (-1*length, 'Ref-X', ii), 
-    #                         (-1*width, 'Ref-Y', ii), 
-    #                         (1*height, 'Ref-Z', ii)))
-    # # part 3: equations for vertices 7 (BRT) and 1 (FLB)
-    # for ii in range(1, 4):
-    #     model.Equation(name='BRT_FLB_'+str(ii),
-    #                     terms=((1, 'vertex_BRT', ii),
-    #                         (-1, 'vertex_FLB', ii),
-    #                         (1*length, 'Ref-X', ii), 
-    #                         (-1*width, 'Ref-Y', ii),
-    #                         (-1*height, 'Ref-Z', ii)))
-    # # part 4: equations for vertices 4 (BRT) and 6 (FLB)
-    # for ii in range(1, 4):
-    #     model.Equation(name='FLT_BRB_'+str(ii), 
-    #                 terms=((1, 'vertex_FLT', ii),
-    #                         (-1, 'vertex_BRB', ii),
-    #                         (-1*length, 'Ref-X', ii),
-    #                         (1*width, 'Ref-Y', ii),
-    #                         (-1*height, 'Ref-Z', ii)))
+    # # define the pbc for vertices ========================================
+    # part 1: equations for vertices 3(FRT) and 5(BLB)
+    for ii in range(1, 4):
+        model.Equation(name='FRT_BLB_'+str(ii), 
+                    terms=((1, 'vertex_FRT', ii),
+                            (-1, 'vertex_BLB', ii),
+                            (-length, 'Ref-X', ii),
+                            (-width, 'Ref-Y', ii),
+                            (-height, 'Ref-Z', ii)))
+    # part 2: equations for vertices 2(FRB) and 8 (BLT)
+    for ii in range(1, 4):
+        model.Equation(name='FRB_BLT_'+str(ii), 
+                    terms=((1, 'vertex_FRB', ii), 
+                            (-1, 'vertex_BLT', ii), 
+                            (-1*length, 'Ref-X', ii), 
+                            (-1*width, 'Ref-Y', ii), 
+                            (1*height, 'Ref-Z', ii)))
+    # part 3: equations for vertices  1 (FLB)  and 7 (BRT) 
+    for ii in range(1, 4):
+        model.Equation(name='FLB_BRT_'+str(ii),
+                        terms=((1, 'vertex_BRT', ii),
+                            (-1, 'vertex_FLB', ii),
+                            (1*length, 'Ref-X', ii), 
+                            (-1*width, 'Ref-Y', ii),
+                            (-1*height, 'Ref-Z', ii)))
+    # part 4: equations for vertices 4 (BRT) and 6 (FLB)
+    for ii in range(1, 4):
+        model.Equation(name='FLT_BRB_'+str(ii), 
+                    terms=((1, 'vertex_FLT', ii),
+                            (-1, 'vertex_BRB', ii),
+                            (-1*length, 'Ref-X', ii),
+                            (1*width, 'Ref-Y', ii),
+                            (-1*height, 'Ref-Z', ii)))
+
 
     ## define the pbc for edges ========================================
 
@@ -580,7 +463,6 @@ def j2_plastic_3d_rve(dict):
                 model.Equation(name='FRONTRIGHT_BACKLEFT_' + str(ii) + '_' + str(jj),
                                 terms=((1, 'FRONTRIGHT_' + str(ii), jj), (-1, 'BACKLEFT_' + str(ii), jj), (-1*length, 'Ref-X', jj),(-1*width, 'Ref-Y', jj)))
             
-
     # part 2: equations for edges 1 (edgesFRONT_LEFT) and 3 (edgesBACK_RIGHT)
     edgesFRONT_LEFT_nodes = part.sets['edgesFRONT_LEFT'].nodes
     edgesFRONT_LEFT_nodes_sorted = sorted(edgesFRONT_LEFT_nodes, key=get_node_z)
@@ -808,7 +690,6 @@ def j2_plastic_3d_rve(dict):
                                             RVEcenter[2]+height/2-delta)
     part.Set(nodes=FRONT_nodes, name='FRONT_nodes')
 
-
     TOP_nodes = allnodes.getByBoundingBox(RVEcenter[0]-length/2+delta,
                                         RVEcenter[1]-width/2+delta, 
                                         RVEcenter[2]+height/2-delta,
@@ -837,7 +718,6 @@ def j2_plastic_3d_rve(dict):
                                             RVEcenter[1]+width/2+delta, 
                                             RVEcenter[2]+height/2-delta)
     part.Set(nodes=RIGHT_nodes, name='RIGHT_nodes')
-
     # create sets for support nodes
     support = allnodes.getByBoundingBox(RVEcenter[0]-5*Mesh_size,
                                         RVEcenter[1]-5*Mesh_size,
@@ -846,8 +726,8 @@ def j2_plastic_3d_rve(dict):
                                         RVEcenter[1]+5*Mesh_size, 
                                         RVEcenter[2]+5*Mesh_size)
     part.Set(nodes=support, name='support_nodes')
-    support = sorted(support, key=get_node_label)  
-
+    support = sorted(support, key=get_node_label)
+    
     # sort the nodes based on the label 
     BACK_nodes = sorted(BACK_nodes, key=get_node_label)
     FRONT_nodes = sorted(FRONT_nodes, key=get_node_label)
@@ -1139,6 +1019,7 @@ def j2_plastic_3d_rve(dict):
         model.DisplacementBC(name='E_33', createStepName='Step-1',
                                 region=assembly.sets['Ref-Z'], u1=UNSET, u2=UNSET, u3=strain[2], amplitude=UNSET, fixed=OFF,
                                 distributionType=UNIFORM, fieldName='', localCsys=None)
+
     else:
         # create strain path 
         num_point = strain_amplitude.shape[0]
@@ -1184,6 +1065,7 @@ def j2_plastic_3d_rve(dict):
         model.DisplacementBC(name='E_33', createStepName='Step-1',
                                 region=assembly.sets['Ref-Z'], u1=UNSET, u2=UNSET, u3=strain[2], amplitude='E_33', fixed=OFF,
                                 distributionType=UNIFORM, fieldName='', localCsys=None)
+
     # restrict the rigid movement
     assembly.SetFromNodeLabels(
         name="supportnode",
@@ -1204,6 +1086,7 @@ def j2_plastic_3d_rve(dict):
         u2=0.0,
         u3=0.0,
     )
+
     # create job
     mdb.Job(name=job_name, model=model_name, description='', type=ANALYSIS, 
         atTime=None, waitMinutes=0, waitHours=0, queue=None, memory=90, 
