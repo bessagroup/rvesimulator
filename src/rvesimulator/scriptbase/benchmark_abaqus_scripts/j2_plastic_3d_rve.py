@@ -501,38 +501,38 @@ def j2_plastic_3d_rve(dict):
     assembly.SetFromNodeLabels(name='vertex_BRB', nodeLabels=(('RVE', (vertex_BRB[0].label,)),), unsorted=True)
 
     # define the pbc for vertices ========================================
-    # # part 1: equations for vertices 3(FRT) and 5(BLB)
-    # for ii in range(1, 4):
-    #     model.Equation(name='FRT_BLB_'+str(ii), 
-    #                 terms=((1, 'vertex_FRT', ii),
-    #                         (-1, 'vertex_BLB', ii),
-    #                         (-1*length, 'Ref-X', ii),
-    #                         (-1*width, 'Ref-Y', ii),
-    #                         (-1*height, 'Ref-Z', ii)))
-    # # part 2: equations for vertices 2(FRB) and 8 (BLT)
-    # for ii in range(1, 4):
-    #     model.Equation(name='FRB_BLT_'+str(ii), 
-    #                 terms=((1, 'vertex_FRB', ii), 
-    #                         (-1, 'vertex_BLT', ii), 
-    #                         (-1*length, 'Ref-X', ii), 
-    #                         (-1*width, 'Ref-Y', ii), 
-    #                         (1*height, 'Ref-Z', ii)))
-    # # part 3: equations for vertices 7 (BRT) and 1 (FLB)
-    # for ii in range(1, 4):
-    #     model.Equation(name='BRT_FLB_'+str(ii),
-    #                     terms=((1, 'vertex_BRT', ii),
-    #                         (-1, 'vertex_FLB', ii),
-    #                         (1*length, 'Ref-X', ii), 
-    #                         (-1*width, 'Ref-Y', ii),
-    #                         (-1*height, 'Ref-Z', ii)))
-    # # part 4: equations for vertices 4 (BRT) and 6 (FLB)
-    # for ii in range(1, 4):
-    #     model.Equation(name='FLT_BRB_'+str(ii), 
-    #                 terms=((1, 'vertex_FLT', ii),
-    #                         (-1, 'vertex_BRB', ii),
-    #                         (-1*length, 'Ref-X', ii),
-    #                         (1*width, 'Ref-Y', ii),
-    #                         (-1*height, 'Ref-Z', ii)))
+    # part 1: equations for vertices 3(FRT) and 5(BLB)
+    for ii in range(1, 4):
+        model.Equation(name='FRT_BLB_'+str(ii), 
+                    terms=((1, 'vertex_FRT', ii),
+                            (-1, 'vertex_BLB', ii),
+                            (-1*length, 'Ref-X', ii),
+                            (-1*width, 'Ref-Y', ii),
+                            (-1*height, 'Ref-Z', ii)))
+    # part 2: equations for vertices 2(FRB) and 8 (BLT)
+    for ii in range(1, 4):
+        model.Equation(name='FRB_BLT_'+str(ii), 
+                    terms=((1, 'vertex_FRB', ii), 
+                            (-1, 'vertex_BLT', ii), 
+                            (-1*length, 'Ref-X', ii), 
+                            (-1*width, 'Ref-Y', ii), 
+                            (1*height, 'Ref-Z', ii)))
+    # part 3: equations for vertices 7 (BRT) and 1 (FLB)
+    for ii in range(1, 4):
+        model.Equation(name='BRT_FLB_'+str(ii),
+                        terms=((1, 'vertex_BRT', ii),
+                            (-1, 'vertex_FLB', ii),
+                            (1*length, 'Ref-X', ii), 
+                            (-1*width, 'Ref-Y', ii),
+                            (-1*height, 'Ref-Z', ii)))
+    # part 4: equations for vertices 4 (BRT) and 6 (FLB)
+    for ii in range(1, 4):
+        model.Equation(name='FLT_BRB_'+str(ii), 
+                    terms=((1, 'vertex_FLT', ii),
+                            (-1, 'vertex_BRB', ii),
+                            (-1*length, 'Ref-X', ii),
+                            (1*width, 'Ref-Y', ii),
+                            (-1*height, 'Ref-Z', ii)))
 
     ## define the pbc for edges ========================================
 
