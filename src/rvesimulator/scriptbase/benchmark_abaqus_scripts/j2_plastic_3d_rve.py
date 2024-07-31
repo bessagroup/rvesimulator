@@ -1185,25 +1185,39 @@ def j2_plastic_3d_rve(dict):
                                 region=assembly.sets['Ref-Z'], u1=UNSET, u2=UNSET, u3=strain[2], amplitude='E_33', fixed=OFF,
                                 distributionType=UNIFORM, fieldName='', localCsys=None)
     # restrict the rigid movement
-    assembly.SetFromNodeLabels(
-        name="supportnode",
-        nodeLabels=(("RVE", (support[0].label,)),),
-        unsorted=True,
-    )
+    # assembly.SetFromNodeLabels(
+    #     name="supportnode",
+    #     nodeLabels=(("RVE", (support[0].label,)),),
+    #     unsorted=True,
+    # )
 
-    model.DisplacementBC(
-        amplitude=UNSET,
-        createStepName="Step-1",
-        distributionType=UNIFORM,
-        fieldName="",
-        fixed=OFF,
-        localCsys=None,
-        name="rigid",
-        region=assembly.sets["supportnode"],
-        u1=0.0,
-        u2=0.0,
-        u3=0.0,
-    )
+    # model.DisplacementBC(
+    #     amplitude=UNSET,
+    #     createStepName="Step-1",
+    #     distributionType=UNIFORM,
+    #     fieldName="",
+    #     fixed=OFF,
+    #     localCsys=None,
+    #     name="rigid",
+    #     region=assembly.sets["supportnode"],
+    #     u1=0.0,
+    #     u2=0.0,
+    #     u3=0.0,
+    # )
+    instance  = assembly.instances["RVE"]
+    model.DisplacementBC(name='rigid_x', createStepName='Step-1',
+                                region=instance.sets['vertex_FLB'], u1=UNSET, u2=UNSET, u3=0, amplitude=UNSET, fixed=OFF,
+                                distributionType=UNIFORM, fieldName='', localCsys=None)
+    # to have rigid body motion for y direction
+    model.DisplacementBC(name='rigid_y', createStepName='Step-1',
+                                region=instance.sets['vertex_BRB'], u1=UNSET, u2=0, u3=UNSET, amplitude=UNSET, fixed=OFF,
+                                distributionType=UNIFORM, fieldName='', localCsys=None)
+    # to have rigid body motion for z direction
+    model.DisplacementBC(name='rigid_z', createStepName='Step-1',
+                                region=instance.sets['vertex_BLT'], u1=0, u2=UNSET, u3=UNSET, amplitude=UNSET, fixed=OFF,
+                                distributionType=UNIFORM, fieldName='', localCsys=None)
+    
+
     # create job
     mdb.Job(name=job_name, model=model_name, description='', type=ANALYSIS, 
         atTime=None, waitMinutes=0, waitHours=0, queue=None, memory=90, 

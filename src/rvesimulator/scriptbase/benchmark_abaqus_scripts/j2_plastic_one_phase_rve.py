@@ -388,9 +388,9 @@ def j2_plastic_3d_rve(dict):
         model.Equation(name='FRT_BLB_'+str(ii), 
                     terms=((1, 'vertex_FRT', ii),
                             (-1, 'vertex_BLB', ii),
-                            (-length, 'Ref-X', ii),
-                            (-width, 'Ref-Y', ii),
-                            (-height, 'Ref-Z', ii)))
+                            (-1*length, 'Ref-X', ii),
+                            (-1*width, 'Ref-Y', ii),
+                            (-1*height, 'Ref-Z', ii)))
     # part 2: equations for vertices 2(FRB) and 8 (BLT)
     for ii in range(1, 4):
         model.Equation(name='FRB_BLT_'+str(ii), 
@@ -415,7 +415,6 @@ def j2_plastic_3d_rve(dict):
                             (-1*length, 'Ref-X', ii),
                             (1*width, 'Ref-Y', ii),
                             (-1*height, 'Ref-Z', ii)))
-
 
     ## define the pbc for edges ========================================
 
@@ -718,15 +717,15 @@ def j2_plastic_3d_rve(dict):
                                             RVEcenter[1]+width/2+delta, 
                                             RVEcenter[2]+height/2-delta)
     part.Set(nodes=RIGHT_nodes, name='RIGHT_nodes')
-    # create sets for support nodes
-    support = allnodes.getByBoundingBox(RVEcenter[0]-5*Mesh_size,
-                                        RVEcenter[1]-5*Mesh_size,
-                                        RVEcenter[2]-5*Mesh_size,
-                                        RVEcenter[0]+5*Mesh_size, 
-                                        RVEcenter[1]+5*Mesh_size, 
-                                        RVEcenter[2]+5*Mesh_size)
-    part.Set(nodes=support, name='support_nodes')
-    support = sorted(support, key=get_node_label)
+    # # create sets for support nodes
+    # support = allnodes.getByBoundingBox(RVEcenter[0]-5*Mesh_size,
+    #                                     RVEcenter[1]-5*Mesh_size,
+    #                                     RVEcenter[2]-5*Mesh_size,
+    #                                     RVEcenter[0]+5*Mesh_size, 
+    #                                     RVEcenter[1]+5*Mesh_size, 
+    #                                     RVEcenter[2]+5*Mesh_size)
+    # part.Set(nodes=support, name='support_nodes')
+    # support = sorted(support, key=get_node_label)
     
     # sort the nodes based on the label 
     BACK_nodes = sorted(BACK_nodes, key=get_node_label)
@@ -950,8 +949,7 @@ def j2_plastic_3d_rve(dict):
                         minInc=1e-5,
                         name="Step-1",
                         previous="Initial",
-                        timePeriod=time_period,
-                        nlgeom=ON,)
+                        timePeriod=time_period,)
     model.fieldOutputRequests["F-Output-1"].setValues(
                 variables=(
                     "S",
@@ -1066,26 +1064,39 @@ def j2_plastic_3d_rve(dict):
                                 region=assembly.sets['Ref-Z'], u1=UNSET, u2=UNSET, u3=strain[2], amplitude='E_33', fixed=OFF,
                                 distributionType=UNIFORM, fieldName='', localCsys=None)
 
-    # restrict the rigid movement
-    assembly.SetFromNodeLabels(
-        name="supportnode",
-        nodeLabels=(("RVE", (support[0].label,)),),
-        unsorted=True,
-    )
+    # # restrict the rigid movement
+    # assembly.SetFromNodeLabels(
+    #     name="supportnode",
+    #     nodeLabels=(("RVE", (support[0].label,)),),
+    #     unsorted=True,
+    # )
 
-    model.DisplacementBC(
-        amplitude=UNSET,
-        createStepName="Step-1",
-        distributionType=UNIFORM,
-        fieldName="",
-        fixed=OFF,
-        localCsys=None,
-        name="rigid",
-        region=assembly.sets["supportnode"],
-        u1=0.0,
-        u2=0.0,
-        u3=0.0,
-    )
+    # model.DisplacementBC(
+    #     amplitude=UNSET,
+    #     createStepName="Step-1",
+    #     distributionType=UNIFORM,
+    #     fieldName="",
+    #     fixed=OFF,
+    #     localCsys=None,
+    #     name="rigid",
+    #     region=assembly.sets["supportnode"],
+    #     u1=0.0,
+    #     u2=0.0,
+    #     u3=0.0,
+    # )
+    # to have rigid body motion for x direction
+    model.DisplacementBC(name='rigid_x', createStepName='Step-1',
+                                region=instance.sets['vertex_FLB'], u1=UNSET, u2=UNSET, u3=0, amplitude=UNSET, fixed=OFF,
+                                distributionType=UNIFORM, fieldName='', localCsys=None)
+    # to have rigid body motion for y direction
+    model.DisplacementBC(name='rigid_y', createStepName='Step-1',
+                                region=instance.sets['vertex_BRB'], u1=UNSET, u2=0, u3=UNSET, amplitude=UNSET, fixed=OFF,
+                                distributionType=UNIFORM, fieldName='', localCsys=None)
+    # to have rigid body motion for z direction
+    model.DisplacementBC(name='rigid_z', createStepName='Step-1',
+                                region=instance.sets['vertex_BLT'], u1=0, u2=UNSET, u3=UNSET, amplitude=UNSET, fixed=OFF,
+                                distributionType=UNIFORM, fieldName='', localCsys=None)
+    
 
     # create job
     mdb.Job(name=job_name, model=model_name, description='', type=ANALYSIS, 
@@ -1137,8 +1148,6 @@ def post_process(dict):
     RF_ref_x = np.zeros((total_frames, 3))
     RF_ref_y = np.zeros((total_frames, 3))
     RF_ref_z = np.zeros((total_frames, 3))
-
-    # plastic energy 
 
     # loop over all frames
     for ii in range(total_frames):
