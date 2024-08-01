@@ -1206,7 +1206,7 @@ def j2_plastic_3d_rve(dict):
     # )
     instance  = assembly.instances["RVE"]
     model.DisplacementBC(name='rigid_x', createStepName='Step-1',
-                                region=instance.sets['vertex_FLB'], u1=UNSET, u2=UNSET, u3=0, amplitude=UNSET, fixed=OFF,
+                                region=instance.sets['vertex_FLB'], u1=0, u2=UNSET, u3=UNSET, amplitude=UNSET, fixed=OFF,
                                 distributionType=UNIFORM, fieldName='', localCsys=None)
     # to have rigid body motion for y direction
     model.DisplacementBC(name='rigid_y', createStepName='Step-1',
@@ -1214,8 +1214,12 @@ def j2_plastic_3d_rve(dict):
                                 distributionType=UNIFORM, fieldName='', localCsys=None)
     # to have rigid body motion for z direction
     model.DisplacementBC(name='rigid_z', createStepName='Step-1',
-                                region=instance.sets['vertex_BLT'], u1=0, u2=UNSET, u3=UNSET, amplitude=UNSET, fixed=OFF,
+                                region=instance.sets['vertex_BLT'], u1=UNSET, u2=UNSET, u3=0, amplitude=UNSET, fixed=OFF,
                                 distributionType=UNIFORM, fieldName='', localCsys=None)
+    # for the original point
+    # model.DisplacementBC(name='rigid', createStepName='Step-1',
+    #                             region=instance.sets['vertex_BLB'], u1=0, u2=0, u3=0, amplitude=UNSET, fixed=OFF,
+    #                             distributionType=UNIFORM, fieldName='', localCsys=None)
     
 
     # create job
