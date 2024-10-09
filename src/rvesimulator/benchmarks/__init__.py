@@ -1,6 +1,7 @@
 
 from .asca_rve import ASCA_RVE
 from .cddm_rve import CDDM_RVE
+from .elastic_2D import ElasticRVE2D
 from .hollow_plate_sve import (ElasticRegularLoads, VonMisesPlasticPathLoads,
                                VonMisesPlasticRegularLoads)
 from .pppe_cohesive_rve import PPPEMixtureCohesive

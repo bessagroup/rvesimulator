@@ -251,6 +251,125 @@ class VonMisesPlasticElasticRegularLoads(NormalDisplacementLoading,
         # create job
         self.create_sequential_job(subroutine_path="")
 
+class TwoElasticRegularLoads(NormalDisplacementLoading,
+                            TwoMaterialsRVEBase):
+
+    def __init__(
+        self,
+        sim_info={
+            "job_name": "elastic_rve",
+            "location_information": None,
+            "len_start": None,
+            "len_end": None,
+            "wid_start": None,
+            "wid_end": None,
+            "radius_mu": None,
+            "radius_std": None,
+            "youngs_modulus_matrix": None,
+            "poisson_ratio_matrix": None,
+            "youngs_modulus_fiber": None,
+            "poisson_ratio_fiber": None,
+            "mesh_partition": None,
+            "strain": None,
+            "num_cpu": None,
+            "num_steps": None,
+            "simulation_time": None},
+    ):
+        """
+        Initialization function of Hollow Plate SVE case
+        """
+
+        # define the names of RVE simulation and set them as private variables
+        self.model_name = "RVE"
+        self.part_name = "Final_Stuff"
+        self.instance_name = "Final_Stuff"
+        self.job_name = str(sim_info["job_name"])
+        self.num_cpu = sim_info["num_cpu"]
+
+        # define the import elements of RVE
+        self.model = None
+        self.sketch = None
+        self.part = None
+        self.assembly = None
+        self.material = None
+
+        #  define the geometry information
+        self.len_start = sim_info["len_start"]
+        self.len_end = sim_info["len_end"]
+        self.wid_start = sim_info["wid_start"]
+        self.wid_end = sim_info["wid_end"]
+        self.circles_information = sim_info["location_information"]
+        # modeling
+        self.length = (sim_info["len_end"] - sim_info["len_start"]
+                       ) - 2 * sim_info["radius_mu"]
+
+        self.width = (sim_info["wid_end"] - sim_info["wid_start"]
+                      ) - 2 * sim_info["radius_mu"]
+
+        self.center = [
+            (sim_info["len_end"] + sim_info["len_start"]) / 2.0,
+            (sim_info["wid_end"] + sim_info["wid_start"]) / 2.0,
+        ]
+        self.radius_mu = sim_info["radius_mu"]
+        self.radius_std = sim_info["radius_std"]
+        self.mesh_size = (
+            min(self.length, self.width) / sim_info["mesh_partition"]
+        )
+
+        # loading condition
+        self.strain = sim_info["strain"]
+
+        # simulation time information
+        self.time_period = sim_info["simulation_time"]
+        self.time_interval = sim_info["simulation_time"] / \
+            sim_info["num_steps"]
+
+        # material properties
+        self.youngs_modulus_fiber = sim_info["youngs_modulus_fiber"]
+        self.poisson_ratio_fiber = sim_info["poisson_ratio_fiber"]
+        self.youngs_modulus_matrix = sim_info["youngs_modulus_matrix"]
+        self.poisson_ratio_matrix = sim_info["poisson_ratio_matrix"]
+
+        # execute the simulation
+        self.script_generator()
+
+    def script_generator(self):
+        # create a new model
+        self.create_new_model()
+        # delete existed models (if any)
+        self.delete_existed_models()
+        # create part
+        self.create_part()
+        # create assembly for abaqus analysis
+        self.create_assembly()
+        # create geometry set for faces, edges, and vertices
+        faces_name, edges_name, vertices_name = self.create_geometry_set()
+        # create material for matrix material
+        self.create_elastic_material(
+            geometry_set_name=faces_name[0],
+            material_name="matrix",
+            youngs=self.youngs_modulus_matrix,
+            poisson=self.poisson_ratio_matrix,
+        )
+        # create material for fiber material
+        self.create_elastic_material(
+            geometry_set_name=faces_name[1],
+            material_name="fiber",
+            youngs=self.youngs_modulus_fiber,
+            poisson=self.poisson_ratio_fiber,
+
+        )
+        # create mesh
+        self.create_mesh(edges_name=edges_name, element_type="quadratic")
+        # create pbc
+        self.create_pbc(vertices_name=vertices_name)
+        # create step
+        self.create_step()
+        # create loading
+        self.create_load()
+        # create job
+        self.create_sequential_job(subroutine_path="")
+
 
 # =============================================================================
 

@@ -508,8 +508,8 @@ class CircleParticles(MicrostructureGenerator):
         np.ndarray
             2d numpy array that contains the micro-structure information
         """
-
-        self.rgmsh = np.zeros((num_discrete, num_discrete))
+        # the default material is ones (matrix)
+        self.rgmsh = np.ones((num_discrete, num_discrete))
         grid_len = self.length / num_discrete
         grid_wid = self.width / num_discrete
         radius = self.fiber_positions[:, 2].reshape(-1, 1)
@@ -528,10 +528,13 @@ class CircleParticles(MicrostructureGenerator):
                     self.fiber_positions[:, 0:2],
                     loc_temp,
                 )
-
+                # if the distance is smaller than the radius, it is fiber
+                # we give the fiber a value of 2
                 if (points_dis_temp - radius).min() < 0:
-                    self.rgmsh[ii, jj] = 1
-
+                    self.rgmsh[ii, jj] = 2
+        # to make sure all the numbers in the array are integers
+        self.rgmsh = self.rgmsh.astype(int)
+        
         return self.rgmsh.T
 
     def vertices_mesh_loc(self, fiber: np.ndarray) -> str:
