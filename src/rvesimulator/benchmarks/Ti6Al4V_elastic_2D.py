@@ -239,8 +239,7 @@ class Ti6Al4VElastic2D(Py3RVEBase):
         # update logger on samples
         self.logger.info("==============        update info      ============")
         self.logger.info("sample: {}".format(sample))
-        # change folder to main folder
-        # save microstructure
+
         # update simulation information
         self.logger.info("============== Start abaqus simulation ============")
         start_time = time.time()
