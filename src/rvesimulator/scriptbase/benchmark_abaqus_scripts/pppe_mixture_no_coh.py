@@ -83,13 +83,7 @@ class PPPEMixtureNoCohesive(object):
         self.create_simulation_job()
         # create the job and write it into inp file
         self.create_job()
-        #
-        # self.submit_job()
-        # # post process
-        # if sim_info["platform"] == "cluster" or sim_info["platform"] == "windows":
-        #     PostProcess(job_name=self.job_name,
-        #                 record_time_step=self.record_time_step)
-
+        
     def create_simulation_job(self):
 
         # get delta

@@ -50,11 +50,23 @@ class TwoMaterialsRVEBase(CommonProcedure,
 
     def create_assembly(self):
 
-        self.model.rootAssembly.features.changeKey(
-            fromName="Final_Stuff-1", toName="Final_Stuff"
+        if "Final_Stuff-1" in self.model.rootAssembly.features.keys():
+            self.model.rootAssembly.features.changeKey(
+                fromName="Final_Stuff-1", toName=self.instance_name
+            )
+        else:
+            self.assembly = self.model.rootAssembly
+
+        self.assembly.Instance(
+            name=self.instance_name, part=self.part, dependent=ON
         )
-        self.assembly = self.model.rootAssembly
-        self.part = self.model.parts["Final_Stuff"]
+        # self.part = self.model.parts[self.part_name]      
+        
+        # self.model.rootAssembly.features.changeKey(
+        #     fromName="Final_Stuff-1", toName="Final_Stuff"
+        # )
+        # self.assembly = self.model.rootAssembly
+        # self.part = self.model.parts["Final_Stuff"]
 
     def create_geometry_set(self):
 
