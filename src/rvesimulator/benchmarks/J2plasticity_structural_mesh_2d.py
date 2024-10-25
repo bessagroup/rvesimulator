@@ -9,8 +9,8 @@ import os
 import time
 from pathlib import Path
 from typing import Any, Dict
-import numpy as np
 
+import numpy as np
 # local
 import rvesimulator
 from rvesimulator.abaqus2py.abaqus_simulator import AbaqusSimulator
@@ -741,7 +741,7 @@ class StrucMesh2DRVE(Py3RVEBase):
     def _get_sim_info(self) -> None:
         """get simulation information"""
         self.sim_info = {
-            "job_name": "cddm_rve",
+            "job_name": "J2StrucMesh",
             "location_information": self.microstructure.microstructure_info[
                 "location_information"
             ],

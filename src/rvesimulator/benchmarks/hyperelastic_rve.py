@@ -4,10 +4,10 @@
 import logging
 import os
 import time
-from typing import Any
 from pathlib import Path
+from typing import Any, Dict
+
 import rvesimulator
-from typing import Dict
 from rvesimulator.abaqus2py.abaqus_simulator import AbaqusSimulator
 from rvesimulator.microstructure.circle_particles import CircleParticles
 
@@ -29,7 +29,7 @@ class HyperelasticRVE(Py3RVEBase):
     def __init__(self) -> None:
 
         logging.basicConfig(level=logging.INFO,
-                            filename='rve_simulation.log', filemode='w')
+                            filename='hyper_elastic.log', filemode='w')
         self.logger = logging.getLogger("abaqus_simulation")
         self.main_folder = Path.cwd()
         self.folder_info = {
@@ -98,7 +98,8 @@ class HyperelasticRVE(Py3RVEBase):
         self.logger.info("params_matrix: {}".format(params_matrix))
         self.logger.info("params_inclusion: {}".format(params_inclusion))
         self.logger.info("mesh_division: {}".format(mesh_division))
-        self.logger.info("displacement_gradient: {}".format(displacement_gradient))
+        self.logger.info(
+            "displacement_gradient: {}".format(displacement_gradient))
         self.logger.info(
             "num_pseudo_time_steps: {}".format(num_pseudo_time_steps))
         self.logger.info("simulation_time: {}".format(simulation_time))
@@ -148,7 +149,7 @@ class HyperelasticRVE(Py3RVEBase):
             "num_pseudo_time_steps": self.num_pseudo_time_steps,
             "simulation_time": self.simulation_time,
             "num_cpu": self.num_cpu
-            }
+        }
 
     def run_simulation(
         self,

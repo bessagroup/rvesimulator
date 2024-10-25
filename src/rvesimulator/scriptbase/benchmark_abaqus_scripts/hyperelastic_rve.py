@@ -1,20 +1,24 @@
 
 # -*- coding: mbcs -*-
+from math import ceil
+
 import assembly
 import mesh
 import numpy as np
 import regionToolset
-from math import ceil
 from abaqus import *
 from abaqusConstants import *
 from caeModules import *
 # import packages for abaqus post-processing
 from odbAccess import *
+from scipy.optimize import linear_sum_assignment
+from scipy.spatial import distance
 
 try:
     import cPickle as pickle  # Improve speed
 except:
     import pickle
+
 
 class HyperelasticRVE(object):
     """ Hyperelastic RVE with hyperelastic matrix and hyperelastic inclusions
@@ -31,7 +35,7 @@ class HyperelasticRVE(object):
                                  "part_name": "rve_2phase",
                                  "instance_name": "rve_2phase",
                                  "job_name": "hyperelastic_rve",
-                                 "displacement_gradient": [[0.1, 0.0],[0.0, 0.0]],
+                                 "displacement_gradient": [[0.1, 0.0], [0.0, 0.0]],
                                  "params_matrix": None,
                                  "params_inclusion": None,
                                  "mesh_division": None,
@@ -52,19 +56,19 @@ class HyperelasticRVE(object):
         # information for creating geometry of the RVE
 
         self.inclusion_location_information = sim_info["inclusion_location_information"]
-        self.length = (sim_info["length_end"] 
+        self.length = (sim_info["length_end"]
                        - sim_info["length_start"]
                        - 2 * sim_info["radius_mu"])
         self.width = (sim_info["width_end"]
-                        - sim_info["width_start"]
-                        - 2 * sim_info["radius_mu"])
-        self.center = [ 
+                      - sim_info["width_start"]
+                      - 2 * sim_info["radius_mu"])
+        self.center = [
             (sim_info["length_end"] + sim_info["length_start"]) / 2.0,
-            (sim_info["width_end"] + sim_info["width_start"]) / 2.0 ]
+            (sim_info["width_end"] + sim_info["width_start"]) / 2.0]
         self.radius_mu = sim_info["radius_mu"]
         self.radius_std = sim_info["radius_std"]
 
-        # information for creating mesh 
+        # information for creating mesh
         self.mesh_division = sim_info["mesh_division"]
         self.mesh_size = min(self.length, self.width) / self.mesh_division
 
@@ -84,7 +88,7 @@ class HyperelasticRVE(object):
         self.data_check()
 
     def create_model(self):
-        # get delta 
+        # get delta
         delta = min(min(self.length, self.width) / 1000, self.mesh_size / 10)
 
         # get model information
@@ -97,13 +101,13 @@ class HyperelasticRVE(object):
         # delete existed model
         if 'Model-1' in mdb.models.keys():
             del mdb.models['Model-1']
-        
+
         # create sketch--------------------------------------------------------
         # model the matrix part first
         sketch = model.ConstrainedSketch(name='__profile__', sheetSize=200.0)
         sketch.rectangle(point1=(0.0, 0.0), point2=(self.length, self.width))
         part = model.Part(name='Final_Stuff',
-                        dimensionality=TWO_D_PLANAR, type=DEFORMABLE_BODY)
+                          dimensionality=TWO_D_PLANAR, type=DEFORMABLE_BODY)
         part.BaseShell(sketch=sketch)
         del sketch
 
@@ -121,7 +125,8 @@ class HyperelasticRVE(object):
         for ii in range(len(self.inclusion_location_information)):
             # actual inclusions
             sketch.CircleByCenterPerimeter(
-                center=(self.inclusion_location_information[ii][0], self.inclusion_location_information[ii][1]),
+                center=(
+                    self.inclusion_location_information[ii][0], self.inclusion_location_information[ii][1]),
                 point1=(self.inclusion_location_information[ii][0] +
                         self.inclusion_location_information[ii][2], self.inclusion_location_information[ii][1]),
             )
@@ -136,17 +141,17 @@ class HyperelasticRVE(object):
 
         part.Set(faces=faces, name="all_faces")
         inclusionface = part.faces.getByBoundingBox(
-                    xMin=self.inclusion_location_information[0][0] - self.inclusion_location_information[0][2] -
-                    0.001 * self.inclusion_location_information[0][2],
-                    xMax=self.inclusion_location_information[0][0] + self.inclusion_location_information[0][2] +
-                    0.001 * self.inclusion_location_information[0][2],
-                    yMin=self.inclusion_location_information[0][1] - self.inclusion_location_information[0][2] -
-                    0.001 * self.inclusion_location_information[0][2],
-                    yMax=self.inclusion_location_information[0][1] + self.inclusion_location_information[0][2] +
-                    0.001 * self.inclusion_location_information[0][2],
-                    zMin=0.0,
-                    zMax=1.0,
-                )
+            xMin=self.inclusion_location_information[0][0] - self.inclusion_location_information[0][2] -
+            0.001 * self.inclusion_location_information[0][2],
+            xMax=self.inclusion_location_information[0][0] + self.inclusion_location_information[0][2] +
+            0.001 * self.inclusion_location_information[0][2],
+            yMin=self.inclusion_location_information[0][1] - self.inclusion_location_information[0][2] -
+            0.001 * self.inclusion_location_information[0][2],
+            yMax=self.inclusion_location_information[0][1] + self.inclusion_location_information[0][2] +
+            0.001 * self.inclusion_location_information[0][2],
+            zMin=0.0,
+            zMax=1.0,
+        )
         part.Set(faces=inclusionface, name="inclusionface")
 
         for ii in range(1, len(self.inclusion_location_information)):
@@ -165,7 +170,8 @@ class HyperelasticRVE(object):
             part.Set(faces=inclusionface_1, name="inclusionface_1")
             part.SetByBoolean(
                 name="inclusionface",
-                sets=(part.sets["inclusionface_1"],  part.sets["inclusionface"]),
+                sets=(part.sets["inclusionface_1"],
+                      part.sets["inclusionface"]),
                 operation=UNION,
             )
         # delete fiber face 1
@@ -258,11 +264,12 @@ class HyperelasticRVE(object):
         vertices_name = ["VertexLB", "VertexLT", "VertexRB", "VertexRT"]
 
         # meshing ---------------------------------------------------------------------
-        part.seedPart(deviationFactor=0.05,  minSizeFactor=0.05, size=self.mesh_size)
+        part.seedPart(deviationFactor=0.05,
+                      minSizeFactor=0.05, size=self.mesh_size)
         # element type (plane strain element)
         elemType1 = mesh.ElemType(elemCode=CPE4R, elemLibrary=STANDARD,
-                                secondOrderAccuracy=OFF, hourglassControl=ENHANCED,
-                                distortionControl=DEFAULT)
+                                  secondOrderAccuracy=OFF, hourglassControl=ENHANCED,
+                                  distortionControl=DEFAULT)
         elemType2 = mesh.ElemType(elemCode=CPE3, elemLibrary=STANDARD)
         part.setElementType(
             regions=part.sets["inclusionface"], elemTypes=(elemType1, elemType2))
@@ -274,40 +281,52 @@ class HyperelasticRVE(object):
         # material properties ---------------------------------------------------------
         # material property for particles
         material_inclusion = model.Material(name="material_inclusion")
-        material_inclusion.Hyperelastic(materialType=ISOTROPIC, testData=OFF, type=NEO_HOOKE, 
-                                        volumetricResponse=VOLUMETRIC_DATA, 
-                                        table=((self.params_inclusion[0], self.params_inclusion[1]), ))
+        material_inclusion.Hyperelastic(materialType=ISOTROPIC,
+                                        testData=OFF,
+                                        type=NEO_HOOKE,
+                                        volumetricResponse=VOLUMETRIC_DATA,
+                                        table=((self.params_inclusion[0],
+                                                self.params_inclusion[1]), ))
 
         # material property for the matrix part
         material_matrix = model.Material(name="material_matrix")
-        material_matrix.Hyperelastic(materialType=ISOTROPIC, testData=OFF, type=ARRUDA_BOYCE, 
-                                        volumetricResponse=VOLUMETRIC_DATA, 
-                                        table=((self.params_matrix[0], self.params_matrix[1], self.params_matrix[2]), ))
+        material_matrix.Hyperelastic(materialType=ISOTROPIC,
+                                     testData=OFF,
+                                     type=ARRUDA_BOYCE,
+                                     volumetricResponse=VOLUMETRIC_DATA,
+                                     table=((self.params_matrix[0],
+                                             self.params_matrix[1],
+                                             self.params_matrix[2]), ))
 
         # create section and assign material property to corresponding section
         # matrix material
         model.HomogeneousSolidSection(
             name='matrix', material='material_matrix', thickness=None)
-        part.SectionAssignment(region=part.sets['matrixface'], sectionName='matrix', offset=0.0,
-                            offsetType=MIDDLE_SURFACE, offsetField='', thicknessAssignment=FROM_SECTION)
-
+        part.SectionAssignment(region=part.sets['matrixface'],
+                               sectionName='matrix', offset=0.0,
+                               offsetType=MIDDLE_SURFACE,
+                               offsetField='',
+                               thicknessAssignment=FROM_SECTION)
 
         # inclusion material
         model.HomogeneousSolidSection(
             name='inclusion', material='material_inclusion', thickness=None)
-        part.SectionAssignment(region=part.sets['inclusionface'], sectionName='inclusion', offset=0.0,
-                            offsetType=MIDDLE_SURFACE, offsetField='',
-                            thicknessAssignment=FROM_SECTION)
+        part.SectionAssignment(region=part.sets['inclusionface'],
+                               sectionName='inclusion', offset=0.0,
+                               offsetType=MIDDLE_SURFACE, offsetField='',
+                               thicknessAssignment=FROM_SECTION)
 
         sim_assembly = model.rootAssembly
         sim_instance = sim_assembly.Instance(
             dependent=ON, name=instance_name, part=part)
-        
+
         # pbcs-----------------------------------------------------------------
         # right reference point
-        right_reference_point_id = sim_assembly.ReferencePoint(point=(self.length * 1.5, self.center[1], 0.0)).id
+        right_reference_point_id = sim_assembly.ReferencePoint(
+            point=(self.length * 1.5, self.center[1], 0.0)).id
         # top reference point
-        top_reference_point_id = sim_assembly.ReferencePoint(point=(self.center[0], self.width * 1.5, 0.0)).id
+        top_reference_point_id = sim_assembly.ReferencePoint(
+            point=(self.center[0], self.width * 1.5, 0.0)).id
         # reference points
 
         reference_points = sim_assembly.referencePoints
@@ -321,13 +340,14 @@ class HyperelasticRVE(object):
             referencePoints=((reference_points[top_reference_point_id],)),
         )
 
-        # pbc for vertices ------------------------------------------------------------
+        # pbc for vertices ----------------------------------------------------
         # regenerate assembly
-        session.viewports["Viewport: 1"].setValues( displayedObject=sim_assembly)
+        session.viewports["Viewport: 1"].setValues(
+            displayedObject=sim_assembly)
         sim_assembly.regenerate()
 
         #
-        set_name_for_vertices =["NodeLB", "NodeLT", "NodeRB", "NodeRT"]
+        set_name_for_vertices = ["NodeLB", "NodeLT", "NodeRB", "NodeRT"]
         for ii in range(len(vertices_name)):
             vertex_node = part.sets[vertices_name[ii]].nodes
             # create the assembly node set for vertex
@@ -379,165 +399,226 @@ class HyperelasticRVE(object):
         # part 1: equations for edges 2 (edgesFRONT_RIGHT) and 4 (edgesBACK_LEFT)
         edgesRIGHT_nodes = part.sets["edgesRIGHT"].nodes
         edgesRIGHT_nodes_sorted = sorted(edgesRIGHT_nodes, key=get_node_y)
+        # pop the first and last node
+        edgesRIGHT_nodes_sorted.pop(0)
+        edgesRIGHT_nodes_sorted.pop(-1)
+
+        # sort the nodes of the right edge
         edgesLEFT_nodes = part.sets["edgesLEFT"].nodes
         edgesLEFT_nodes_sorted = sorted(edgesLEFT_nodes, key=get_node_y)
-        if len(edgesRIGHT_nodes_sorted) == len(edgesLEFT_nodes_sorted):
-            for ii in range(1, len(edgesRIGHT_nodes_sorted) - 1):
-                sim_assembly.SetFromNodeLabels(
-                    name="LEFT_" + str(ii),
-                    nodeLabels=(
-                        (
-                            instance_name,
-                            tuple([edgesLEFT_nodes_sorted[ii].label]),
-                        ),
-                    ),
-                    unsorted=True,
-                )
-                sim_assembly.SetFromNodeLabels(
-                    name="RIGHT_" + str(ii),
-                    nodeLabels=(
-                        (
-                            instance_name,
-                            tuple([edgesRIGHT_nodes_sorted[ii].label]),
-                        ),
-                    ),
-                    unsorted=True,
-                )
-                for jj in range(1, 3):
-                    model.Equation(
-                        name="LEFT_RIGHT_" + str(ii) + "_" + str(jj),
-                        terms=(
-                            (1, "RIGHT_" + str(ii), jj),
-                            (-1, "LEFT_" + str(ii), jj),
-                            (-1 * self.length, "Ref-R", jj),
-                        ),
-                    )
-        else:
-           raise ValueError(
-                "the number of nodes between the left and right are not the same"
-            )
+        # pop the first and last node
+        edgesLEFT_nodes_sorted.pop(0)
+        edgesLEFT_nodes_sorted.pop(-1)
 
-        # part II:
+        if len(edgesRIGHT_nodes_sorted) != len(edgesLEFT_nodes_sorted):
+
+            print("The number of nodes between the two sides are not the same")
+            print(
+                f"Right side node is: {len(edgesRIGHT_nodes_sorted)} ")
+            print(
+                f"Left side node is: {len(edgesLEFT_nodes_sorted)} ")
+            if len(edgesRIGHT_nodes_sorted) > len(edgesLEFT_nodes_sorted):
+                print(
+                    f"remove {np.abs(len(edgesRIGHT_nodes_sorted) - len(edgesLEFT_nodes_sorted))} nodes from right ")
+                num_remove = len(edgesRIGHT_nodes_sorted) - \
+                    len(edgesLEFT_nodes_sorted)
+                index_remove = np.random.choice(
+                    len(edgesRIGHT_nodes_sorted) - num_remove, num_remove, replace=False)
+                for jj in index_remove:
+                    edgesRIGHT_nodes_sorted.pop(jj)
+            else:
+                print(
+                    f"remove {np.abs(len(edgesRIGHT_nodes_sorted) - len(edgesLEFT_nodes_sorted))} nodes from left ")
+                num_remove = len(edgesLEFT_nodes_sorted) - \
+                    len(edgesRIGHT_nodes_sorted)
+                index_remove = np.random.choice(
+                    len(edgesLEFT_nodes_sorted) - num_remove, num_remove, replace=False)
+                for jj in index_remove:
+                    edgesLEFT_nodes_sorted.pop(jj)
+        else:
+            print("The number of nodes between the two sides are the same")
+
+        # pbcs for the left and right edges
+        for ii in range(len(edgesRIGHT_nodes_sorted)):
+            sim_assembly.SetFromNodeLabels(
+                name="LEFT_" + str(ii),
+                nodeLabels=(
+                    (
+                        instance_name,
+                        tuple([edgesLEFT_nodes_sorted[ii].label]),
+                    ),
+                ),
+                unsorted=True,
+            )
+            sim_assembly.SetFromNodeLabels(
+                name="RIGHT_" + str(ii),
+                nodeLabels=(
+                    (
+                        instance_name,
+                        tuple([edgesRIGHT_nodes_sorted[ii].label]),
+                    ),
+                ),
+                unsorted=True,
+            )
+            for jj in range(1, 3):
+                model.Equation(
+                    name="LEFT_RIGHT_" + str(ii) + "_" + str(jj),
+                    terms=(
+                        (1, "RIGHT_" + str(ii), jj),
+                        (-1, "LEFT_" + str(ii), jj),
+                        (-1 * self.length, "Ref-R", jj),
+                    ),
+                )
+        # part II: pbcs for the top and bottom edges
+        # get the top nodes
         edgesTOP_nodes = part.sets["edgesTOP"].nodes
         edgesTOP_nodes_sorted = sorted(edgesTOP_nodes, key=get_node_x)
+        # pop the first and last node
+        edgesTOP_nodes_sorted.pop(0)
+        edgesTOP_nodes_sorted.pop(-1)
+
+        # get the bottom nodes
         edgesBOT_nodes = part.sets["edgesBOT"].nodes
         edgesBOT_nodes_sorted = sorted(edgesBOT_nodes, key=get_node_x)
-        if len(edgesTOP_nodes_sorted) == len(edgesBOT_nodes_sorted):
-            for ii in range(1, len(edgesTOP_nodes_sorted) - 1):
-                sim_assembly.SetFromNodeLabels(
-                    name="TOP_" + str(ii),
-                    nodeLabels=(
-                        (
-                            instance_name,
-                            tuple([edgesTOP_nodes_sorted[ii].label]),
-                        ),
-                    ),
-                    unsorted=True,
-                )
-                sim_assembly.SetFromNodeLabels(
-                    name="BOT_" + str(ii),
-                    nodeLabels=(
-                        (
-                            instance_name,
-                            tuple([edgesBOT_nodes_sorted[ii].label]),
-                        ),
-                    ),
-                    unsorted=True,
-                )
-                for jj in range(1, 3):
-                    model.Equation(
-                        name="TOP_BOT_" + str(ii) + "_" + str(jj),
-                        terms=(
-                            (1, "TOP_" + str(ii), jj),
-                            (-1, "BOT_" + str(ii), jj),
-                            (-1 * self.width, "Ref-T", jj),
-                        ),
-                    )
-        else:
-            raise ValueError(
-                "the number of nodes between top and the bottom is not the same"
-            )
+        # pop the first and last node
+        edgesBOT_nodes_sorted.pop(0)
+        edgesBOT_nodes_sorted.pop(-1)
 
-        
-        # steps (static-step, implicit solver) 
+        if len(edgesTOP_nodes_sorted) != len(edgesBOT_nodes_sorted):
+            print("The number of nodes between the top and the bottom are not the same")
+            print(
+                f"Top side node is: {len(edgesTOP_nodes_sorted)} ")
+            print(
+                f"Bottom side node is: {len(edgesBOT_nodes_sorted)} ")
+            if len(edgesTOP_nodes_sorted) > len(edgesBOT_nodes_sorted):
+                print(
+                    f"remove {np.abs(len(edgesTOP_nodes_sorted) - len(edgesBOT_nodes_sorted))} nodes from top ")
+                num_remove = len(edgesTOP_nodes_sorted) - \
+                    len(edgesBOT_nodes_sorted)
+                index_remove = np.random.choice(
+                    len(edgesTOP_nodes_sorted) - num_remove, num_remove, replace=False)
+                for jj in index_remove:
+                    edgesTOP_nodes_sorted.pop(jj)
+            else:
+                print(
+                    f"remove {np.abs(len(edgesTOP_nodes_sorted) - len(edgesBOT_nodes_sorted))} nodes from bottom ")
+                num_remove = len(edgesBOT_nodes_sorted) - \
+                    len(edgesTOP_nodes_sorted)
+                index_remove = np.random.choice(
+                    len(edgesBOT_nodes_sorted) - num_remove, num_remove, replace=False)
+                for jj in index_remove:
+                    edgesBOT_nodes_sorted.pop(jj)
+        else:
+            print("The number of nodes between the top and the bottom are the same")
+
+        # pbcs for the top and bottom edges
+        for ii in range(len(edgesTOP_nodes_sorted)):
+            sim_assembly.SetFromNodeLabels(
+                name="TOP_" + str(ii),
+                nodeLabels=(
+                    (
+                        instance_name,
+                        tuple([edgesTOP_nodes_sorted[ii].label]),
+                    ),
+                ),
+                unsorted=True,
+            )
+            sim_assembly.SetFromNodeLabels(
+                name="BOT_" + str(ii),
+                nodeLabels=(
+                    (
+                        instance_name,
+                        tuple([edgesBOT_nodes_sorted[ii].label]),
+                    ),
+                ),
+                unsorted=True,
+            )
+            for jj in range(1, 3):
+                model.Equation(
+                    name="TOP_BOT_" + str(ii) + "_" + str(jj),
+                    terms=(
+                        (1, "TOP_" + str(ii), jj),
+                        (-1, "BOT_" + str(ii), jj),
+                        (-1 * self.width, "Ref-T", jj),
+                    ),
+                )
+
+        # steps (static-step, implicit solver)
         model.StaticStep(name="Step-1", previous="Initial")
         step = model.StaticStep(
-                    initialInc=0.01,
-                    maxInc=1.0,
-                    maxNumInc=100000,
-                    minInc=1e-20,
-                    name="Step-1",
-                    previous="Initial",
-                    timePeriod=self.simulation_time,
-                    nlgeom=ON
-                )
+            initialInc=0.01,
+            maxInc=1.0,
+            maxNumInc=100000,
+            minInc=1e-20,
+            name="Step-1",
+            previous="Initial",
+            timePeriod=self.simulation_time,
+            nlgeom=ON
+        )
         model.fieldOutputRequests["F-Output-1"].setValues(
-                    variables=(
-                        "S",
-                        "E",
-                        "LE",
-                        "ENER",
-                        "ELEN",
-                        "ELEDEN",
-                        "EVOL",
-                        "IVOL",
-                    ),
-                    timeInterval=self.reporting_interval,
-                )
+            variables=(
+                "S",
+                "E",
+                "LE",
+                "ENER",
+                "ELEN",
+                "ELEDEN",
+                "EVOL",
+                "IVOL",
+            ),
+            timeInterval=self.reporting_interval,
+        )
         model.FieldOutputRequest(
-                    name="F-Output-2",
-                    createStepName="Step-1",
-                    variables=("U", "RF"),
-                    timeInterval=self.reporting_interval,
-                )
-
+            name="F-Output-2",
+            createStepName="Step-1",
+            variables=("U", "RF"),
+            timeInterval=self.reporting_interval,
+        )
 
         # loadings --------------------------------------------------------------------
         model.DisplacementBC(
-                    name="RightBC",
-                    createStepName="Step-1",
-                    region=sim_assembly.sets["Ref-R"],
-                    u1=self.displacement_gradient[0][0],
-                    u2=self.displacement_gradient[0][1],
-                    ur3=UNSET,
-                    amplitude=UNSET,
-                    fixed=OFF,
-                    distributionType=UNIFORM,
-                    fieldName="",
-                    localCsys=None,
-                )
-        
+            name="RightBC",
+            createStepName="Step-1",
+            region=sim_assembly.sets["Ref-R"],
+            u1=self.displacement_gradient[0][0],
+            u2=self.displacement_gradient[0][1],
+            ur3=UNSET,
+            amplitude=UNSET,
+            fixed=OFF,
+            distributionType=UNIFORM,
+            fieldName="",
+            localCsys=None,
+        )
+
         model.DisplacementBC(
-                    name="TopBC",
-                    createStepName="Step-1",
-                    region=sim_assembly.sets["Ref-T"],
-                    u1=self.displacement_gradient[1][0],
-                    u2=self.displacement_gradient[1][1],
-                    ur3=UNSET,
-                    amplitude=UNSET,
-                    fixed=OFF,
-                    distributionType=UNIFORM,
-                    fieldName="",
-                    localCsys=None,
-                )
-        
+            name="TopBC",
+            createStepName="Step-1",
+            region=sim_assembly.sets["Ref-T"],
+            u1=self.displacement_gradient[1][0],
+            u2=self.displacement_gradient[1][1],
+            ur3=UNSET,
+            amplitude=UNSET,
+            fixed=OFF,
+            distributionType=UNIFORM,
+            fieldName="",
+            localCsys=None,
+        )
+
     def create_job(self):
         # run the job
         self.job = mdb.Job(name=self.job_name, model=self.model_name, description='', type=ANALYSIS,
-            atTime=None, waitMinutes=0, waitHours=0, queue=None, memory=90,
-            memoryUnits=PERCENTAGE, getMemoryFromAnalysis=True,
-            explicitPrecision=SINGLE, nodalOutputPrecision=SINGLE, echoPrint=OFF,
-            modelPrint=OFF, contactPrint=OFF, historyPrint=OFF,
-            scratch='', resultsFormat=ODB, multiprocessingMode=DEFAULT, numCpus=self.num_cpu,
-            numDomains=self.num_cpu, numGPUs=0)
-        
+                           atTime=None, waitMinutes=0, waitHours=0, queue=None, memory=90,
+                           memoryUnits=PERCENTAGE, getMemoryFromAnalysis=True,
+                           explicitPrecision=SINGLE, nodalOutputPrecision=SINGLE, echoPrint=OFF,
+                           modelPrint=OFF, contactPrint=OFF, historyPrint=OFF,
+                           scratch='', resultsFormat=ODB, multiprocessingMode=DEFAULT, numCpus=self.num_cpu,
+                           numDomains=self.num_cpu, numGPUs=0)
+
     def data_check(self):
         """check if there is error in the model
         """
-        self.job.submit(consistencyChecking=OFF, datacheckJob=True)  
+        self.job.submit(consistencyChecking=OFF, datacheckJob=True)
         self.job.waitForCompletion()
-
-
 
 
 class PostProcess:
@@ -555,7 +636,8 @@ class PostProcess:
         rve_odb = openOdb(path=odbfile)
         # get element sets
         entire_element_set = rve_odb.rootAssembly.elementSets[" ALL ELEMENTS"]
-        inclusion_element_set = rve_odb.rootAssembly.instances["RVE_2PHASE"].elementSets['INCLUSIONFACE']
+        inclusion_element_set = rve_odb.rootAssembly.instances[
+            "RVE_2PHASE"].elementSets['INCLUSIONFACE']
         matrix_element_set = rve_odb.rootAssembly.instances["RVE_2PHASE"].elementSets["MATRIXFACE"]
 
         ref1_node_set = rve_odb.rootAssembly.nodeSets["REF-R"]
@@ -644,16 +726,16 @@ class PostProcess:
                                  jj][:] = rf_field_ref1.values[0].data[:]
                     self.RF_ref2[ii * len(step_frames) +
                                  jj][:] = rf_field_ref2.values[0].data[:]
-                
+
                 # get deformation gradient, displacement_gradient and pk1_stress
                 for i in range(0, 2):
                     # get deformation gradient
                     self.deformation_gradient[ii * len(step_frames) + jj][0][i] \
                         = self.U_ref1[ii * len(step_frames) + jj][i] \
-                            + np.identity(2)[0][i]
+                        + np.identity(2)[0][i]
                     self.deformation_gradient[ii * len(step_frames) + jj][1][i] \
                         = self.U_ref2[ii * len(step_frames) + jj][i] \
-                            + np.identity(2)[1][i]
+                        + np.identity(2)[1][i]
                     # get displacement_gradient
                     self.displacement_gradient[ii * len(step_frames) + jj][0][i] \
                         = self.U_ref1[ii * len(step_frames) + jj][i]
@@ -700,7 +782,7 @@ class PostProcess:
             else:
                 # variable is an array
                 array_temp = np.zeros((total_frames,
-                                          len(sub_field.values[0].data)))
+                                       len(sub_field.values[0].data)))
 
         return array_temp
 
@@ -725,5 +807,7 @@ def get_node_y(node):
     return node.coordinates[1]
 
 # get node coordinates
+
+
 def get_node_x(node):
     return node.coordinates[0]
