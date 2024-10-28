@@ -7,6 +7,7 @@ from caeModules import *
 # import packages for abaqus post-processing
 from odbAccess import *
 
+
 def simulation_script(sim_info):
     # Create a model
     # names of model, part, instance
@@ -27,12 +28,12 @@ def simulation_script(sim_info):
         (sim_info["wid_end"] + sim_info["wid_start"]) / 2.0,
     ]
 
-    ## material properties
+    # material properties
     youngs_modulus_fiber = sim_info["youngs_modulus_fiber"]
     poisson_ratio_fiber = sim_info["poisson_ratio_fiber"]
     hardening_table_fiber = np.zeros(
-            (len(sim_info["hardening_table_fiber"][0]), 2)
-        )
+        (len(sim_info["hardening_table_fiber"][0]), 2)
+    )
     for ii in range(2):
         hardening_table_fiber[:, ii] = sim_info["hardening_table_fiber"][ii]
 
@@ -46,14 +47,13 @@ def simulation_script(sim_info):
     # information of RVE modeling
     strain = sim_info["strain"]
     mesh_size = (
-        min(length,width) / sim_info["mesh_partition"]
+        min(length, width) / sim_info["mesh_partition"]
     )
     time_period = sim_info["simulation_time"]
     time_interval = (
         sim_info["simulation_time"] / sim_info["num_steps"]
     )
     delta = min(min(length, width) / 1000, mesh_size / 10)
-    
 
     # create model---------------------------------------------------------
     mdb.models.changeKey(fromName='Model-1', toName=model_name)
@@ -67,14 +67,15 @@ def simulation_script(sim_info):
     sketch = model.ConstrainedSketch(name='__profile__', sheetSize=200.0)
     sketch.rectangle(point1=(0.0, 0.0), point2=(length, width))
     part = model.Part(name=part_name,
-                        dimensionality=TWO_D_PLANAR, type=DEFORMABLE_BODY)
+                      dimensionality=TWO_D_PLANAR, type=DEFORMABLE_BODY)
     part.BaseShell(sketch=sketch)
     del sketch
 
     # ==========================  Meshing ========================== #
     part.seedPart(size=mesh_size, deviationFactor=0.1, minSizeFactor=0.1)
     # Apply mesh controls for structured meshing
-    part.setMeshControls(regions=part.faces, elemShape=QUAD, technique=STRUCTURED)
+    part.setMeshControls(regions=part.faces,
+                         elemShape=QUAD, technique=STRUCTURED)
     # Generate the mesh
     part.generateMesh()
 
@@ -98,7 +99,7 @@ def simulation_script(sim_info):
     index = np.where(microstructure_descriptor == 2)
     index = index[0] + 1
     # create the set for the elements with the value 1
-    part.Set(name='fiber', elements=part.elements.sequenceFromLabels(index.tolist())) 
+    part.Set(name='fiber', elements=part.elements.sequenceFromLabels(index.tolist()))
 
     # create sets for edges
     s = part.edges
@@ -116,25 +117,25 @@ def simulation_script(sim_info):
         center[1] - width / 2 - delta,
         0,
         center[0] + length / 2 + delta,
-         center[1] +  width / 2 + delta,
+        center[1] + width / 2 + delta,
         0,
     )
     part.Set(edges=edgesRIGHT, name="edgesRIGHT")
     edgesTOP = s.getByBoundingBox(
-         center[0] -  length / 2 - delta,
-         center[1] +  width / 2 - delta,
+        center[0] - length / 2 - delta,
+        center[1] + width / 2 - delta,
         0,
-         center[0] +  width / 2 + delta,
-         center[1] +  width / 2 + delta,
+        center[0] + width / 2 + delta,
+        center[1] + width / 2 + delta,
         0,
     )
     part.Set(edges=edgesTOP, name="edgesTOP")
     edgesBOT = s.getByBoundingBox(
-         center[0] -  length / 2 - delta,
-         center[1] -  width / 2 - delta,
+        center[0] - length / 2 - delta,
+        center[1] - width / 2 - delta,
         0,
-         center[0] +  length / 2 + delta,
-         center[1] -  width / 2 + delta,
+        center[0] + length / 2 + delta,
+        center[1] - width / 2 + delta,
         0,
     )
     part.Set(edges=edgesBOT, name="edgesBOT")
@@ -143,38 +144,38 @@ def simulation_script(sim_info):
     # create set for vertices
     v = part.vertices
     vertexLB = v.getByBoundingBox(
-         center[0] -  length / 2 - delta,
-         center[1] -  width / 2 - delta,
+        center[0] - length / 2 - delta,
+        center[1] - width / 2 - delta,
         0,
-         center[0] -  length / 2 + delta,
-         center[1] -  width / 2 + delta,
+        center[0] - length / 2 + delta,
+        center[1] - width / 2 + delta,
         0,
     )
     part.Set(vertices=vertexLB, name="VertexLB")
     vertexRB = v.getByBoundingBox(
-         center[0] +  length / 2 - delta,
-         center[1] -  width / 2 - delta,
+        center[0] + length / 2 - delta,
+        center[1] - width / 2 - delta,
         0,
-         center[0] +  length / 2 + delta,
-         center[1] -  width / 2 + delta,
+        center[0] + length / 2 + delta,
+        center[1] - width / 2 + delta,
         0,
     )
     part.Set(vertices=vertexRB, name="VertexRB")
     vertexRT = v.getByBoundingBox(
-         center[0] +  length / 2 - delta,
-         center[1] +  width / 2 - delta,
+        center[0] + length / 2 - delta,
+        center[1] + width / 2 - delta,
         0,
-         center[0] +  length / 2 + delta,
-         center[1] +  width / 2 + delta,
+        center[0] + length / 2 + delta,
+        center[1] + width / 2 + delta,
         0,
     )
     part.Set(vertices=vertexRT, name="VertexRT")
     vertexLT = v.getByBoundingBox(
-         center[0] -  length / 2 - delta,
-         center[1] +  width / 2 - delta,
+        center[0] - length / 2 - delta,
+        center[1] + width / 2 - delta,
         0,
-         center[0] -  length / 2 + delta,
-         center[1] +  width / 2 + delta,
+        center[0] - length / 2 + delta,
+        center[1] + width / 2 + delta,
         0,
     )
     part.Set(vertices=vertexLT, name="VertexLT")
@@ -183,7 +184,8 @@ def simulation_script(sim_info):
     # material properties ---------------------------------------------------------
     # material property for fiber part
     material_fiber = model.Material(name="fiber")
-    material_fiber.Elastic(table=((youngs_modulus_fiber, poisson_ratio_fiber),))
+    material_fiber.Elastic(
+        table=((youngs_modulus_fiber, poisson_ratio_fiber),))
     material_fiber.Plastic(table=(hardening_table_fiber))
     model.HomogeneousSolidSection(
         name="fiber", material="fiber", thickness=None
@@ -198,7 +200,8 @@ def simulation_script(sim_info):
     )
     # material property for matrix part
     material_matrix = model.Material(name="matrix")
-    material_matrix.Elastic(table=((youngs_modulus_matrix, poisson_ratio_matrix),))
+    material_matrix.Elastic(
+        table=((youngs_modulus_matrix, poisson_ratio_matrix),))
     material_matrix.Plastic(table=(hardening_table_matrix))
     model.HomogeneousSolidSection(
         name="matrix", material="matrix", thickness=None
@@ -219,10 +222,10 @@ def simulation_script(sim_info):
     # pbcs-----------------------------------------------------------------
     # right reference point
     right_reference_point_id = sim_assembly.ReferencePoint(
-        point=( length * 1.5,  center[1], 0.0)).id
+        point=(length * 1.5,  center[1], 0.0)).id
     # top reference point
     top_reference_point_id = sim_assembly.ReferencePoint(
-        point=( center[0],  width * 1.5, 0.0)).id
+        point=(center[0],  width * 1.5, 0.0)).id
     # reference points
 
     reference_points = sim_assembly.referencePoints
@@ -259,8 +262,8 @@ def simulation_script(sim_info):
         terms=(
             (1, "NodeRT", 1),
             (-1, "NodeLB", 1),
-            (-1 *  length, "Ref-R", 1),
-            (-1 *  width, "Ref-T", 1),
+            (-1 * length, "Ref-R", 1),
+            (-1 * width, "Ref-T", 1),
         ),
     )
     model.Equation(
@@ -268,8 +271,8 @@ def simulation_script(sim_info):
         terms=(
             (1, "NodeRT", 2),
             (-1, "NodeLB", 2),
-            (-1 *  length, "Ref-R", 2),
-            (-1 *  width, "Ref-T", 2),
+            (-1 * length, "Ref-R", 2),
+            (-1 * width, "Ref-T", 2),
         ),
     )
     model.Equation(
@@ -277,8 +280,8 @@ def simulation_script(sim_info):
         terms=(
             (1, "NodeRB", 1),
             (-1, "NodeLT", 1),
-            (-1 *  length, "Ref-R", 1),
-            (1 *  width, "Ref-T", 1),
+            (-1 * length, "Ref-R", 1),
+            (1 * width, "Ref-T", 1),
         ),
     )
     model.Equation(
@@ -286,8 +289,8 @@ def simulation_script(sim_info):
         terms=(
             (1, "NodeRB", 2),
             (-1, "NodeLT", 2),
-            (-1 *  length, "Ref-R", 2),
-            (1 *  width, "Ref-T", 2),
+            (-1 * length, "Ref-R", 2),
+            (1 * width, "Ref-T", 2),
         ),
     )
 
@@ -325,11 +328,12 @@ def simulation_script(sim_info):
                     terms=(
                         (1, "RIGHT_" + str(ii), jj),
                         (-1, "LEFT_" + str(ii), jj),
-                        (-1 *  length, "Ref-R", jj),
+                        (-1 * length, "Ref-R", jj),
                     ),
                 )
     else:
-        raise ValueError("the number of nodes between the two sides are not the same")
+        raise ValueError(
+            "the number of nodes between the two sides are not the same")
 
     # part II:
     edgesTOP_nodes = part.sets["edgesTOP"].nodes
@@ -364,11 +368,12 @@ def simulation_script(sim_info):
                     terms=(
                         (1, "TOP_" + str(ii), jj),
                         (-1, "BOT_" + str(ii), jj),
-                        (-1 *  width, "Ref-T", jj),
+                        (-1 * width, "Ref-T", jj),
                     ),
                 )
     else:
-        raise ValueError("the number of nodes between the two sides are not the same")
+        raise ValueError(
+            "the number of nodes between the two sides are not the same")
 
     #  ==========================  Create step ========================== #
     model.StaticStep(name="Step-1", previous="Initial")
@@ -379,7 +384,7 @@ def simulation_script(sim_info):
         minInc=1e-20,
         name="Step-1",
         previous="Initial",
-        timePeriod= time_period,
+        timePeriod=time_period,
         nlgeom=ON,
     )
     model.fieldOutputRequests["F-Output-1"].setValues(
@@ -394,13 +399,13 @@ def simulation_script(sim_info):
             "IVOL",
             'SDV'
         ),
-        timeInterval= time_interval,
+        timeInterval=time_interval,
     )
     model.FieldOutputRequest(
         name="F-Output-2",
         createStepName="Step-1",
         variables=("U", "RF"),
-        timeInterval= time_interval,
+        timeInterval=time_interval,
     )
     model.historyOutputRequests["H-Output-1"].setValues(
         variables=(
@@ -413,18 +418,17 @@ def simulation_script(sim_info):
             "ALLWK",
             "ETOTAL",
         ),
-        timeInterval= time_interval,
+        timeInterval=time_interval,
     )
-
 
     # ==========================  Apply boundary conditions ========================== #
 
     if strain[1] == 0 and strain[2] == 0:
         # only E11
-        E11(strain[0], model, sim_assembly) 
+        E11(strain[0], model, sim_assembly)
         # rigid body motion for x direction
         rigid_constraints_for_x_direction(model, sim_assembly, instance_name)
-    elif strain[0] == 0 and  strain[2] == 0:
+    elif strain[0] == 0 and strain[2] == 0:
         # only E22
         E22(E22, model, sim_assembly)
         # rigid body motion for y direction
@@ -440,34 +444,32 @@ def simulation_script(sim_info):
     # ==========================  Create job ========================== #
     # create job
     mdb.Job(
-                name=job_name,
-                model=model_name,
-                description="",
-                type=ANALYSIS,
-                atTime=None,
-                waitMinutes=0,
-                waitHours=0,
-                queue=None,
-                memory=90,
-                memoryUnits=PERCENTAGE,
-                getMemoryFromAnalysis=True,
-                explicitPrecision=SINGLE,
-                nodalOutputPrecision=SINGLE,
-                echoPrint=OFF,
-                modelPrint=OFF,
-                contactPrint=OFF,
-                historyPrint=OFF,
-                userSubroutine="",
-                scratch="",
-                resultsFormat=ODB,
-                multiprocessingMode=DEFAULT,
-                numCpus=num_cpu,
-                numGPUs=0,
-                numDomains=num_cpu)
+        name=job_name,
+        model=model_name,
+        description="",
+        type=ANALYSIS,
+        atTime=None,
+        waitMinutes=0,
+        waitHours=0,
+        queue=None,
+        memory=90,
+        memoryUnits=PERCENTAGE,
+        getMemoryFromAnalysis=True,
+        explicitPrecision=SINGLE,
+        nodalOutputPrecision=SINGLE,
+        echoPrint=OFF,
+        modelPrint=OFF,
+        contactPrint=OFF,
+        historyPrint=OFF,
+        userSubroutine="",
+        scratch="",
+        resultsFormat=ODB,
+        multiprocessingMode=DEFAULT,
+        numCpus=num_cpu,
+        numGPUs=0,
+        numDomains=num_cpu)
     # submit the job
     mdb.jobs[job_name].writeInput(consistencyChecking=OFF)
-    
-
 
 
 def E11(E11, model, assembly):
@@ -486,6 +488,7 @@ def E11(E11, model, assembly):
         localCsys=None,
     )
 
+
 def E22(E22, model, assembly):
     "displacement for y direction"
     model.DisplacementBC(
@@ -501,6 +504,7 @@ def E22(E22, model, assembly):
         fieldName="",
         localCsys=None,
     )
+
 
 def E12(E12, model, assembly):
     "displacement for xy direction"
@@ -531,7 +535,8 @@ def E12(E12, model, assembly):
         localCsys=None,
     )
 
-def rigid_constraints_for_x_direction(model, assembly, instance_name):  
+
+def rigid_constraints_for_x_direction(model, assembly, instance_name):
     """displacement rigid constraints for x direction"""
     model.DisplacementBC(
         amplitude=UNSET,
@@ -559,6 +564,7 @@ def rigid_constraints_for_x_direction(model, assembly, instance_name):
         u2=0.0,
         ur3=UNSET,
     )
+
 
 def rigid_constraints_for_y_direction(model, assembly, instance_name):
     model.DisplacementBC(
@@ -589,10 +595,11 @@ def rigid_constraints_for_y_direction(model, assembly, instance_name):
     )
 
 # get node coordinates
+
+
 def get_node_y(node):
     return node.coordinates[1]
 
 
 def get_node_x(node):
     return node.coordinates[0]
-
