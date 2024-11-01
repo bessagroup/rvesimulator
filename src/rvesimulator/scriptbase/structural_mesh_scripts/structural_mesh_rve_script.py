@@ -1,4 +1,3 @@
-
 # -*- coding: mbcs -*-
 import numpy as np
 from abaqus import *
