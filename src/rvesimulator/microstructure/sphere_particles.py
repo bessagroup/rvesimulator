@@ -615,7 +615,7 @@ class SphereParticles(MicrostructureGenerator):
         y = rng.uniform(wid_start, wid_end, 1)
         z = rng.uniform(hei_start, hei_end, 1)
         r = rng.normal(radius_mu, radius_std, 1)
-        while r <= 0.02*(len_end - len_start - 2*radius_mu):
+        while r <= 0.03*(len_end - len_start - 2*radius_mu):
             r = rng.normal(radius_mu, radius_std, 1)
         fiber = np.array([x, y, z, r])
 

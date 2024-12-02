@@ -9,12 +9,12 @@ import os
 import time
 from pathlib import Path
 from typing import Any, Dict
-
+import numpy as np
 # local
 import rvesimulator
 from rvesimulator.abaqus2py.abaqus_simulator import AbaqusSimulator
 from rvesimulator.additions.hardening_law import SwiftHardeningLaw
-from rvesimulator.microstructure.sphere_particles import SphereParticles
+from rvesimulator.microstructure.sphere_particles import SphereParticles,MicrostructureGenerator
 
 from .py3rve_base import Py3RVEBase
 
@@ -75,6 +75,8 @@ class Ti6Al4V_3D(Py3RVEBase):
         min_dist_factor: float = 1.025,
         regular_load: bool = False,
         strain_amplitude: list = None,
+        specify_microstructure: bool = False,
+        microstructure_info: Dict = None,
     ) -> None:
         """regular rve for Ti6Al4V 3D case
 
@@ -133,6 +135,9 @@ class Ti6Al4V_3D(Py3RVEBase):
         self.hardening_law_fiber = hardening_law_fiber
         self.hardening_law_matrix = hardening_law_matrix
         self.seed = seed
+        # specify microstructure
+        self.specify_microstructure = specify_microstructure
+        self.microstructure_info = microstructure_info
         # loading 
         self.regular_load = regular_load
         self.strain_amplitude = strain_amplitude
@@ -186,18 +191,18 @@ class Ti6Al4V_3D(Py3RVEBase):
         if self.regular_load:
             self.sim_info = {
                 "job_name": "Ti6Al4V_3D",
-                "location_information": self.microstructure.microstructure_info[
+                "location_information": self.microstructure_info[
                     "location_information"
                 ],
-                "radius_mu": self.microstructure.microstructure_info["radius_mu"],
-                "radius_std": self.microstructure.microstructure_info[
+                "radius_mu": self.microstructure_info["radius_mu"],
+                "radius_std": self.microstructure_info[
                     "radius_std"],
-                "len_start": self.microstructure.microstructure_info["len_start"],
-                "len_end": self.microstructure.microstructure_info["len_end"],
-                "wid_start": self.microstructure.microstructure_info["wid_start"],
-                "wid_end": self.microstructure.microstructure_info["wid_end"],
-                "hei_start": self.microstructure.microstructure_info["hei_start"],
-                "hei_end": self.microstructure.microstructure_info["hei_end"],
+                "len_start": self.microstructure_info["len_start"],
+                "len_end": self.microstructure_info["len_end"],
+                "wid_start": self.microstructure_info["wid_start"],
+                "wid_end": self.microstructure_info["wid_end"],
+                "hei_start": self.microstructure_info["hei_start"],
+                "hei_end": self.microstructure_info["hei_end"],
                 "youngs_modulus_matrix": self.youngs_modulus_matrix,
                 "poisson_ratio_matrix": self.poisson_ratio_matrix,
                 "youngs_modulus_fiber": self.youngs_modulus_fiber,
@@ -213,18 +218,18 @@ class Ti6Al4V_3D(Py3RVEBase):
         else:
             self.sim_info = {
                 "job_name": "Ti6Al4V_3D",
-                "location_information": self.microstructure.microstructure_info[
+                "location_information": self.microstructure_info[
                     "location_information"
                 ],
-                "radius_mu": self.microstructure.microstructure_info["radius_mu"],
-                "radius_std": self.microstructure.microstructure_info[
+                "radius_mu": self.microstructure_info["radius_mu"],
+                "radius_std": self.microstructure_info[
                     "radius_std"],
-                "len_start": self.microstructure.microstructure_info["len_start"],
-                "len_end": self.microstructure.microstructure_info["len_end"],
-                "wid_start": self.microstructure.microstructure_info["wid_start"],
-                "wid_end": self.microstructure.microstructure_info["wid_end"],
-                "hei_start": self.microstructure.microstructure_info["hei_start"],
-                "hei_end": self.microstructure.microstructure_info["hei_end"],
+                "len_start": self.microstructure_info["len_start"],
+                "len_end": self.microstructure_info["len_end"],
+                "wid_start": self.microstructure_info["wid_start"],
+                "wid_end": self.microstructure_info["wid_end"],
+                "hei_start": self.microstructure_info["hei_start"],
+                "hei_end": self.microstructure_info["hei_end"],
                 "youngs_modulus_matrix": self.youngs_modulus_matrix,
                 "poisson_ratio_matrix": self.poisson_ratio_matrix,
                 "youngs_modulus_fiber": self.youngs_modulus_fiber,
@@ -268,25 +273,40 @@ class Ti6Al4V_3D(Py3RVEBase):
             folder_index,
         )
         self.logger.info("working folder: {}".format(self.working_folder))
-        # create microstructure
-        self.microstructure = SphereParticles(
-            length=self.size,
-            width=self.size,
-            height=self.size,
-            radius_mu=self.radius_mu,
-            radius_std=self.radius_std,
-            vol_req=self.vol_req,
-            dist_min_factor=self.mini_dist_factor,
-            num_cycle_max=20,
-            num_guess_max=100000,
-            num_fiber_max=20000,
-        )
-        self.microstructure.generate_microstructure(seed=self.seed)
-        self.microstructure.to_abaqus_format()
-        self.microstructure.plot_microstructure(save_figure=True,
-                                                fig_name="3d_rve_{}.png".
-                                                format(self.seed))
-        self.vol_frac = self.microstructure.vol_frac
+        
+        if self.specify_microstructure:
+            # plot microstructure
+            MicrostructureGenerator().sphere_plot(
+                fibers=np.array(self.microstructure_info["location_information"]),
+               length= self.microstructure_info["len_end"] - self.microstructure_info["len_start"],
+               width= self.microstructure_info["wid_end"] - self.microstructure_info["wid_start"],
+               height= self.microstructure_info["hei_end"] - self.microstructure_info["hei_start"],
+               vol_frac= self.microstructure_info["vol_frac"],
+               save_figure=True,
+               fig_name="3d_rve_{}.png".format(self.microstructure_info["vol_frac"]))     
+            self.vol_frac = self.microstructure_info["vol_frac"]                                                 
+        
+        else:
+            self.microstructure = SphereParticles(
+                length=self.size,
+                width=self.size,
+                height=self.size,
+                radius_mu=self.radius_mu,
+                radius_std=self.radius_std,
+                vol_req=self.vol_req,
+                dist_min_factor=self.mini_dist_factor,
+                num_cycle_max=20,
+                num_guess_max=100000,
+                num_fiber_max=20000,
+            )
+            # create microstructure
+            self.microstructure.generate_microstructure(seed=self.seed)
+            self.microstructure.to_abaqus_format()
+            self.microstructure.plot_microstructure(save_figure=True,
+                                                    fig_name="3d_rve_{}.png".
+                                                    format(self.seed))
+            self.vol_frac = self.microstructure.vol_frac
+            self.microstructure_info = self.microstructure.microstructure_info
         self.logger.info("volume fraction: {}".format(self.vol_frac))
         # update simulation information
         self._get_sim_info()
