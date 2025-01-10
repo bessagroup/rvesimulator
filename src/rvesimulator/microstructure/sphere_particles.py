@@ -441,7 +441,7 @@ class SphereParticles(MicrostructureGenerator):
                         self.rgmsh[ii, jj, kk] = 1
 
         return self.rgmsh.T
-    
+
     def vertices_mesh_loc(self, fiber: np.ndarray) -> str:
         """identify proper vertices location for meshing
 
@@ -476,7 +476,7 @@ class SphereParticles(MicrostructureGenerator):
             return "fail"
         else:
             return "pass"
-    
+
     def face_mesh_location(self,
                            fiber: np.ndarray) -> str:
         """identify the proper face location for meshing
@@ -485,7 +485,7 @@ class SphereParticles(MicrostructureGenerator):
         ----------
         fiber : np.ndarray
             temp fiber
-        
+
         Returns
         -------
         str
@@ -500,60 +500,20 @@ class SphereParticles(MicrostructureGenerator):
             return "fail"
         elif self.length - 0.0 < dis_x.min() < 0.2*fiber[0, 3]:
             return "fail"
-        
         # for y direction faces (check for y coordinate)
         dis_y = np.abs([fiber[:, 1] - 0.0, fiber[:, 1] - self.width])
         if 0.0 < dis_y.min() < 0.2*fiber[0, 3]:
             return "fail"
         elif self.width - 0.0 < dis_y.min() < 0.2*fiber[0, 3]:
             return "fail"
-        
         # for z direction faces (check for z coordinate)
         dis_z = np.abs([fiber[:, 2] - 0.0, fiber[:, 2] - self.height])
         if 0.0 < dis_z.min() < 0.2*fiber[0, 3]:
             return "fail"
         elif self.height - 0.0 < dis_z.min() < 0.2*fiber[0, 3]:
             return "fail"
-        
+
         return "pass"
-
-    # def edge_mesh_location(self, fiber: np.ndarray) -> str:
-    #     """identify the proper edge location for meshing
-
-    #     Parameters
-    #     ----------
-    #     fiber : np.ndarray
-    #         temp fiber
-        
-    #     Returns
-    #     -------
-    #     str
-    #         status of the fiber
-    #     """
-    #     # reformat the fiber location
-    #     fiber = fiber.reshape((-1, 5))
-
-    #     # for edges paralle to X axis, check for y, z coordinates
-    #     edges = np.array([[ 0, 0],
-    #                       [ 0, self.height],
-    #                         [ self.width, 0],
-    #                         [ self.width, self.height]])
-    #     # calculate the distance 
-    #     points_dis_temp = distance_matrix(
-    #         edges,
-    #         fiber[:, 1:3],
-    #     )
-    #     min_points_dis = points_dis_temp.min()
-    #     if 0.0*fiber[0, 3] < min_points_dis < np.sqrt(2)*fiber[0, 2]:
-    #         return "fail"
-    #     else:
-    #         return "pass"
-
-
-
-
-        
-    #     return "pass"
 
 
     @staticmethod
@@ -615,7 +575,7 @@ class SphereParticles(MicrostructureGenerator):
         y = rng.uniform(wid_start, wid_end, 1)
         z = rng.uniform(hei_start, hei_end, 1)
         r = rng.normal(radius_mu, radius_std, 1)
-        while r <= 0.02*(len_end - len_start - 2*radius_mu):
+        while r <= 0.03*(len_end - len_start - 2*radius_mu):
             r = rng.normal(radius_mu, radius_std, 1)
         fiber = np.array([x, y, z, r])
 

@@ -6,7 +6,7 @@ import json
 import logging
 import math
 import time
-from typing import Any, Dict, Tuple
+from typing import Any, Tuple
 
 # Third party
 import numpy as np
@@ -21,8 +21,7 @@ __author__ = "Jiaxiang Yi (J.Yi@tudelft.nl)"
 __credits__ = ["Jiaxiang Yi"]
 __status__ = "Stable"
 # =============================================================================
-#
-# =============================================================================
+
 
 
 class CircleParticles(MicrostructureGenerator):
@@ -534,7 +533,7 @@ class CircleParticles(MicrostructureGenerator):
                     self.rgmsh[ii, jj] = 2
         # to make sure all the numbers in the array are integers
         self.rgmsh = self.rgmsh.astype(int)
-        
+
         return self.rgmsh.T
 
     def vertices_mesh_loc(self, fiber: np.ndarray) -> str:
