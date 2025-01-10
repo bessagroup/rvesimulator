@@ -1,12 +1,11 @@
 from .asca_rve import ASCA_RVE
 from .cddm_rve import CDDM_RVE
-from .elastic_2D import ElasticRVE2D
+from .elastic_2d import ElasticRVE2D
 from .hollow_plate_sve import (ElasticRegularLoads, VonMisesPlasticPathLoads,
                                VonMisesPlasticRegularLoads)
-from .hyperelastic_rve import HyperelasticRVE
-from .hyperelastic_structural_mesh_2d import HyperElasticStrucMesh2DRVE
-from .pppe_cohesive_rve import PPPEMixtureCohesive
-from .pppe_no_cohesive_rve import PPPEMixtureNoCohesive
-from .Ti6Al4V_elastic_2D import Ti6Al4VElastic2D
-from .Ti_6Al_4V_2D import Ti6Al4V_2D
-from .Ti_6Al_4V_3D import Ti6Al4V_3D
+from .hyperelastic_2d import HyperelasticRVE, HyperElasticStrucMesh2DRVE
+from .pppe_mixture_j2 import J2StrucMesh2DRVE
+from .pppe_mixture_leonov import (PPPEMixtureEmptyFiber,
+                                  PPPEMixtureCohesive,
+                                  PPPEMixtureNoCohesive)
+from .Ti6Al4V import Ti6Al4V_2D, Ti6Al4V_3D, Ti6Al4VElastic2D

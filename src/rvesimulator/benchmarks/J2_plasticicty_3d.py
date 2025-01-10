@@ -13,8 +13,8 @@ from typing import Any, Dict
 # local
 import rvesimulator
 from rvesimulator.abaqus2py.abaqus_simulator import AbaqusSimulator
-from rvesimulator.additions.hardening_law import SwiftHardeningLaw
-from rvesimulator.microstructure.sphere_particles import SphereParticles
+from rvesimulator.additions.hardening_law import (
+    SwiftHardeningLaw, HardeningLaw)
 
 from .py3rve_base import Py3RVEBase
 
@@ -63,7 +63,7 @@ class J2Plasticity_3D(Py3RVEBase):
         num_steps: int = 100,
         simulation_time: float = 1.0,
         num_cpu: int = 4,
-        hardening_law: Any = SwiftHardeningLaw(),
+        hardening_law: HardeningLaw = SwiftHardeningLaw(),
         seed: Any = None,
         print_info: bool = False,
         regular_load: bool = False,
@@ -99,10 +99,8 @@ class J2Plasticity_3D(Py3RVEBase):
             total simulation time, by default 1.0
         num_cpu : int, optional
             number of cpu used for simulation, by default 1
-        hardening_law_fiber : Any, optional
-            hardening law for the fiber material, by default LinearHardeningLaw()
-        haderning_law_matrix : Any, optional
-            hardening law for the matrix material, by default LinearHardeningLaw()
+        hardening_law : Any, optional
+            hardening law, by default SwiftHardeningLaw()
         seed : Any, optional
             seed number, by default None
         print_info : bool, optional
@@ -121,7 +119,6 @@ class J2Plasticity_3D(Py3RVEBase):
         self.num_cpu = num_cpu
         self.hardening_law = hardening_law
         self.seed = seed
-        # loading 
         self.regular_load = regular_load
         self.strain_amplitude = strain_amplitude
         # get hardening law
@@ -137,11 +134,11 @@ class J2Plasticity_3D(Py3RVEBase):
                 "strain": strain,
                 "num_steps": num_steps,
                 "simulation_time": simulation_time,
-                "num_cpu": num_cpu }
+                "num_cpu": num_cpu, }
         else:
             self.sim_paras = {
-               "size": size,
-               "radius_mu": self.radius_mu,
+                "size": size,
+                "radius_mu": self.radius_mu,
                 "youngs_modulus": youngs_modulus,
                 "poisson_ratio": poisson_ratio,
                 "hardening_table": self.hardening_table,
@@ -150,7 +147,7 @@ class J2Plasticity_3D(Py3RVEBase):
                 "num_steps": num_steps,
                 "simulation_time": simulation_time,
                 "num_cpu": num_cpu,
-                "strain_amplitude": strain_amplitude }
+                "strain_amplitude": strain_amplitude}
 
         # print simulation information to screen
         if print_info:
@@ -163,10 +160,10 @@ class J2Plasticity_3D(Py3RVEBase):
                 "job_name": "J2_plasticity_3D",
                 "radius_mu": self.radius_mu,
                 "len_start": -self.radius_mu,
-                "len_end":  self.size+self.radius_mu,
+                "len_end": self.size+self.radius_mu,
                 "wid_start": -self.radius_mu,
-                "wid_end":  self.size+self.radius_mu,
-                "hei_start":  -self.radius_mu,
+                "wid_end": self.size+self.radius_mu,
+                "hei_start": -self.radius_mu,
                 "hei_end": self.size+self.radius_mu,
                 "youngs_modulus": self.youngs_modulus,
                 "poisson_ratio": self.poisson_ratio,
@@ -182,9 +179,9 @@ class J2Plasticity_3D(Py3RVEBase):
                 "job_name": "J2_plasticity_3D",
                 "radius_mu": self.radius_mu,
                 "len_start": -self.radius_mu,
-                "len_end":  self.size+self.radius_mu,
+                "len_end": self.size+self.radius_mu,
                 "wid_start": -self.radius_mu,
-                "wid_end":  self.size+self.radius_mu,
+                "wid_end": self.size+self.radius_mu,
                 "hei_start": -self.radius_mu,
                 "hei_end": self.size+self.radius_mu,
                 "youngs_modulus": self.youngs_modulus,

@@ -1,10 +1,11 @@
 
 # -*- coding: mbcs -*-
+from math import ceil
+
 import assembly
 import mesh
 import numpy
 import regionToolset
-from math import ceil
 from abaqus import *
 from abaqusConstants import *
 from caeModules import *
@@ -29,8 +30,8 @@ class PPPEMixtureNoCohesive(object):
                                  "wid_end": None,
                                  "job_name": "veni_nocoh_rve",
                                  "strain": [0.10, 0.0, 0.0],
-                                 "paras_pp": None,
-                                 "paras_pe": None,
+                                 "params_pp": None,
+                                 "params_pe": None,
                                  "mesh_partition": None,
                                  "simulation_time": 100.0,
                                  "num_steps": None,
@@ -73,8 +74,8 @@ class PPPEMixtureNoCohesive(object):
         )
 
         # material properties
-        self.paras_pp = sim_info["paras_pp"]
-        self.paras_pe = sim_info["paras_pe"]
+        self.params_pp = sim_info["params_pp"]
+        self.params_pe = sim_info["params_pe"]
         self.subroutine_path = str(sim_info["subroutine_path"])
 
         # record time step
@@ -83,7 +84,7 @@ class PPPEMixtureNoCohesive(object):
         self.create_simulation_job()
         # create the job and write it into inp file
         self.create_job()
-        
+
     def create_simulation_job(self):
 
         # get delta
@@ -139,23 +140,31 @@ class PPPEMixtureNoCohesive(object):
         part.Set(faces=faces, name="all_faces")
 
         # fiber faces
-        fiberface = part.faces.getByBoundingCylinder(
-            (self.circles_information[0][0],
-             self.circles_information[0][1], 0.0),
-            (self.circles_information[0][0],
-             self.circles_information[0][1], 1.0),
-            self.circles_information[0][2] + 0.001 *
-            self.circles_information[0][2],
+        fiberface = part.faces.getByBoundingBox(
+            xMin=self.circles_information[0][0] - self.circles_information[0][2] -
+            0.001 * self.circles_information[0][2],
+            xMax=self.circles_information[0][0] + self.circles_information[0][2] +
+            0.001 * self.circles_information[0][2],
+            yMin=self.circles_information[0][1] - self.circles_information[0][2] -
+            0.001 * self.circles_information[0][2],
+            yMax=self.circles_information[0][1] + self.circles_information[0][2] +
+            0.001 * self.circles_information[0][2],
+            zMin=0.0,
+            zMax=1.0,
         )
         part.Set(faces=fiberface, name="fiberface")
         for ii in range(1, len(self.circles_information)):
-            fiberface_1 = part.faces.getByBoundingCylinder(
-                (self.circles_information[ii][0],
-                 self.circles_information[ii][1], 0.0),
-                (self.circles_information[ii][0],
-                 self.circles_information[ii][1], 1.0),
-                self.circles_information[ii][2] +
+            fiberface_1 = part.faces.getByBoundingBox(
+                xMin=self.circles_information[ii][0] - self.circles_information[ii][2] -
                 0.001 * self.circles_information[ii][2],
+                xMax=self.circles_information[ii][0] + self.circles_information[ii][2] +
+                0.001 * self.circles_information[ii][2],
+                yMin=self.circles_information[ii][1] - self.circles_information[ii][2] -
+                0.001 * self.circles_information[ii][2],
+                yMax=self.circles_information[ii][1] + self.circles_information[ii][2] +
+                0.001 * self.circles_information[ii][2],
+                zMin=0.0,
+                zMax=1.0,
             )
             part.Set(faces=fiberface_1, name="fiberface_1")
             part.SetByBoolean(
@@ -275,20 +284,20 @@ class PPPEMixtureNoCohesive(object):
         material_fiber.Density(table=((7.9e-9, ), ))
         material_fiber.UserMaterial(
             mechanicalConstants=(
-                self.paras_pp[0],
-                self.paras_pp[1],
-                self.paras_pp[2],
-                self.paras_pp[3],
-                self.paras_pp[4],
-                self.paras_pp[5],
-                self.paras_pp[6],
-                self.paras_pp[7],
-                self.paras_pp[8],
-                self.paras_pp[9],
-                self.paras_pp[10],
-                self.paras_pp[11],
-                self.paras_pp[12],
-                self.paras_pp[13],
+                self.params_pp[0],
+                self.params_pp[1],
+                self.params_pp[2],
+                self.params_pp[3],
+                self.params_pp[4],
+                self.params_pp[5],
+                self.params_pp[6],
+                self.params_pp[7],
+                self.params_pp[8],
+                self.params_pp[9],
+                self.params_pp[10],
+                self.params_pp[11],
+                self.params_pp[12],
+                self.params_pp[13],
             )
         )
         material_matrix = model.Material(name="material_matrix")
@@ -296,33 +305,39 @@ class PPPEMixtureNoCohesive(object):
         material_matrix.Density(table=((7.9e-9, ), ))
         material_matrix.UserMaterial(
             mechanicalConstants=(
-                self.paras_pe[0],
-                self.paras_pe[1],
-                self.paras_pe[2],
-                self.paras_pe[3],
-                self.paras_pe[4],
-                self.paras_pe[5],
-                self.paras_pe[6],
-                self.paras_pe[7],
-                self.paras_pe[8],
-                self.paras_pe[9],
-                self.paras_pe[10],
-                self.paras_pe[11],
-                self.paras_pe[12],
-                self.paras_pe[13],
+                self.params_pe[0],
+                self.params_pe[1],
+                self.params_pe[2],
+                self.params_pe[3],
+                self.params_pe[4],
+                self.params_pe[5],
+                self.params_pe[6],
+                self.params_pe[7],
+                self.params_pe[8],
+                self.params_pe[9],
+                self.params_pe[10],
+                self.params_pe[11],
+                self.params_pe[12],
+                self.params_pe[13],
             )
         )
         # create section and assign material property to corresponding section
         # matrix material
         model.HomogeneousSolidSection(
-            name='matrix', material='material_matrix', thickness=None)
-        part.SectionAssignment(region=part.sets['matrixface'], sectionName='matrix', offset=0.0,
-                               offsetType=MIDDLE_SURFACE, offsetField='', thicknessAssignment=FROM_SECTION)
+            name='matrix', material='material_matrix',
+            thickness=None)
+        part.SectionAssignment(region=part.sets['matrixface'],
+                               sectionName='matrix', offset=0.0,
+                               offsetType=MIDDLE_SURFACE,
+                               offsetField='', thicknessAssignment=FROM_SECTION)
 
         # fiber material
         model.HomogeneousSolidSection(
-            name='fiber', material='material_fiber', thickness=None)
-        part.SectionAssignment(region=part.sets['fiberface'], sectionName='fiber', offset=0.0,
+            name='fiber',
+            material='material_fiber',
+            thickness=None)
+        part.SectionAssignment(region=part.sets['fiberface'],
+                               sectionName='fiber', offset=0.0,
                                offsetType=MIDDLE_SURFACE, offsetField='',
                                thicknessAssignment=FROM_SECTION)
 
@@ -443,7 +458,9 @@ class PPPEMixtureNoCohesive(object):
                         ),
                     )
         else:
-            print "the number of nodes between the two sides are not the same"
+            raise ValueError(
+                "the number of nodes between the two sides are not the same"
+            )
 
         # part II:
         edgesTOP_nodes = part.sets["edgesTOP"].nodes
@@ -482,7 +499,9 @@ class PPPEMixtureNoCohesive(object):
                         ),
                     )
         else:
-            print "the number of nodes between the two sides are not the same"
+            raise ValueError(
+                "the number of nodes between the two sides are not the same"
+            )
 
         # steps (static-step, implicit solver)
         model.StaticStep(name="Step-1", previous="Initial")
@@ -603,8 +622,8 @@ class PostProcess:
         # job name
         self.job_name = str(dict["job_name"])
         # record time step (fir saving memory)
-        self.record_time_step = dict["record_time_step"]
-        #  do post processing to extract the results
+        self.record_time_step = int(dict["record_time_step"])
+        # post process
         self.post_process()
 
     def post_process(self):
@@ -617,6 +636,7 @@ class PostProcess:
         fiber_element_set = rve_odb.rootAssembly.instances["FINAL_STUFF"].elementSets['FIBERFACE']
         matrix_element_set = rve_odb.rootAssembly.instances["FINAL_STUFF"].elementSets["MATRIXFACE"]
 
+
         ref1_node_set = rve_odb.rootAssembly.nodeSets["REF-R"]
         ref2_node_set = rve_odb.rootAssembly.nodeSets["REF-T"]
 
@@ -628,7 +648,7 @@ class PostProcess:
         for ii in range(len(my_steps)):
             total_frames = total_frames + \
                 len(my_steps[my_steps.keys()[ii]].frames)
-        # self.record_time_step = ceil(total_frames / self.record_frames)
+
         # get the variables that do not change with time steps
         rve_frame = rve_odb.steps[my_steps.keys()[0]].frames[0]
 
@@ -639,6 +659,7 @@ class PostProcess:
         self.ivol_fibers = self.get_ivol(ivol_field, fiber_element_set)
         # get the filed output for matrix
         self.ivol_matrix = self.get_ivol(ivol_field, matrix_element_set)
+
 
         # define required variables
         self.deformation_gradient = numpy.zeros((total_frames, 2, 2))
@@ -706,14 +727,15 @@ class PostProcess:
                     self.RF_ref2[ii * len(step_frames) +
                                  jj][:] = rf_field_ref2.values[0].data[:]
                 # get plastic strain for matrix
-
                 # save the results every 10 frames to save memory
                 if jj % self.record_time_step == 0:
                     plastic_strain_field = frame.fieldOutputs["SDV17"].getSubset(
                         region=matrix_element_set, position=INTEGRATION_POINT)
                     for kk in range(0, len(plastic_strain_field.values)):
-                        self.plastic_strain[ii * len(step_frames) +
-                                            jj / self.record_time_step][kk] = plastic_strain_field.values[kk].data
+                        print(ii * len(step_frames) +
+                              int(jj / self.record_time_step))
+                        self.plastic_strain[ii * len(step_frames) + int(
+                            jj / self.record_time_step)][kk] = plastic_strain_field.values[kk].data
 
                 # get deformation gradient
                 for i in range(0, 2):
@@ -801,8 +823,6 @@ class PostProcess:
 # get node coordinates
 def get_node_y(node):
     return node.coordinates[1]
-
-# get node coordinates
 
 
 def get_node_x(node):

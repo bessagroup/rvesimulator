@@ -128,7 +128,8 @@ class PPPEMixtureEmptyFiber(object):
                 center=(self.circles_information[ii][0],
                         self.circles_information[ii][1]),
                 point1=(self.circles_information[ii][0] +
-                        self.circles_information[ii][2], self.circles_information[ii][1]),
+                        self.circles_information[ii][2],
+                        self.circles_information[ii][1]),
             )
         part.PartitionFaceBySketch(faces=faces[:], sketch=sketch)
         del sketch
@@ -141,23 +142,31 @@ class PPPEMixtureEmptyFiber(object):
         part.Set(faces=faces, name="all_faces")
 
         # fiber faces
-        fiberface = part.faces.getByBoundingCylinder(
-            (self.circles_information[0][0],
-             self.circles_information[0][1], 0.0),
-            (self.circles_information[0][0],
-             self.circles_information[0][1], 1.0),
-            self.circles_information[0][2] + 0.001 *
-            self.circles_information[0][2],
+        fiberface = part.faces.getByBoundingBox(
+            xMin=self.circles_information[0][0] - self.circles_information[0][2] -
+            0.001 * self.circles_information[0][2],
+            xMax=self.circles_information[0][0] + self.circles_information[0][2] +
+            0.001 * self.circles_information[0][2],
+            yMin=self.circles_information[0][1] - self.circles_information[0][2] -
+            0.001 * self.circles_information[0][2],
+            yMax=self.circles_information[0][1] + self.circles_information[0][2] +
+            0.001 * self.circles_information[0][2],
+            zMin=0.0,
+            zMax=1.0,
         )
         part.Set(faces=fiberface, name="fiberface")
         for ii in range(1, len(self.circles_information)):
-            fiberface_1 = part.faces.getByBoundingCylinder(
-                (self.circles_information[ii][0],
-                 self.circles_information[ii][1], 0.0),
-                (self.circles_information[ii][0],
-                 self.circles_information[ii][1], 1.0),
-                self.circles_information[ii][2] +
+            fiberface_1 = part.faces.getByBoundingBox(
+                xMin=self.circles_information[ii][0] - self.circles_information[ii][2] -
                 0.001 * self.circles_information[ii][2],
+                xMax=self.circles_information[ii][0] + self.circles_information[ii][2] +
+                0.001 * self.circles_information[ii][2],
+                yMin=self.circles_information[ii][1] - self.circles_information[ii][2] -
+                0.001 * self.circles_information[ii][2],
+                yMax=self.circles_information[ii][1] + self.circles_information[ii][2] +
+                0.001 * self.circles_information[ii][2],
+                zMin=0.0,
+                zMax=1.0,
             )
             part.Set(faces=fiberface_1, name="fiberface_1")
             part.SetByBoolean(
@@ -428,7 +437,9 @@ class PPPEMixtureEmptyFiber(object):
                         ),
                     )
         else:
-            print "the number of nodes between the two sides are not the same"
+            raise ValueError(
+                "the number of nodes between the two sides are not the same"
+            )
 
         # part II:
         edgesTOP_nodes = part.sets["edgesTOP"].nodes
@@ -467,7 +478,9 @@ class PPPEMixtureEmptyFiber(object):
                         ),
                     )
         else:
-            print "the number of nodes between the two sides are not the same"
+            raise ValueError(
+                "the number of nodes between the two sides are not the same"
+            )
 
         # steps (static-step, implicit solver)
         model.StaticStep(name="Step-1", previous="Initial")
@@ -579,14 +592,13 @@ class PPPEMixtureEmptyFiber(object):
         self.job.submit(consistencyChecking=OFF)
         self.job.waitForCompletion()
 
-
 class PostProcess:
 
     def __init__(self, dict):
         # job name
         self.job_name = str(dict["job_name"])
         # record time step (fir saving memory)
-        self.record_time_step = dict["record_time_step"]
+        self.record_time_step = int(dict["record_time_step"])
         # post process
         self.post_process()
 
@@ -600,6 +612,7 @@ class PostProcess:
         fiber_element_set = rve_odb.rootAssembly.instances["FINAL_STUFF"].elementSets['FIBERFACE']
         matrix_element_set = rve_odb.rootAssembly.instances["FINAL_STUFF"].elementSets["MATRIXFACE"]
 
+
         ref1_node_set = rve_odb.rootAssembly.nodeSets["REF-R"]
         ref2_node_set = rve_odb.rootAssembly.nodeSets["REF-T"]
 
@@ -611,7 +624,7 @@ class PostProcess:
         for ii in range(len(my_steps)):
             total_frames = total_frames + \
                 len(my_steps[my_steps.keys()[ii]].frames)
-        # self.record_time_step = ceil(total_frames / self.record_frames)
+
         # get the variables that do not change with time steps
         rve_frame = rve_odb.steps[my_steps.keys()[0]].frames[0]
 
@@ -622,6 +635,7 @@ class PostProcess:
         self.ivol_fibers = self.get_ivol(ivol_field, fiber_element_set)
         # get the filed output for matrix
         self.ivol_matrix = self.get_ivol(ivol_field, matrix_element_set)
+
 
         # define required variables
         self.deformation_gradient = numpy.zeros((total_frames, 2, 2))
@@ -689,14 +703,15 @@ class PostProcess:
                     self.RF_ref2[ii * len(step_frames) +
                                  jj][:] = rf_field_ref2.values[0].data[:]
                 # get plastic strain for matrix
-
                 # save the results every 10 frames to save memory
                 if jj % self.record_time_step == 0:
                     plastic_strain_field = frame.fieldOutputs["SDV17"].getSubset(
                         region=matrix_element_set, position=INTEGRATION_POINT)
                     for kk in range(0, len(plastic_strain_field.values)):
-                        self.plastic_strain[ii * len(step_frames) +
-                                            jj / self.record_time_step][kk] = plastic_strain_field.values[kk].data
+                        print(ii * len(step_frames) +
+                              int(jj / self.record_time_step))
+                        self.plastic_strain[ii * len(step_frames) + int(
+                            jj / self.record_time_step)][kk] = plastic_strain_field.values[kk].data
 
                 # get deformation gradient
                 for i in range(0, 2):
@@ -780,13 +795,10 @@ class PostProcess:
         with open("results.pkl", "wb") as fp:
             pickle.dump(results, fp)
 
-
 # get node coordinates
 def get_node_y(node):
     return node.coordinates[1]
 
 # get node coordinates
-
-
 def get_node_x(node):
     return node.coordinates[0]
