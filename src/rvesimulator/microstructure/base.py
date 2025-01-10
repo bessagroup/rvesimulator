@@ -113,7 +113,9 @@ class MicrostructureGenerator:
             ax.set_xticks([])
             if save_fig is True:
                 plt.savefig(fig_name, dpi=300, bbox_inches="tight")
-            plt.show()
+                plt.close()
+            else:
+                plt.show()
         elif self.fiber_positions.shape[1] == 5:
             fig = plt.figure(**kwarg)
             ax = fig.add_subplot(projection="3d")
@@ -122,7 +124,9 @@ class MicrostructureGenerator:
             ax.set_xticks([])
             if save_fig is True:
                 plt.savefig(fig_name, dpi=300, bbox_inches="tight")
-            plt.show()
+                plt.close()
+            else:
+                plt.show()
 
     @staticmethod
     def circle_plot(
@@ -246,7 +250,7 @@ class MicrostructureGenerator:
                 raise ValueError("Spltting number is wrong!\n")
         axes = [int(length), int(width), int(height)]
         data = np.ones(axes, dtype=np.bool_)
-        alpha = 0.6
+        alpha = 0.2
         colors = np.empty(axes + [4], dtype=np.float32)
         colors[:] = [1, 1, 1, alpha]
         ax.voxels(data, facecolors=colors)

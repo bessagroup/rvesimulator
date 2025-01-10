@@ -10,7 +10,7 @@ import platform
 import time
 from pathlib import Path
 from pickle import UnpicklingError
-from typing import Dict, List
+from typing import Dict
 
 from ..additions.utils import (make_new_script, print_banner, remove_files,
                                write_json)
@@ -115,9 +115,14 @@ class AbaqusSimulator(Simulator, AssertInputs):
 
         file_name = self.job_name + ".inp"
         if "subroutine_path" not in self.sim_info.keys():
-            command = f"abaqus job={file_name} cpus={num_cpu}  -interactive"
+            command = (
+                f"abaqus job={file_name} cpus={num_cpu} -interactive"
+            )
         else:
-            command = f"abaqus job={file_name} cpus={num_cpu} user={self.sim_info['subroutine_path']} -interactive"
+            command = (
+                f"abaqus job={file_name} cpus={num_cpu} "
+                f"user={self.sim_info['subroutine_path']} -interactive"
+            )
         start_time = time.perf_counter()
         os.system(command)
         end_time = time.perf_counter()
@@ -222,7 +227,7 @@ class AbaqusSimulator(Simulator, AssertInputs):
 
         if inp_exist and odb_exist:
             print(
-                f"post process finished with  :{(end_time - start_time):2f} s")
+                f"post process finished with:{(end_time - start_time):2f} s")
         elif not odb_exist and inp_exist:
             print(
-                f"inp generation finished with  :{(end_time - start_time):2f} s")
+                f"inp generation finished with:{(end_time - start_time):2f} s")

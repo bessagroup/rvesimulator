@@ -4,13 +4,15 @@ from math import ceil
 
 import assembly
 import mesh
-import numpy
+import numpy as np
 import regionToolset
 from abaqus import *
 from abaqusConstants import *
 from caeModules import *
 # import packages for abaqus post-processing
 from odbAccess import *
+from scipy.optimize import linear_sum_assignment
+from scipy.spatial import distance
 
 try:
     import cPickle as pickle  # Improve speed
@@ -18,75 +20,74 @@ except:
     import pickle
 
 
-class PPPEMixtureNoCohesive(object):
-    """ PP and PE 2D SVE without cohesive elements"""
+class HyperelasticRVE(object):
+    """ Hyperelastic RVE with hyperelastic matrix and hyperelastic inclusions
+    """
 
-    def __init__(self, sim_info={"location_information": None,
+    def __init__(self, sim_info={"inclusion_location_information": None,
                                  "radius_mu": None,
                                  "radius_std": None,
-                                 "len_start": None,
-                                 "len_end": None,
-                                 "wid_start": None,
-                                 "wid_end": None,
-                                 "job_name": "veni_nocoh_rve",
-                                 "strain": [0.10, 0.0, 0.0],
-                                 "params_pp": None,
-                                 "params_pe": None,
-                                 "mesh_partition": None,
-                                 "simulation_time": 100.0,
-                                 "num_steps": None,
-                                 "num_cpu": 1,
-                                 "record_time_step": 5,
-                                 "subroutine_path": None}):
-        # ------------------------------ parameters ------------------------- #
-        # names of model, part, instance
-        self.model_name = "veni_sve"
-        self.part_name = "Final_Stuff"
-        self.instance_name = "Final_Stuff"
+                                 "length_start": None,
+                                 "length_end": None,
+                                 "width_start": None,
+                                 "width_end": None,
+                                 "model_name": "rve_2phase",
+                                 "part_name": "rve_2phase",
+                                 "instance_name": "rve_2phase",
+                                 "job_name": "hyperelastic_rve",
+                                 "displacement_gradient": [[0.1, 0.0], [0.0, 0.0]],
+                                 "params_matrix": None,
+                                 "params_inclusion": None,
+                                 "mesh_division": None,
+                                 "simulation_time": 1.0,
+                                 "num_pseudo_time_steps": None,
+                                 "num_cpu": 1}):
+
+        # ----------------------------parameters----------------------------- #
+
+        # names of model, part, instance, job
+
+        self.model_name = str(sim_info["model_name"])
+        self.part_name = str(sim_info["part_name"])
+        self.instance_name = str(sim_info["instance_name"])
         self.job_name = str(sim_info["job_name"])
         self.num_cpu = sim_info["num_cpu"]
 
-        # information of geometry of RVE
-        self.loc_info = sim_info
-        # mech and sets information
-        self.circles_information = sim_info["location_information"]
-        self.length = (
-            sim_info["len_end"] - sim_info["len_start"]
-        ) - 2 * sim_info["radius_mu"]
-        self.width = (
-            sim_info["wid_end"] - sim_info["wid_start"]
-        ) - 2 * sim_info["radius_mu"]
+        # information for creating geometry of the RVE
+
+        self.inclusion_location_information = sim_info["inclusion_location_information"]
+        self.length = (sim_info["length_end"]
+                       - sim_info["length_start"]
+                       - 2 * sim_info["radius_mu"])
+        self.width = (sim_info["width_end"]
+                      - sim_info["width_start"]
+                      - 2 * sim_info["radius_mu"])
         self.center = [
-            (sim_info["len_end"] + sim_info["len_start"]) / 2.0,
-            (sim_info["wid_end"] + sim_info["wid_start"]) / 2.0,
-        ]
+            (sim_info["length_end"] + sim_info["length_start"]) / 2.0,
+            (sim_info["width_end"] + sim_info["width_start"]) / 2.0]
         self.radius_mu = sim_info["radius_mu"]
         self.radius_std = sim_info["radius_std"]
 
-        # information of RVE modeling
-        self.strain = sim_info["strain"]
-        self.mesh_size = (
-            min(self.length, self.width) / sim_info["mesh_partition"]
-        )
-        self.time_period = sim_info["simulation_time"]
-        self.time_interval = (
-            sim_info["simulation_time"] / sim_info["num_steps"]
-        )
+        # information for creating mesh
+        self.mesh_division = sim_info["mesh_division"]
+        self.mesh_size = min(self.length, self.width) / self.mesh_division
 
-        # material properties
-        self.params_pp = sim_info["params_pp"]
-        self.params_pe = sim_info["params_pe"]
-        self.subroutine_path = str(sim_info["subroutine_path"])
+        # information for simulation
+        self.displacement_gradient = sim_info["displacement_gradient"]
+        self.simulation_time = sim_info["simulation_time"]
+        self.num_pseudo_time_steps = sim_info["num_pseudo_time_steps"]
+        self.reporting_interval = self.simulation_time / self.num_pseudo_time_steps
 
-        # record time step
-        self.record_time_step = sim_info["record_time_step"]
-        # create the model
-        self.create_simulation_job()
-        # create the job and write it into inp file
+        # information for material properties
+        self.params_matrix = sim_info["params_matrix"]
+        self.params_inclusion = sim_info["params_inclusion"]
+
+        # submit # This is a strange way of implementing the code
+        self.create_model()
         self.create_job()
+        self.data_check()
 
-    def create_simulation_job(self):
-
+    def create_model(self):
         # get delta
         delta = min(min(self.length, self.width) / 1000, self.mesh_size / 10)
 
@@ -120,14 +121,14 @@ class PPPEMixtureNoCohesive(object):
         sketch.setPrimaryObject(option=SUPERIMPOSE)
         part.projectReferencesOntoSketch(sketch=sketch, filter=COPLANAR_EDGES)
 
-        # create the fibers
-        for ii in range(len(self.circles_information)):
-            # actual fibers
+        # create the inclusions
+        for ii in range(len(self.inclusion_location_information)):
+            # actual inclusions
             sketch.CircleByCenterPerimeter(
-                center=(self.circles_information[ii][0],
-                        self.circles_information[ii][1]),
-                point1=(self.circles_information[ii][0] +
-                        self.circles_information[ii][2], self.circles_information[ii][1]),
+                center=(
+                    self.inclusion_location_information[ii][0], self.inclusion_location_information[ii][1]),
+                point1=(self.inclusion_location_information[ii][0] +
+                        self.inclusion_location_information[ii][2], self.inclusion_location_information[ii][1]),
             )
         part.PartitionFaceBySketch(faces=faces[:], sketch=sketch)
         del sketch
@@ -137,48 +138,48 @@ class PPPEMixtureNoCohesive(object):
         faces = part.faces[:]
 
         # for all faces
-        part.Set(faces=faces, name="all_faces")
 
-        # fiber faces
-        fiberface = part.faces.getByBoundingBox(
-            xMin=self.circles_information[0][0] - self.circles_information[0][2] -
-            0.001 * self.circles_information[0][2],
-            xMax=self.circles_information[0][0] + self.circles_information[0][2] +
-            0.001 * self.circles_information[0][2],
-            yMin=self.circles_information[0][1] - self.circles_information[0][2] -
-            0.001 * self.circles_information[0][2],
-            yMax=self.circles_information[0][1] + self.circles_information[0][2] +
-            0.001 * self.circles_information[0][2],
+        part.Set(faces=faces, name="all_faces")
+        inclusionface = part.faces.getByBoundingBox(
+            xMin=self.inclusion_location_information[0][0] - self.inclusion_location_information[0][2] -
+            0.001 * self.inclusion_location_information[0][2],
+            xMax=self.inclusion_location_information[0][0] + self.inclusion_location_information[0][2] +
+            0.001 * self.inclusion_location_information[0][2],
+            yMin=self.inclusion_location_information[0][1] - self.inclusion_location_information[0][2] -
+            0.001 * self.inclusion_location_information[0][2],
+            yMax=self.inclusion_location_information[0][1] + self.inclusion_location_information[0][2] +
+            0.001 * self.inclusion_location_information[0][2],
             zMin=0.0,
             zMax=1.0,
         )
-        part.Set(faces=fiberface, name="fiberface")
-        for ii in range(1, len(self.circles_information)):
-            fiberface_1 = part.faces.getByBoundingBox(
-                xMin=self.circles_information[ii][0] - self.circles_information[ii][2] -
-                0.001 * self.circles_information[ii][2],
-                xMax=self.circles_information[ii][0] + self.circles_information[ii][2] +
-                0.001 * self.circles_information[ii][2],
-                yMin=self.circles_information[ii][1] - self.circles_information[ii][2] -
-                0.001 * self.circles_information[ii][2],
-                yMax=self.circles_information[ii][1] + self.circles_information[ii][2] +
-                0.001 * self.circles_information[ii][2],
+        part.Set(faces=inclusionface, name="inclusionface")
+
+        for ii in range(1, len(self.inclusion_location_information)):
+            inclusionface_1 = part.faces.getByBoundingBox(
+                xMin=self.inclusion_location_information[ii][0] - self.inclusion_location_information[ii][2] -
+                0.001 * self.inclusion_location_information[ii][2],
+                xMax=self.inclusion_location_information[ii][0] + self.inclusion_location_information[ii][2] +
+                0.001 * self.inclusion_location_information[ii][2],
+                yMin=self.inclusion_location_information[ii][1] - self.inclusion_location_information[ii][2] -
+                0.001 * self.inclusion_location_information[ii][2],
+                yMax=self.inclusion_location_information[ii][1] + self.inclusion_location_information[ii][2] +
+                0.001 * self.inclusion_location_information[ii][2],
                 zMin=0.0,
                 zMax=1.0,
             )
-            part.Set(faces=fiberface_1, name="fiberface_1")
+            part.Set(faces=inclusionface_1, name="inclusionface_1")
             part.SetByBoolean(
-                name="fiberface",
-                sets=(part.sets["fiberface_1"],  part.sets["fiberface"]),
+                name="inclusionface",
+                sets=(part.sets["inclusionface_1"],
+                      part.sets["inclusionface"]),
                 operation=UNION,
             )
         # delete fiber face 1
-        del part.sets["fiberface_1"]
-
+        del part.sets["inclusionface_1"]
         # create set for matrix
         part.SetByBoolean(
             name="matrixface",
-            sets=(part.sets["all_faces"], part.sets["fiberface"]),
+            sets=(part.sets["all_faces"], part.sets["inclusionface"]),
             operation=DIFFERENCE,
         )
 
@@ -271,73 +272,47 @@ class PPPEMixtureNoCohesive(object):
                                   distortionControl=DEFAULT)
         elemType2 = mesh.ElemType(elemCode=CPE3, elemLibrary=STANDARD)
         part.setElementType(
-            regions=part.sets["fiberface"], elemTypes=(elemType1, elemType2))
+            regions=part.sets["inclusionface"], elemTypes=(elemType1, elemType2))
         part.setElementType(
             regions=part.sets["matrixface"], elemTypes=(elemType1, elemType2))
 
         part.generateMesh()
 
         # material properties ---------------------------------------------------------
-        # material property for top part
-        material_fiber = model.Material(name="material_fiber")
-        material_fiber.Depvar(n=44)
-        material_fiber.Density(table=((7.9e-9, ), ))
-        material_fiber.UserMaterial(
-            mechanicalConstants=(
-                self.params_pp[0],
-                self.params_pp[1],
-                self.params_pp[2],
-                self.params_pp[3],
-                self.params_pp[4],
-                self.params_pp[5],
-                self.params_pp[6],
-                self.params_pp[7],
-                self.params_pp[8],
-                self.params_pp[9],
-                self.params_pp[10],
-                self.params_pp[11],
-                self.params_pp[12],
-                self.params_pp[13],
-            )
-        )
+        # material property for particles
+        material_inclusion = model.Material(name="material_inclusion")
+        material_inclusion.Hyperelastic(materialType=ISOTROPIC,
+                                        testData=OFF,
+                                        type=NEO_HOOKE,
+                                        volumetricResponse=VOLUMETRIC_DATA,
+                                        table=((self.params_inclusion[0],
+                                                self.params_inclusion[1]), ))
+
+        # material property for the matrix part
         material_matrix = model.Material(name="material_matrix")
-        material_matrix.Depvar(n=44)
-        material_matrix.Density(table=((7.9e-9, ), ))
-        material_matrix.UserMaterial(
-            mechanicalConstants=(
-                self.params_pe[0],
-                self.params_pe[1],
-                self.params_pe[2],
-                self.params_pe[3],
-                self.params_pe[4],
-                self.params_pe[5],
-                self.params_pe[6],
-                self.params_pe[7],
-                self.params_pe[8],
-                self.params_pe[9],
-                self.params_pe[10],
-                self.params_pe[11],
-                self.params_pe[12],
-                self.params_pe[13],
-            )
-        )
+        material_matrix.Hyperelastic(materialType=ISOTROPIC,
+                                     testData=OFF,
+                                     type=ARRUDA_BOYCE,
+                                     volumetricResponse=VOLUMETRIC_DATA,
+                                     table=((self.params_matrix[0],
+                                             self.params_matrix[1],
+                                             self.params_matrix[2]), ))
+
         # create section and assign material property to corresponding section
         # matrix material
         model.HomogeneousSolidSection(
-            name='matrix', material='material_matrix',
-            thickness=None)
+            name='matrix', material='material_matrix', thickness=None)
         part.SectionAssignment(region=part.sets['matrixface'],
                                sectionName='matrix', offset=0.0,
                                offsetType=MIDDLE_SURFACE,
-                               offsetField='', thicknessAssignment=FROM_SECTION)
+                               offsetField='',
+                               thicknessAssignment=FROM_SECTION)
 
-        # fiber material
+        # inclusion material
         model.HomogeneousSolidSection(
-            name='fiber',
-            material='material_fiber',
-            thickness=None)
-        part.SectionAssignment(region=part.sets['fiberface'],
-                               sectionName='fiber', offset=0.0,
+            name='inclusion', material='material_inclusion', thickness=None)
+        part.SectionAssignment(region=part.sets['inclusionface'],
+                               sectionName='inclusion', offset=0.0,
                                offsetType=MIDDLE_SURFACE, offsetField='',
                                thicknessAssignment=FROM_SECTION)
 
@@ -365,7 +340,7 @@ class PPPEMixtureNoCohesive(object):
             referencePoints=((reference_points[top_reference_point_id],)),
         )
 
-        # pbc for vertices ------------------------------------------------------------
+        # pbc for vertices ----------------------------------------------------
         # regenerate assembly
         session.viewports["Viewport: 1"].setValues(
             displayedObject=sim_assembly)
@@ -424,84 +399,149 @@ class PPPEMixtureNoCohesive(object):
         # part 1: equations for edges 2 (edgesFRONT_RIGHT) and 4 (edgesBACK_LEFT)
         edgesRIGHT_nodes = part.sets["edgesRIGHT"].nodes
         edgesRIGHT_nodes_sorted = sorted(edgesRIGHT_nodes, key=get_node_y)
+        # pop the first and last node
+        edgesRIGHT_nodes_sorted.pop(0)
+        edgesRIGHT_nodes_sorted.pop(-1)
+
+        # sort the nodes of the right edge
         edgesLEFT_nodes = part.sets["edgesLEFT"].nodes
         edgesLEFT_nodes_sorted = sorted(edgesLEFT_nodes, key=get_node_y)
-        if len(edgesRIGHT_nodes_sorted) == len(edgesLEFT_nodes_sorted):
-            for ii in range(1, len(edgesRIGHT_nodes_sorted) - 1):
-                sim_assembly.SetFromNodeLabels(
-                    name="LEFT_" + str(ii),
-                    nodeLabels=(
-                        (
-                            instance_name,
-                            tuple([edgesLEFT_nodes_sorted[ii].label]),
-                        ),
-                    ),
-                    unsorted=True,
-                )
-                sim_assembly.SetFromNodeLabels(
-                    name="RIGHT_" + str(ii),
-                    nodeLabels=(
-                        (
-                            instance_name,
-                            tuple([edgesRIGHT_nodes_sorted[ii].label]),
-                        ),
-                    ),
-                    unsorted=True,
-                )
-                for jj in range(1, 3):
-                    model.Equation(
-                        name="LEFT_RIGHT_" + str(ii) + "_" + str(jj),
-                        terms=(
-                            (1, "RIGHT_" + str(ii), jj),
-                            (-1, "LEFT_" + str(ii), jj),
-                            (-1 * self.length, "Ref-R", jj),
-                        ),
-                    )
-        else:
-            raise ValueError(
-                "the number of nodes between the two sides are not the same"
-            )
+        # pop the first and last node
+        edgesLEFT_nodes_sorted.pop(0)
+        edgesLEFT_nodes_sorted.pop(-1)
 
-        # part II:
+        if len(edgesRIGHT_nodes_sorted) != len(edgesLEFT_nodes_sorted):
+
+            print("The number of nodes between the two sides are not the same")
+            print(
+                f"Right side node is: {len(edgesRIGHT_nodes_sorted)} ")
+            print(
+                f"Left side node is: {len(edgesLEFT_nodes_sorted)} ")
+            if len(edgesRIGHT_nodes_sorted) > len(edgesLEFT_nodes_sorted):
+                print(
+                    f"remove {np.abs(len(edgesRIGHT_nodes_sorted) - len(edgesLEFT_nodes_sorted))} nodes from right ")
+                num_remove = len(edgesRIGHT_nodes_sorted) - \
+                    len(edgesLEFT_nodes_sorted)
+                index_remove = np.random.choice(
+                    len(edgesRIGHT_nodes_sorted) - num_remove, num_remove, replace=False)
+                for jj in index_remove:
+                    edgesRIGHT_nodes_sorted.pop(jj)
+            else:
+                print(
+                    f"remove {np.abs(len(edgesRIGHT_nodes_sorted) - len(edgesLEFT_nodes_sorted))} nodes from left ")
+                num_remove = len(edgesLEFT_nodes_sorted) - \
+                    len(edgesRIGHT_nodes_sorted)
+                index_remove = np.random.choice(
+                    len(edgesLEFT_nodes_sorted) - num_remove, num_remove, replace=False)
+                for jj in index_remove:
+                    edgesLEFT_nodes_sorted.pop(jj)
+        else:
+            print("The number of nodes between the two sides are the same")
+
+        # pbcs for the left and right edges
+        for ii in range(len(edgesRIGHT_nodes_sorted)):
+            sim_assembly.SetFromNodeLabels(
+                name="LEFT_" + str(ii),
+                nodeLabels=(
+                    (
+                        instance_name,
+                        tuple([edgesLEFT_nodes_sorted[ii].label]),
+                    ),
+                ),
+                unsorted=True,
+            )
+            sim_assembly.SetFromNodeLabels(
+                name="RIGHT_" + str(ii),
+                nodeLabels=(
+                    (
+                        instance_name,
+                        tuple([edgesRIGHT_nodes_sorted[ii].label]),
+                    ),
+                ),
+                unsorted=True,
+            )
+            for jj in range(1, 3):
+                model.Equation(
+                    name="LEFT_RIGHT_" + str(ii) + "_" + str(jj),
+                    terms=(
+                        (1, "RIGHT_" + str(ii), jj),
+                        (-1, "LEFT_" + str(ii), jj),
+                        (-1 * self.length, "Ref-R", jj),
+                    ),
+                )
+        # part II: pbcs for the top and bottom edges
+        # get the top nodes
         edgesTOP_nodes = part.sets["edgesTOP"].nodes
         edgesTOP_nodes_sorted = sorted(edgesTOP_nodes, key=get_node_x)
+        # pop the first and last node
+        edgesTOP_nodes_sorted.pop(0)
+        edgesTOP_nodes_sorted.pop(-1)
+
+        # get the bottom nodes
         edgesBOT_nodes = part.sets["edgesBOT"].nodes
         edgesBOT_nodes_sorted = sorted(edgesBOT_nodes, key=get_node_x)
-        if len(edgesTOP_nodes_sorted) == len(edgesBOT_nodes_sorted):
-            for ii in range(1, len(edgesTOP_nodes_sorted) - 1):
-                sim_assembly.SetFromNodeLabels(
-                    name="TOP_" + str(ii),
-                    nodeLabels=(
-                        (
-                            instance_name,
-                            tuple([edgesTOP_nodes_sorted[ii].label]),
-                        ),
-                    ),
-                    unsorted=True,
-                )
-                sim_assembly.SetFromNodeLabels(
-                    name="BOT_" + str(ii),
-                    nodeLabels=(
-                        (
-                            instance_name,
-                            tuple([edgesBOT_nodes_sorted[ii].label]),
-                        ),
-                    ),
-                    unsorted=True,
-                )
-                for jj in range(1, 3):
-                    model.Equation(
-                        name="TOP_BOT_" + str(ii) + "_" + str(jj),
-                        terms=(
-                            (1, "TOP_" + str(ii), jj),
-                            (-1, "BOT_" + str(ii), jj),
-                            (-1 * self.width, "Ref-T", jj),
-                        ),
-                    )
+        # pop the first and last node
+        edgesBOT_nodes_sorted.pop(0)
+        edgesBOT_nodes_sorted.pop(-1)
+
+        if len(edgesTOP_nodes_sorted) != len(edgesBOT_nodes_sorted):
+            print("The number of nodes between the top and the bottom are not the same")
+            print(
+                f"Top side node is: {len(edgesTOP_nodes_sorted)} ")
+            print(
+                f"Bottom side node is: {len(edgesBOT_nodes_sorted)} ")
+            if len(edgesTOP_nodes_sorted) > len(edgesBOT_nodes_sorted):
+                print(
+                    f"remove {np.abs(len(edgesTOP_nodes_sorted) - len(edgesBOT_nodes_sorted))} nodes from top ")
+                num_remove = len(edgesTOP_nodes_sorted) - \
+                    len(edgesBOT_nodes_sorted)
+                index_remove = np.random.choice(
+                    len(edgesTOP_nodes_sorted) - num_remove, num_remove, replace=False)
+                for jj in index_remove:
+                    edgesTOP_nodes_sorted.pop(jj)
+            else:
+                print(
+                    f"remove {np.abs(len(edgesTOP_nodes_sorted) - len(edgesBOT_nodes_sorted))} nodes from bottom ")
+                num_remove = len(edgesBOT_nodes_sorted) - \
+                    len(edgesTOP_nodes_sorted)
+                index_remove = np.random.choice(
+                    len(edgesBOT_nodes_sorted) - num_remove, num_remove, replace=False)
+                for jj in index_remove:
+                    edgesBOT_nodes_sorted.pop(jj)
         else:
-            raise ValueError(
-                "the number of nodes between the two sides are not the same"
+            print("The number of nodes between the top and the bottom are the same")
+
+        # pbcs for the top and bottom edges
+        for ii in range(len(edgesTOP_nodes_sorted)):
+            sim_assembly.SetFromNodeLabels(
+                name="TOP_" + str(ii),
+                nodeLabels=(
+                    (
+                        instance_name,
+                        tuple([edgesTOP_nodes_sorted[ii].label]),
+                    ),
+                ),
+                unsorted=True,
             )
+            sim_assembly.SetFromNodeLabels(
+                name="BOT_" + str(ii),
+                nodeLabels=(
+                    (
+                        instance_name,
+                        tuple([edgesBOT_nodes_sorted[ii].label]),
+                    ),
+                ),
+                unsorted=True,
+            )
+            for jj in range(1, 3):
+                model.Equation(
+                    name="TOP_BOT_" + str(ii) + "_" + str(jj),
+                    terms=(
+                        (1, "TOP_" + str(ii), jj),
+                        (-1, "BOT_" + str(ii), jj),
+                        (-1 * self.width, "Ref-T", jj),
+                    ),
+                )
 
         # steps (static-step, implicit solver)
         model.StaticStep(name="Step-1", previous="Initial")
@@ -512,7 +552,8 @@ class PPPEMixtureNoCohesive(object):
             minInc=1e-20,
             name="Step-1",
             previous="Initial",
-            timePeriod=self.time_period,
+            timePeriod=self.simulation_time,
+            nlgeom=ON
         )
         model.fieldOutputRequests["F-Output-1"].setValues(
             variables=(
@@ -524,71 +565,43 @@ class PPPEMixtureNoCohesive(object):
                 "ELEDEN",
                 "EVOL",
                 "IVOL",
-                'SDV'
             ),
-            timeInterval=self.time_interval,
+            timeInterval=self.reporting_interval,
         )
         model.FieldOutputRequest(
             name="F-Output-2",
             createStepName="Step-1",
             variables=("U", "RF"),
-            timeInterval=self.time_interval,
-        )
-        model.historyOutputRequests["H-Output-1"].setValues(
-            variables=(
-                "ALLAE",
-                "ALLCD",
-                "ALLIE",
-                "ALLKE",
-                "ALLPD",
-                "ALLSE",
-                "ALLWK",
-                "ETOTAL",
-            ),
-            timeInterval=self.time_interval,
+            timeInterval=self.reporting_interval,
         )
 
         # loadings --------------------------------------------------------------------
         model.DisplacementBC(
-            name="E_11",
+            name="RightBC",
             createStepName="Step-1",
             region=sim_assembly.sets["Ref-R"],
-            u1=self.strain[0],
-            u2=UNSET,
+            u1=self.displacement_gradient[0][0],
+            u2=self.displacement_gradient[0][1],
             ur3=UNSET,
             amplitude=UNSET,
             fixed=OFF,
             distributionType=UNIFORM,
             fieldName="",
             localCsys=None,
-        )
-        # fix the rigid movement
-        model.DisplacementBC(
-            amplitude=UNSET,
-            createStepName="Step-1",
-            distributionType=UNIFORM,
-            fieldName="",
-            fixed=OFF,
-            localCsys=None,
-            name="rigid_x_1",
-            region=sim_assembly.instances[instance_name].sets["VertexLB"],
-            u1=0.0,
-            u2=UNSET,
-            ur3=UNSET,
         )
 
         model.DisplacementBC(
-            amplitude=UNSET,
+            name="TopBC",
             createStepName="Step-1",
+            region=sim_assembly.sets["Ref-T"],
+            u1=self.displacement_gradient[1][0],
+            u2=self.displacement_gradient[1][1],
+            ur3=UNSET,
+            amplitude=UNSET,
+            fixed=OFF,
             distributionType=UNIFORM,
             fieldName="",
-            fixed=OFF,
             localCsys=None,
-            name="rigid_x_2",
-            region=sim_assembly.instances[instance_name].sets["VertexLT"],
-            u1=0.0,
-            u2=0.0,
-            ur3=UNSET,
         )
 
     def create_job(self):
@@ -597,11 +610,9 @@ class PPPEMixtureNoCohesive(object):
                            atTime=None, waitMinutes=0, waitHours=0, queue=None, memory=90,
                            memoryUnits=PERCENTAGE, getMemoryFromAnalysis=True,
                            explicitPrecision=SINGLE, nodalOutputPrecision=SINGLE, echoPrint=OFF,
-                           modelPrint=OFF, contactPrint=OFF, historyPrint=OFF, userSubroutine=self.subroutine_path,
+                           modelPrint=OFF, contactPrint=OFF, historyPrint=OFF,
                            scratch='', resultsFormat=ODB, multiprocessingMode=DEFAULT, numCpus=self.num_cpu,
                            numDomains=self.num_cpu, numGPUs=0)
-        # write the job into inp file
-        self.job.writeInput(consistencyChecking=OFF)
 
     def data_check(self):
         """check if there is error in the model
@@ -609,21 +620,13 @@ class PPPEMixtureNoCohesive(object):
         self.job.submit(consistencyChecking=OFF, datacheckJob=True)
         self.job.waitForCompletion()
 
-    def submit_job(self):
-        # submit the job (in the new version of rvesimulator,
-        # we will submit the inp file so that we can release the CAE license)
-        self.job.submit(consistencyChecking=OFF)
-        self.job.waitForCompletion()
-
 
 class PostProcess:
 
     def __init__(self, dict):
         # job name
-        self.job_name = str(dict["job_name"])
-        # record time step (fir saving memory)
-        self.record_time_step = int(dict["record_time_step"])
-        # post process
+        job_name = dict["job_name"]
+        self.job_name = str(job_name)
         self.post_process()
 
     def post_process(self):
@@ -633,9 +636,9 @@ class PostProcess:
         rve_odb = openOdb(path=odbfile)
         # get element sets
         entire_element_set = rve_odb.rootAssembly.elementSets[" ALL ELEMENTS"]
-        fiber_element_set = rve_odb.rootAssembly.instances["FINAL_STUFF"].elementSets['FIBERFACE']
-        matrix_element_set = rve_odb.rootAssembly.instances["FINAL_STUFF"].elementSets["MATRIXFACE"]
-
+        inclusion_element_set = rve_odb.rootAssembly.instances[
+            "RVE_2PHASE"].elementSets['INCLUSIONFACE']
+        matrix_element_set = rve_odb.rootAssembly.instances["RVE_2PHASE"].elementSets["MATRIXFACE"]
 
         ref1_node_set = rve_odb.rootAssembly.nodeSets["REF-R"]
         ref2_node_set = rve_odb.rootAssembly.nodeSets["REF-T"]
@@ -655,17 +658,16 @@ class PostProcess:
         # Extract volume at integration point in ENTIRE RVE:
         ivol_field = rve_frame.fieldOutputs["IVOL"]
 
-        # get element volume for fiber
-        self.ivol_fibers = self.get_ivol(ivol_field, fiber_element_set)
+        # get element volume for inclusion
+        self.ivol_inclusions = self.get_ivol(ivol_field, inclusion_element_set)
         # get the filed output for matrix
         self.ivol_matrix = self.get_ivol(ivol_field, matrix_element_set)
 
-
         # define required variables
-        self.deformation_gradient = numpy.zeros((total_frames, 2, 2))
-        self.strain = numpy.zeros((total_frames, 2, 2))
-        self.stress = numpy.zeros((total_frames, 2, 2))
-        self.total_time = numpy.zeros(len(my_steps))
+        self.deformation_gradient = np.zeros((total_frames, 2, 2))
+        self.displacement_gradient = np.zeros((total_frames, 2, 2))
+        self.pk1_stress = np.zeros((total_frames, 2, 2))
+        self.total_time = np.zeros(len(my_steps))
 
         # define other variables
         self.U_ref1 = self.define_arrays(
@@ -676,8 +678,6 @@ class PostProcess:
             "RF", rve_frame, ref1_node_set, total_frames)
         self.RF_ref2 = self.define_arrays(
             "RF", rve_frame, ref2_node_set, total_frames)
-        self.plastic_strain = self.define_arrays(
-            "SDV17", rve_frame, matrix_element_set, total_frames)
 
         # loop over all steps
         for ii in range(len(my_steps)):
@@ -726,39 +726,29 @@ class PostProcess:
                                  jj][:] = rf_field_ref1.values[0].data[:]
                     self.RF_ref2[ii * len(step_frames) +
                                  jj][:] = rf_field_ref2.values[0].data[:]
-                # get plastic strain for matrix
-                # save the results every 10 frames to save memory
-                if jj % self.record_time_step == 0:
-                    plastic_strain_field = frame.fieldOutputs["SDV17"].getSubset(
-                        region=matrix_element_set, position=INTEGRATION_POINT)
-                    for kk in range(0, len(plastic_strain_field.values)):
-                        print(ii * len(step_frames) +
-                              int(jj / self.record_time_step))
-                        self.plastic_strain[ii * len(step_frames) + int(
-                            jj / self.record_time_step)][kk] = plastic_strain_field.values[kk].data
 
-                # get deformation gradient
+                # get deformation gradient, displacement_gradient and pk1_stress
                 for i in range(0, 2):
                     # get deformation gradient
                     self.deformation_gradient[ii * len(step_frames) + jj][0][i] \
-                        = self.U_ref1[ii * len(step_frames) +
-                                      jj][i] + numpy.identity(2)[0][i]
+                        = self.U_ref1[ii * len(step_frames) + jj][i] \
+                        + np.identity(2)[0][i]
                     self.deformation_gradient[ii * len(step_frames) + jj][1][i] \
-                        = self.U_ref2[ii * len(step_frames) +
-                                      jj][i] + numpy.identity(2)[1][i]
-                    # get strain
-                    self.strain[ii * len(step_frames) + jj][0][i] \
+                        = self.U_ref2[ii * len(step_frames) + jj][i] \
+                        + np.identity(2)[1][i]
+                    # get displacement_gradient
+                    self.displacement_gradient[ii * len(step_frames) + jj][0][i] \
                         = self.U_ref1[ii * len(step_frames) + jj][i]
-                    self.strain[ii * len(step_frames) + jj][1][i] \
+                    self.displacement_gradient[ii * len(step_frames) + jj][1][i] \
                         = self.U_ref2[ii * len(step_frames) + jj][i]
 
-                    # get stress
-                    self.stress[ii * len(step_frames) + jj][0][i] \
+                    # get pk1_stress
+                    self.pk1_stress[ii * len(step_frames) + jj][0][i] \
                         = self.RF_ref1[ii * len(step_frames) + jj][i] / \
-                        (self.ivol_matrix.sum() + self.ivol_fibers.sum())
-                    self.stress[ii * len(step_frames) + jj][1][i] = \
+                        (self.ivol_matrix.sum() + self.ivol_inclusions.sum())
+                    self.pk1_stress[ii * len(step_frames) + jj][1][i] = \
                         self.RF_ref2[ii * len(step_frames) + jj][i] / \
-                        (self.ivol_matrix.sum() + self.ivol_fibers.sum())
+                        (self.ivol_matrix.sum() + self.ivol_inclusions.sum())
 
         self.save_results()
 
@@ -768,8 +758,8 @@ class PostProcess:
         ivolSubField = field.getSubset(
             region=element_set, position=INTEGRATION_POINT
         )
-        # preallocate array for fibers
-        ivol = numpy.zeros((len(ivolSubField.values)))
+        # preallocate array for inclusions
+        ivol = np.zeros((len(ivolSubField.values)))
         # get the ivol
         for i in range(0, len(ivolSubField.values)):
             # Volume for i-th integration point
@@ -788,18 +778,11 @@ class PostProcess:
                                         position=NODAL)
             if isinstance(sub_field.values[0].data, float):
                 # variable is a scalar
-                array_temp = numpy.zeros((total_frames))
+                array_temp = np.zeros((total_frames))
             else:
                 # variable is an array
-                array_temp = numpy.zeros((total_frames,
-                                          len(sub_field.values[0].data)))
-        elif field_name == "SDV17":
-            # only save the results every 10 frames to save memory
-            recorded_frames = int(
-                ceil(total_frames / float(self.record_time_step)))
-            sub_field = field.getSubset(region=element_set,
-                                        position=INTEGRATION_POINT)
-            array_temp = numpy.zeros((recorded_frames, len(sub_field.values)))
+                array_temp = np.zeros((total_frames,
+                                       len(sub_field.values[0].data)))
 
         return array_temp
 
@@ -808,12 +791,11 @@ class PostProcess:
         # Save all variables to a single structured variable with all the data
         results = {
             "total_time": self.total_time,
-            "stress": self.stress,
+            "pk1_stress": self.pk1_stress,
             "deformation_gradient": self.deformation_gradient,
-            "strain": self.strain,
-            "fiber_volume": self.ivol_fibers,
+            "displacement_gradient": self.displacement_gradient,
+            "inclusion_volume": self.ivol_inclusions,
             "matrix_volume": self.ivol_matrix,
-            "plastic_strain": self.plastic_strain,
         }
         # Save the results to a pickle file
         with open("results.pkl", "wb") as fp:
@@ -823,6 +805,8 @@ class PostProcess:
 # get node coordinates
 def get_node_y(node):
     return node.coordinates[1]
+
+# get node coordinates
 
 
 def get_node_x(node):

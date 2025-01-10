@@ -6,7 +6,7 @@ and path loading"""
 import logging
 import os
 import time
-from pathlib import Path, PurePath
+from pathlib import Path
 from typing import Any, Dict
 
 # third-party
@@ -26,8 +26,7 @@ __author__ = "Jiaxiang Yi (J.Yi@tudelft.nl)"
 __credits__ = ["Jiaxiang Yi"]
 __status__ = "Stable"
 # =============================================================================
-
-
+#
 # =============================================================================
 
 
@@ -328,7 +327,7 @@ class VonMisesPlasticPathLoads(HollowPlateBase):
         # folder information
         self.main_folder = Path.cwd()
         self.folder_info = {
-            "main_dir":  Path(self.main_folder, str("Data")),
+            "main_dir": Path(self.main_folder, str("Data")),
             "script_path": Path(rvesimulator.__file__).parent.as_posix() +
             "/scriptbase",
             "current_dir": "point_1",

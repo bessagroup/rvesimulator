@@ -1,10 +1,11 @@
 
 # -*- coding: mbcs -*-
+from math import ceil
+
 import assembly
 import mesh
 import numpy
 import regionToolset
-from math import ceil
 from abaqus import *
 from abaqusConstants import *
 from caeModules import *
@@ -162,24 +163,31 @@ class PPPEMixtureCohesive:
         # for all faces
         part.Set(faces=faces, name="all_faces")
 
-        # fiber faces
-        fiberface = part.faces.getByBoundingCylinder(
-            (self.circles_information[0][0],
-             self.circles_information[0][1], 0.0),
-            (self.circles_information[0][0],
-             self.circles_information[0][1], 1.0),
-            self.circles_information[0][2] + 0.001 *
-            self.circles_information[0][2],
+        fiberface = part.faces.getByBoundingBox(
+            xMin=self.circles_information[0][0] - self.circles_information[0][2] -
+            0.001 * self.circles_information[0][2],
+            xMax=self.circles_information[0][0] + self.circles_information[0][2] +
+            0.001 * self.circles_information[0][2],
+            yMin=self.circles_information[0][1] - self.circles_information[0][2] -
+            0.001 * self.circles_information[0][2],
+            yMax=self.circles_information[0][1] + self.circles_information[0][2] +
+            0.001 * self.circles_information[0][2],
+            zMin=0.0,
+            zMax=1.0,
         )
         part.Set(faces=fiberface, name="fiberface")
         for ii in range(1, len(self.circles_information)):
-            fiberface_1 = part.faces.getByBoundingCylinder(
-                (self.circles_information[ii][0],
-                 self.circles_information[ii][1], 0.0),
-                (self.circles_information[ii][0],
-                 self.circles_information[ii][1], 1.0),
-                self.circles_information[ii][2] +
+            fiberface_1 = part.faces.getByBoundingBox(
+                xMin=self.circles_information[ii][0] - self.circles_information[ii][2] -
                 0.001 * self.circles_information[ii][2],
+                xMax=self.circles_information[ii][0] + self.circles_information[ii][2] +
+                0.001 * self.circles_information[ii][2],
+                yMin=self.circles_information[ii][1] - self.circles_information[ii][2] -
+                0.001 * self.circles_information[ii][2],
+                yMax=self.circles_information[ii][1] + self.circles_information[ii][2] +
+                0.001 * self.circles_information[ii][2],
+                zMin=0.0,
+                zMax=1.0,
             )
             part.Set(faces=fiberface_1, name="fiberface_1")
             part.SetByBoolean(
@@ -191,24 +199,55 @@ class PPPEMixtureCohesive:
         del part.sets["fiberface_1"]
 
         # create set for cohesive and fibers
-        cohesive_fiber = part.faces.getByBoundingCylinder(
-            (self.circles_information[0][0],
-             self.circles_information[0][1], 0.0),
-            (self.circles_information[0][0],
-             self.circles_information[0][1], 1.0),
-            self.circles_information[0][2]*self.cohesive_radius_factor +
-            0.001 * self.circles_information[0][2],
+        # cohesive_fiber = part.faces.getByBoundingCylinder(
+        #     (self.circles_information[0][0],
+        #      self.circles_information[0][1], 0.0),
+        #     (self.circles_information[0][0],
+        #      self.circles_information[0][1], 1.0),
+        #     self.circles_information[0][2]*self.cohesive_radius_factor +
+        #     0.001 * self.circles_information[0][2],
+        # )
+        cohesive_fiber = part.faces.getByBoundingBox(
+            xMin=self.circles_information[0][0] - self.circles_information[0][2] *
+            self.cohesive_radius_factor - 0.001 *
+            self.circles_information[0][2],
+            xMax=self.circles_information[0][0] + self.circles_information[0][2] *
+            self.cohesive_radius_factor + 0.001 *
+            self.circles_information[0][2],
+            yMin=self.circles_information[0][1] - self.circles_information[0][2] *
+            self.cohesive_radius_factor - 0.001 *
+            self.circles_information[0][2],
+            yMax=self.circles_information[0][1] + self.circles_information[0][2] *
+            self.cohesive_radius_factor + 0.001 *
+            self.circles_information[0][2],
+            zMin=0.0,
+            zMax=1.0,
         )
-
         part.Set(faces=cohesive_fiber, name="cohesive_fiber")
         for ii in range(1, len(self.circles_information)):
-            cohesive_fiber_1 = part.faces.getByBoundingCylinder(
-                (self.circles_information[ii][0],
-                 self.circles_information[ii][1], 0.0),
-                (self.circles_information[ii][0],
-                 self.circles_information[ii][1], 1.0),
-                self.circles_information[ii][2]*self.cohesive_radius_factor +
-                0.001 * self.circles_information[ii][2],
+            # cohesive_fiber_1 = part.faces.getByBoundingCylinder(
+            #     (self.circles_information[ii][0],
+            #      self.circles_information[ii][1], 0.0),
+            #     (self.circles_information[ii][0],
+            #      self.circles_information[ii][1], 1.0),
+            #     self.circles_information[ii][2]*self.cohesive_radius_factor +
+            #     0.001 * self.circles_information[ii][2],
+            # )
+            cohesive_fiber_1 = part.faces.getByBoundingBox(
+                xMin=self.circles_information[ii][0] - self.circles_information[ii][2] *
+                self.cohesive_radius_factor - 0.001 *
+                self.circles_information[ii][2],
+                xMax=self.circles_information[ii][0] + self.circles_information[ii][2] *
+                self.cohesive_radius_factor + 0.001 *
+                self.circles_information[ii][2],
+                yMin=self.circles_information[ii][1] - self.circles_information[ii][2] *
+                self.cohesive_radius_factor - 0.001 *
+                self.circles_information[ii][2],
+                yMax=self.circles_information[ii][1] + self.circles_information[ii][2] *
+                self.cohesive_radius_factor + 0.001 *
+                self.circles_information[ii][2],
+                zMin=0.0,
+                zMax=1.0,
             )
             part.Set(faces=cohesive_fiber_1, name="cohesive_fiber_1")
             part.SetByBoolean(
@@ -276,24 +315,56 @@ class PPPEMixtureCohesive:
         name_edges = ["edgesLEFT", "edgesRIGHT", "edgesTOP", "edgesBOT"]
 
         # create set for cohesive edges
-        cohesive_edges = s.getByBoundingCylinder(
-            (self.circles_information[0][0],
-             self.circles_information[0][1], 0.0),
-            (self.circles_information[0][0],
-             self.circles_information[0][1], 1.0),
-            self.circles_information[0][2]*self.cohesive_radius_factor +
-            0.001 * self.circles_information[0][2],
+        # cohesive_edges = s.getByBoundingCylinder(
+        #     (self.circles_information[0][0],
+        #      self.circles_information[0][1], 0.0),
+        #     (self.circles_information[0][0],
+        #      self.circles_information[0][1], 1.0),
+        #     self.circles_information[0][2]*self.cohesive_radius_factor +
+        #     0.001 * self.circles_information[0][2],
+        # )
+        cohesive_edges = s.getByBoundingBox(
+            xMin=self.circles_information[0][0] - self.circles_information[0][2] *
+            self.cohesive_radius_factor - 0.001 *
+            self.circles_information[0][2],
+            xMax=self.circles_information[0][0] + self.circles_information[0][2] *
+            self.cohesive_radius_factor + 0.001 *
+            self.circles_information[0][2],
+            yMin=self.circles_information[0][1] - self.circles_information[0][2] *
+            self.cohesive_radius_factor - 0.001 *
+            self.circles_information[0][2],
+            yMax=self.circles_information[0][1] + self.circles_information[0][2] *
+            self.cohesive_radius_factor + 0.001 *
+            self.circles_information[0][2],
+            zMin=0.0,
+            zMax=1.0,
         )
         part.Set(edges=cohesive_edges, name="cohesive_edges")
 
         for ii in range(1, len(self.circles_information)):
-            cohesive_edges_1 = s.getByBoundingCylinder(
-                (self.circles_information[ii][0],
-                 self.circles_information[ii][1], 0.0),
-                (self.circles_information[ii][0],
-                 self.circles_information[ii][1], 1.0),
-                self.circles_information[ii][2]*self.cohesive_radius_factor +
-                0.001 * self.circles_information[ii][2],
+            # cohesive_edges_1 = s.getByBoundingCylinder(
+            #     (self.circles_information[ii][0],
+            #      self.circles_information[ii][1], 0.0),
+            #     (self.circles_information[ii][0],
+            #      self.circles_information[ii][1], 1.0),
+            #     self.circles_information[ii][2]*self.cohesive_radius_factor +
+            #     0.001 * self.circles_information[ii][2],
+            # )
+            cohesive_edges_1 = s.getByBoundingBox(
+                xMin=self.circles_information[ii][0] - self.circles_information[ii][2] *
+                self.cohesive_radius_factor - 0.001 *
+                self.circles_information[ii][2],
+                xMax=self.circles_information[ii][0] + self.circles_information[ii][2] *
+                self.cohesive_radius_factor + 0.001 *
+                self.circles_information[ii][2],
+                yMin=self.circles_information[ii][1] - self.circles_information[ii][2] *
+                self.cohesive_radius_factor - 0.001 *
+                self.circles_information[ii][2],
+                yMax=self.circles_information[ii][1] + self.circles_information[ii][2] *
+                self.cohesive_radius_factor + 0.001 *
+                self.circles_information[ii][2],
+                zMin=0.0,
+                zMax=1.0,
             )
             part.Set(edges=cohesive_edges_1, name="cohesive_edges_1")
             part.SetByBoolean(
@@ -594,8 +665,6 @@ class PPPEMixtureCohesive:
                             (-1 * self.length, "Ref-R", jj),
                         ),
                     )
-        else:
-            print "the number of nodes between the two sides are not the same"
 
         # part II:
         edgesTOP_nodes = part.sets["edgesTOP"].nodes
@@ -633,8 +702,7 @@ class PPPEMixtureCohesive:
                             (-1 * self.width, "Ref-T", jj),
                         ),
                     )
-        else:
-            print "the number of nodes between the two sides are not the same"
+
 
         # steps (static-step, implicit solver)
         model.StaticStep(name="Step-1", previous="Initial")
@@ -759,7 +827,7 @@ class PostProcess:
         # job name
         self.job_name = str(dict["job_name"])
         # record time step (fir saving memory)
-        self.record_time_step = dict["record_time_step"]
+        self.record_time_step = int(dict["record_time_step"])
         # post process
         self.post_process()
 
@@ -866,15 +934,16 @@ class PostProcess:
                     self.RF_ref2[ii * len(step_frames) +
                                  jj][:] = rf_field_ref2.values[0].data[:]
                 # get plastic strain for matrix
-
                 # save the results every 10 frames to save memory
                 if jj % self.record_time_step == 0:
-
                     plastic_strain_field = frame.fieldOutputs["SDV17"].getSubset(
                         region=matrix_element_set, position=INTEGRATION_POINT)
                     for kk in range(0, len(plastic_strain_field.values)):
-                        self.plastic_strain[ii * len(step_frames) +
-                                            jj / self.record_time_step][kk] = plastic_strain_field.values[kk].data
+                        print(ii * len(step_frames) +
+                              int(jj / self.record_time_step))
+                        self.plastic_strain[ii * len(step_frames) + int(
+                            jj / self.record_time_step)][kk] = plastic_strain_field.values[kk].data
+
                 # get deformation gradient
                 for i in range(0, 2):
                     # get deformation gradient
@@ -964,7 +1033,5 @@ def get_node_y(node):
     return node.coordinates[1]
 
 # get node coordinates
-
-
 def get_node_x(node):
     return node.coordinates[0]

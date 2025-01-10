@@ -13,8 +13,9 @@ __status__ = "Stable"
 # =============================================================================
 
 from abc import ABC, abstractmethod
-from ..additions.utils import print_banner
-class Simulator:
+
+
+class Simulator(ABC):
     """Base class for a FEM simulator"""
 
     @abstractmethod
@@ -56,7 +57,6 @@ class Simulator:
                               post_py_func=post_py_func,
                               delete_odb=delete_odb)
         else:
-            
             self.pre_process(py_script=py_script, py_func=py_func)
             self.submit_job(num_cpu=num_cpu)
             self.post_process(post_py_script=post_py_script,
@@ -132,4 +132,3 @@ class AssertInputs:
         assert (
             "job_name" in sim_info.keys()
         ), "job_name should in folder_info dict"
-

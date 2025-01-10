@@ -1,4 +1,7 @@
-"""Class for uni-axial tension for pp/pe Mixture/composite without cohesive"""
+"""
+Two dimensional RVE simulation with both Elastic properties for matrix and
+filler materials.
+"""
 #                                                                       Modules
 # =============================================================================
 # Standard
@@ -10,158 +13,133 @@ from typing import Any, Dict
 
 # local
 import rvesimulator
+from rvesimulator.abaqus2py.abaqus_simulator import AbaqusSimulator
+from rvesimulator.microstructure.circle_particles import CircleParticles
 
-from ..abaqus2py.abaqus_simulator import AbaqusSimulator
-from ..microstructure.circle_particles import CircleParticles
 from .py3rve_base import Py3RVEBase
 
-#                                                         Authorship & Credits
+#                                                          Authorship & Credits
 # =============================================================================
 __author__ = "Jiaxiang Yi (J.Yi@tudelft.nl)"
 __credits__ = ["Jiaxiang Yi"]
 __status__ = "Stable"
-
-# =============================================================================
-
 # =============================================================================
 
 
-class PPPEMixtureEmptyFiber(Py3RVEBase):
-    """uni-axial tension for pp/pe Mixture/composite without cohesive elements
-    in between fiber and matrix material phases"""
+class ElasticRVE2D(Py3RVEBase):
+    """Interface between python3 and abaqus of the elastic rve case
+
+    Parameters
+    ----------
+    SimulationBase : class
+        base class for simulation
+    """
 
     def __init__(self) -> None:
+        """Interface between python and abaqus of the Hollow plate case"""
 
-        logging.basicConfig(level=logging.INFO,
-                            filename='rve_simulation.log', filemode='w')
+        logging.basicConfig(level=logging.INFO, filename="elasticRVE.log")
         self.logger = logging.getLogger("abaqus_simulation")
+
         self.main_folder = Path.cwd()
         self.folder_info = {
             "main_dir": Path(self.main_folder, str("Data")),
             "script_path": Path(rvesimulator.__file__).parent.as_posix() +
             "/scriptbase",
             "current_dir": "point_1",
-            "sim_script": "benchmark_abaqus_scripts.pppe_mixture_empty_fibers",
-            "sim_func": "PPPEMixtureEmptyFiber",
-            "post_script": "benchmark_abaqus_scripts.pppe_mixture_empty_fibers",
-            "post_func": "PostProcess",
+            "sim_script": "benchmark_abaqus_scripts.two_materials_rve",
+            "sim_func": "TwoElasticRegularLoads",
+            "post_script": "basic_analysis_scripts.post_process",
+            "post_func": "PostProcess2D",
         }
-        self.subroutine_path = self.folder_info["script_path"] + \
-            "/benchmark_abaqus_scripts/vevp_leonov_model.f"
 
     def update_sim_info(
         self,
-        size: float = 0.02,
-        radius_mu: float = 0.0031,
+        size: float = 0.048,
+        radius_mu: float = 0.003,
         radius_std: float = 0.0,
         vol_req: float = 0.30,
-        params_matrix: list = None,
-        youngs_fiber: float = 1.0,
-        poisson_fiber: float = 0.3,
-        mesh_partition: int = 100,
+        youngs_modulus_matrix: float = 100.0,
+        poisson_ratio_matrix: float = 0.3,
+        youngs_modulus_fiber: float = 1.0,
+        poisson_ratio_fiber: float = 0.19,
+        mesh_partition: int = 30,
         strain: list = [0.1, 0.0, 0.0],
-        num_steps: int = 1000,
-        simulation_time: float = 100.0,
-        num_cpu: int = 8,
+        num_steps: int = 10,
+        simulation_time: float = 1.0,
+        num_cpu: int = 1,
         seed: Any = None,
+        mini_dist_factor: float = 1.3,
         print_info: bool = False,
-        record_time_step: int = 5,
-        pre_given_matrial: str = "PP",
     ) -> None:
-        """update simulation information
+        """path dependent rve for cddm
 
         Parameters
         ----------
         size : float, optional
-            size of rve, by default 0.02
+            size of the rve, by default 0.048
         radius_mu : float, optional
-            radius mean, by default 0.0031
+            radius mean of the rve, by default 0.003
         radius_std : float, optional
-            radius standard deviation, by default 0.0
+            radius deviation of the rve, by default 0.0
         vol_req : float, optional
             volume fraction requirement, by default 0.30
-        paras_pp : list, optional
-            parameters of pp
-        paras_pe : list, optional
-            parameters of pe
+        youngs_modulus_matrix : float, optional
+            youngs modulus of the matrix material, by default 100.0
+        poisson_ratio_matrix : float, optional
+            poisson ratio of the matrix material, by default 0.3
+        youngs_modulus_fiber : float, optional
+            youngs modulus of the fiber material, by default 1.0
+        poisson_ratio_fiber : float, optional
+            poisson ratio of the fiber material, by default 0.19
         mesh_partition : int, optional
-            mesh partition, by default 100
+            mesh partition for the edges, by default 30
         strain : list, optional
-            maximum strain, by default [0.1, 0.0, 0.0]
+            applied maximum strain, by default [0.1, 0.0, 0.0]
         num_steps : int, optional
-            number of simulation steps, by default 1000
+            number of simulation steps, by default 100
         simulation_time : float, optional
-            simulation time, by default 100.0
+            total simulation time, by default 1.0
         num_cpu : int, optional
-            number of cpu, by default 8
+            number of cpu used for simulation, by default 1
         seed : Any, optional
-            seed, by default None
+            seed number, by default None
         print_info : bool, optional
-            print simulation information to the screen or not, by default False
+            print simulation information or not, by default False
         """
-        # material parameters
-        if params_matrix is not None:
-            self.params_matrix = params_matrix
-        elif params_matrix is None and pre_given_matrial == "PP":
-            # parameters for PP
-            self.params_matrix = [748.234, 0.45, 296.0,  0.1, 1.53e-02, 6.608e-01, 7.33e02,
-                                  2.51e08, 3.30e-26, 7.42e06, 2.67e-02, 4.826e1, 1.520, 1.303,]
-        elif params_matrix is None and pre_given_matrial == "PE":
-            self.params_matrix = [611.6, 0.45, 296.0, 0.1, 4.40e-01, 5.1e-03, 772.1, 2.29e08,
-                                  9.94e-26, 5.01e06, 3.234e-01, 15.88, 13.52, 0.043,]
-        else:
-            raise ValueError("params_matrix is not provided")
-        self.youngs_fiber = youngs_fiber
-        self.poisson_fiber = poisson_fiber
-        # micro_structure information
-        self.seed = seed
+
+        # get simulation information
         self.size = size
         self.radius_mu = radius_mu
         self.radius_std = radius_std
         self.vol_req = vol_req
-
-        # simulation information
+        self.youngs_modulus_matrix = youngs_modulus_matrix
+        self.poisson_ratio_matrix = poisson_ratio_matrix
+        self.youngs_modulus_fiber = youngs_modulus_fiber
+        self.poisson_ratio_fiber = poisson_ratio_fiber
         self.mesh_partition = mesh_partition
         self.strain = strain
         self.num_steps = num_steps
         self.simulation_time = simulation_time
-        # parallel information and platform
         self.num_cpu = num_cpu
-        # get the micro_structure information
         self.seed = seed
-        # record time step
-        self.record_time_step = record_time_step
-
-        # update simulation information to logger
-        self.logger.info("=============== simulation information ============")
-        self.logger.info("size: {}".format(size))
-        self.logger.info("radius_mu: {}".format(radius_mu))
-        self.logger.info("radius_std: {}".format(radius_std))
-        self.logger.info("vol_req: {}".format(vol_req))
-        self.logger.info("params_matrix: {}".format(params_matrix))
-        self.logger.info("youngs_fiber: {}".format(youngs_fiber))
-        self.logger.info("poisson_fiber: {}".format(poisson_fiber))
-        self.logger.info("mesh_partition: {}".format(mesh_partition))
-        self.logger.info("strain: {}".format(strain))
-        self.logger.info("num_steps: {}".format(num_steps))
-        self.logger.info("simulation_time: {}".format(simulation_time))
-        self.logger.info("num_cpu: {}".format(num_cpu))
-        self.logger.info("record_time_step: {}".format(record_time_step))
-
+        self.mini_dist_factor = mini_dist_factor
+        # get hardening law
         self.sim_paras = {
             "size": size,
             "radius_mu": radius_mu,
             "radius_std": radius_std,
             "vol_req": vol_req,
-            "params_matrix": params_matrix,
-            "youngs_fiber": youngs_fiber,
-            "poisson_fiber": poisson_fiber,
+            "youngs_modulus_matrix": youngs_modulus_matrix,
+            "poisson_ratio_matrix": poisson_ratio_matrix,
+            "youngs_modulus_fiber": youngs_modulus_fiber,
+            "poisson_ratio_fiber": poisson_ratio_fiber,
             "mesh_partition": mesh_partition,
             "strain": strain,
             "num_steps": num_steps,
             "simulation_time": simulation_time,
             "num_cpu": num_cpu,
-            "record_time_step": self.record_time_step}
+            "mini_dist_factor": mini_dist_factor, }
 
         # print simulation information to screen
         if print_info:
@@ -170,7 +148,7 @@ class PPPEMixtureEmptyFiber(Py3RVEBase):
     def _get_sim_info(self) -> None:
         """get simulation information"""
         self.sim_info = {
-            "job_name": "empty_fiber",
+            "job_name": "cddm_rve",
             "location_information": self.microstructure.microstructure_info[
                 "location_information"
             ],
@@ -181,40 +159,46 @@ class PPPEMixtureEmptyFiber(Py3RVEBase):
             "len_end": self.microstructure.microstructure_info["len_end"],
             "wid_start": self.microstructure.microstructure_info["wid_start"],
             "wid_end": self.microstructure.microstructure_info["wid_end"],
-            "params_matrix": self.params_matrix,
-            "youngs_fiber": self.youngs_fiber,
-            "poisson_fiber": self.poisson_fiber,
+            "youngs_modulus_matrix": self.youngs_modulus_matrix,
+            "poisson_ratio_matrix": self.poisson_ratio_matrix,
+            "youngs_modulus_fiber": self.youngs_modulus_fiber,
+            "poisson_ratio_fiber": self.poisson_ratio_fiber,
             "mesh_partition": self.mesh_partition,
             "num_steps": self.num_steps,
             "simulation_time": self.simulation_time,
             "strain": self.strain,
             "num_cpu": self.num_cpu,
-            "subroutine_path": self.subroutine_path,
-            "record_time_step": self.record_time_step,
+            "mini_dist_factor": self.mini_dist_factor,
         }
 
     def run_simulation(
         self,
         sample: Dict = None,
-        folder_index: int = 0,
+        folder_index: int = None,
         delete_odb: bool = True,
     ) -> Dict:
         """run single simulation
 
         Parameters
         ----------
-        sample : Dict, optional
-            a Dict contains the information of design variables
+        sample : dict, optional
+            a dict contains the information of design variables
         folder_index : int, optional
             first folder index, by default None
+        sub_folder_index : int, optional
+            second folder index, by default None
+        third_folder_index : int, optional
+            third folder index, by default None
+
         Returns
         -------
-        Dict
+        dict
             all the simulation results from abaqus
         """
         # number of samples
-        self._create_working_folder(folder_index)
-
+        self._create_working_folder(
+            folder_index,
+        )
         self.logger.info("working folder: {}".format(self.working_folder))
         # create microstructure
         self.microstructure = CircleParticles(
@@ -223,6 +207,7 @@ class PPPEMixtureEmptyFiber(Py3RVEBase):
             radius_mu=self.radius_mu,
             radius_std=self.radius_std,
             vol_req=self.vol_req,
+            dist_min_factor=self.mini_dist_factor,
         )
         self.microstructure.generate_microstructure(seed=self.seed)
         self.microstructure.to_abaqus_format()
@@ -235,6 +220,9 @@ class PPPEMixtureEmptyFiber(Py3RVEBase):
         self._get_sim_info()
         # update the geometry info for microstructure
         self._update_sample_info(sample=sample)
+        # update logger on samples
+        self.logger.info("==============        update info      ============")
+        self.logger.info("sample: {}".format(sample))
         # change folder to main folder
         # save microstructure
         # update simulation information
@@ -248,15 +236,15 @@ class PPPEMixtureEmptyFiber(Py3RVEBase):
             simulator.run(py_func=self.folder_info["sim_func"],
                           py_script=self.folder_info["sim_script"],
                           post_py_func=self.folder_info["post_func"],
-                          num_cpu=self.num_cpu,
                           post_py_script=self.folder_info["post_script"],
+                          num_cpu=self.num_cpu,
                           delete_odb=delete_odb)
-            # get the simulation results back
             results = simulator.read_back_results()
-            self.logger.info("Abaqus simulation finished")
+            self.logger.info("abaqus simulation finished")
         except FileNotFoundError:
-            self.logger.error("Abaqus simulation failed")
+            self.logger.info("abaqus simulation failed")
             results = None
+        # get the simulation results back
         end_time = time.time()
         self.logger.info("time used: {} s".format(end_time - start_time))
         self.logger.info("============== End abaqus simulation ============")

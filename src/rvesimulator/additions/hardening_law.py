@@ -68,8 +68,8 @@ class LinearHardeningLaw(HardeningLaw):
         yield_stress = self.yield_stress
         a = self.a
         # define the table for hardening law
-        hardening_law_table = np.zeros((101, 2))
-        hardening_law_table[:, 1] = np.linspace(0, 1, 101)
+        hardening_law_table = np.zeros((201, 2))
+        hardening_law_table[:, 1] = np.linspace(0, 2, 201)
 
         # generate the hardening law
         hardening_law_table[:, 0] = (
@@ -100,8 +100,8 @@ class SwiftHardeningLaw(HardeningLaw):
         b = self.b
         eps = 1e-5
         # define the table for hardening law
-        hardening_law_table = np.zeros((101, 2))
-        hardening_law_table[:, 1] = np.linspace(0, 1, 101)
+        hardening_law_table = np.zeros((201, 2))
+        hardening_law_table[:, 1] = np.linspace(0, 2, 201)
         # generate the hardening law
         hardening_law_table[:, 0] = (
             yield_stress + a * (hardening_law_table[:, 1]) ** b
@@ -130,8 +130,8 @@ class RambergHardeningLaw(HardeningLaw):
         a = self.a
         b = self.b
         # define the table for hardening law
-        hardening_law_table = np.zeros((101, 2))
-        hardening_law_table[:, 1] = np.linspace(0, 1, 101)
+        hardening_law_table = np.zeros((201, 2))
+        hardening_law_table[:, 1] = np.linspace(0, 2, 201)
 
         # generate the hardening law
         hardening_law_table[:, 0] = yield_stress * (
