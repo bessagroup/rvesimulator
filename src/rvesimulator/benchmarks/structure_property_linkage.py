@@ -1,5 +1,7 @@
 """
-Class for ASCA RVE case
+Class for replicating the material property linkages from the paper " Bayesian
+neural network for uncertainty quantification in data-driven materials modeling"
+by Oliver et al. (2021).
 """
 #                                                                       Modules
 # =============================================================================
@@ -13,7 +15,7 @@ from typing import Any, Dict
 # local
 import rvesimulator
 from rvesimulator.abaqus2py.abaqus_simulator import AbaqusSimulator
-from rvesimulator.additions.hardening_law import LinearHardeningLaw
+from rvesimulator.additions.hardening_law import SwiftHardeningLaw
 from rvesimulator.microstructure.circle_particles import CircleParticles
 
 from .py3rve_base import Py3RVEBase
@@ -26,8 +28,10 @@ __status__ = "Stable"
 # =============================================================================
 
 
-class ASCA_RVE(Py3RVEBase):
-    """Interface between python and abaqus of the ASCA RVE case
+class StrucPropSVE(Py3RVEBase):
+    """Interface between python and Abaqus of material structure property
+    linkages
+
 
     Parameters
     ----------
@@ -36,9 +40,9 @@ class ASCA_RVE(Py3RVEBase):
     """
 
     def __init__(self) -> None:
-        """Interface between python and abaqus of the ASCA case"""
+        """Interface between python and abaqus of the  case"""
 
-        logging.basicConfig(level=logging.INFO, filename="asca_rve.log")
+        logging.basicConfig(level=logging.INFO, filename="StrucProp.log")
         self.logger = logging.getLogger("abaqus_simulation")
 
         self.main_folder = Path.cwd()
@@ -47,10 +51,10 @@ class ASCA_RVE(Py3RVEBase):
             "script_path": Path(rvesimulator.__file__).parent.as_posix() +
             "/scriptbase",
             "current_dir": "point_1",
-            "sim_script": "benchmark_abaqus_scripts.two_materials_rve",
-            "sim_func": "VonMisesPlasticElasticRegularLoads",
-            "post_script": "basic_analysis_scripts.post_process",
-            "post_func": "PostProcess2D",
+            "sim_script": "structural_mesh_scripts.structure_property_linkage_sve_script",
+            "sim_func": "simulation_script",
+            "post_script": "structural_mesh_scripts.structure_property_linkage_sve_script",
+            "post_func": "post_process",
         }
 
     def update_sim_info(
@@ -59,16 +63,18 @@ class ASCA_RVE(Py3RVEBase):
         radius_mu: float = 0.003,
         radius_std: float = 0.0,
         vol_req: float = 0.30,
-        youngs_modulus_matrix: float = 100.0,
+        youngs_modulus_matrix: float = 100000.0,
         poisson_ratio_matrix: float = 0.3,
-        youngs_modulus_fiber: float = 1.0,
-        poisson_ratio_fiber: float = 0.19,
-        mesh_partition: int = 30,
-        strain: list = [0.1, 0.0, 0.0],
+        youngs_modulus_fiber: float = 400000.0,
+        poisson_ratio_fiber: float = 0.25,
+        mesh_partition: int = 100,
+        strain: list = [0.05, 0.0, 0.0],
         num_steps: int = 100,
         simulation_time: float = 1.0,
         num_cpu: int = 1,
-        hardening_law: Any = LinearHardeningLaw(),
+        yield_stress: float = 400,
+        param_a: float = 400,
+        param_b: float = 0.3,
         seed: Any = None,
         print_info: bool = False,
     ) -> None:
@@ -126,10 +132,12 @@ class ASCA_RVE(Py3RVEBase):
         self.num_steps = num_steps
         self.simulation_time = simulation_time
         self.num_cpu = num_cpu
-        self.hardening_law = hardening_law
+        self.hardening_law = SwiftHardeningLaw(yield_stress=yield_stress,
+                                               a=param_a,
+                                               b=param_b)
         self.seed = seed
         # get hardening law
-        self.hardening_table = hardening_law.calculate_hardening_table()
+        self.hardening_table = self.hardening_law.calculate_hardening_table()
 
         self.sim_params = {
             "size": size,
@@ -140,7 +148,7 @@ class ASCA_RVE(Py3RVEBase):
             "poisson_ratio_matrix": poisson_ratio_matrix,
             "youngs_modulus_fiber": youngs_modulus_fiber,
             "poisson_ratio_fiber": poisson_ratio_fiber,
-            "hardening_table": self.hardening_table,
+            "hardening_table_matrix": self.hardening_table,
             "mesh_partition": mesh_partition,
             "strain": strain,
             "num_steps": num_steps,
@@ -154,7 +162,7 @@ class ASCA_RVE(Py3RVEBase):
     def _get_sim_info(self) -> None:
         """get simulation information"""
         self.sim_info = {
-            "job_name": "asca_rve",
+            "job_name": "StrucProp",
             "location_information": self.microstructure.microstructure_info[
                 "location_information"
             ],
@@ -170,7 +178,7 @@ class ASCA_RVE(Py3RVEBase):
             "youngs_modulus_fiber": self.youngs_modulus_fiber,
             "poisson_ratio_fiber": self.poisson_ratio_fiber,
             "mesh_partition": self.mesh_partition,
-            "hardening_table": self.hardening_table,
+            "hardening_table_matrix": self.hardening_table,
             "num_steps": self.num_steps,
             "simulation_time": self.simulation_time,
             "strain": self.strain,
@@ -216,6 +224,17 @@ class ASCA_RVE(Py3RVEBase):
         self.microstructure.plot_microstructure(save_figure=True,
                                                 fig_name="rve_{}.png".
                                                 format(self.seed))
+        # generate the structure mesh
+        # generate the discrete microstructure
+        self.microstructure.crate_rgmsh(num_discrete=self.mesh_partition)
+        self.microstructure.to_crate_format()
+        # check the "microstructure.rgmsh.npy" file is in the folder or not
+        if not os.path.exists("microstructure.rgmsh.npy"):
+            self.logger.info("microstructure.rgmsh.npy is not in the folder")
+            print("microstructure.rgmsh.npy is not in the folder")
+        else:
+            self.logger.info("microstructure.rgmsh.npy is in the folder")
+            print("microstructure.rgmsh.npy is in the folder")
         self.vol_frac = self.microstructure.vol_frac
         self.logger.info("volume fraction: {}".format(self.vol_frac))
         # update simulation information
