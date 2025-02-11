@@ -6,7 +6,7 @@ from abaqusConstants import *
 from caeModules import *
 # import packages for abaqus post-processing
 from odbAccess import *
-
+import mesh
 
 def simulation_script(sim_info):
     # Create a model
@@ -69,6 +69,11 @@ def simulation_script(sim_info):
     # ==========================  Meshing ========================== #
     part.seedPart(size=mesh_size, deviationFactor=0.1, minSizeFactor=0.1)
     # Apply mesh controls for structured meshing
+
+    elemType1 = mesh.ElemType(elemCode=CPE4R, elemLibrary=STANDARD,
+                              secondOrderAccuracy=OFF, hourglassControl=DEFAULT,
+                              distortionControl=DEFAULT)
+    part.setElementType(regions=(part.faces[:],), elemTypes=(elemType1, ))
     part.setMeshControls(regions=part.faces,
                          elemShape=QUAD, technique=STRUCTURED)
     # Generate the mesh
