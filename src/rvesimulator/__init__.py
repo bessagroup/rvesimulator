@@ -26,7 +26,7 @@ __status__ = 'Stable'
 # =============================================================================
 from .abaqus2py import AbaqusSimulator
 from .additions import ampitudesampler, hardening_law
-from .benchmarks.structure_property_linkage import StrucPropSVE
+from .benchmarks.structure_property_linkage import StrucPropDNS
 from .benchmarks.cddm_rve import CDDM_RVE
 from .benchmarks.hollow_plate_sve import (ElasticRegularLoads,
                                           VonMisesPlasticPathLoads,

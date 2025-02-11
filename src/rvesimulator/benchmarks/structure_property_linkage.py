@@ -10,15 +10,16 @@ import logging
 import os
 import time
 from pathlib import Path
-from typing import Any, Dict
-
+from typing import Any, Dict, Tuple
+import numpy as np
 # local
 import rvesimulator
 from rvesimulator.abaqus2py.abaqus_simulator import AbaqusSimulator
 from rvesimulator.additions.hardening_law import SwiftHardeningLaw
 from rvesimulator.microstructure.circle_particles import CircleParticles
-
+import cratepy
 from .py3rve_base import Py3RVEBase
+from rvesimulator.rve2crateio.rvesimulator2crateio import rvesimulator2crateIO
 
 #                                                          Authorship & Credits
 # =============================================================================
@@ -28,7 +29,7 @@ __status__ = "Stable"
 # =============================================================================
 
 
-class StrucPropSVE(Py3RVEBase):
+class StrucPropDNS(Py3RVEBase):
     """Interface between python and Abaqus of material structure property
     linkages
 
@@ -59,9 +60,9 @@ class StrucPropSVE(Py3RVEBase):
 
     def update_sim_info(
         self,
-        size: float = 0.048,
-        radius_mu: float = 0.003,
-        radius_std: float = 0.0,
+        size: float = 1.0,
+        radius_mu: float = 0.03125,
+        radius_std: float = 0.003125,
         vol_req: float = 0.30,
         youngs_modulus_matrix: float = 100000.0,
         poisson_ratio_matrix: float = 0.3,
@@ -274,3 +275,174 @@ class StrucPropSVE(Py3RVEBase):
         os.chdir(self.main_folder)
 
         return results
+
+
+class StrucPropSVESCA:
+    """ Structure property linkage simulation with tension loading using SCA
+    """
+
+    def __init__(self,
+                 size: float = 1.0,
+                 radius_mu: float = 0.03125,
+                 radius_std: float = 0.003125,
+                 vol_req: float = 0.30,
+                 youngs_modulus_matrix: float = 100000.0,
+                 poisson_ratio_matrix: float = 0.3,
+                 youngs_modulus_fiber: float = 400000.0,
+                 poisson_ratio_fiber: float = 0.25,
+                 mesh_partition: int = 200,
+                 strain: list = [0.05, 0.0, 0.0],
+                 num_steps: int = 100,
+                 yield_stress: float = 400,
+                 param_a: float = 400,
+                 param_b: float = 0.3,
+                 min_dist_factor: float = 1.3,
+                 job_number: int = 1,
+                 delete_vtk: bool = True,
+                 print_info: bool = False,) -> None:
+        """Initialize the simulation
+
+        Parameters
+        ----------
+        size : float
+            size of the microstructure
+        radius_mu : float
+            mean radius of the particles
+        radius_std : float
+            standard deviation of the radius of the particles
+        vol_req : float
+            volume fraction of the particles
+
+        """
+
+        # information of microstructure
+        self.size = size
+        self.radius_mu = radius_mu
+        self.radius_std = radius_std
+        self.vol_req = vol_req
+        self.min_dist_factor = min_dist_factor
+        self.mesh_partition = mesh_partition
+
+        # information of material properties
+        self.youngs_modulus_matrix = youngs_modulus_matrix
+        self.poisson_ratio_matrix = poisson_ratio_matrix
+        self.youngs_modulus_fiber = youngs_modulus_fiber
+        self.poisson_ratio_fiber = poisson_ratio_fiber
+        self.hardening_law = SwiftHardeningLaw(
+            a=param_a,
+            b=param_b,
+            yield_stress=yield_stress)
+
+        # path-dependent loading
+        self.strain = strain
+        self.num_steps = num_steps
+
+        # print information or not
+        self.print_info = print_info
+        self.delete_vtk = delete_vtk
+
+        # define the job number
+        self.job_number = job_number
+
+    def configure_input_file(self,
+                             clusters: list = [2, 1],
+                             rve_seed: int = 1,
+                             template_path: str = "mat_struc_linkage_input_template.dat",
+                             out_file_path: str = "Data") -> Tuple[str, str]:
+        """configure the input file for the simulation
+
+        Parameters
+        ----------
+        template_path : str
+            relative path of the template file in the repo
+        out_file_path : str
+            relative path of the output file in the repo
+        """
+        # the path of the repo
+        file_path = Path(__file__).parents[1].as_posix()
+        # get the path of the template file
+        absolute_template_path = file_path + "/rve2crateio/" + template_path
+        # get the path of current file
+        self.main_folder = Path.cwd()
+        # create a folder according to out_file_path
+        out_folder = Path(self.main_folder, str(out_file_path))
+        out_folder.mkdir(parents=True, exist_ok=True)
+        # change the directory to the output folder
+        os.chdir(out_folder)
+        self.cwd = out_folder.as_posix()
+        # configure crate adapter
+        crate_adapter = rvesimulator2crateIO()
+        # read the template file
+        try:
+            crate_adapter.read_template(absolute_template_path)
+        except FileNotFoundError:
+            print("Error: template file not found")
+            return
+        # generate the microstructure
+        microstructure = CircleParticles(
+            length=self.size,
+            width=self.size,
+            radius_mu=self.radius_mu,
+            radius_std=self.radius_std,
+            vol_req=self.vol_req,
+            dist_min_factor=self.min_dist_factor,
+        )
+        # generate microstructure and write to file
+        microstructure.generate_microstructure(seed=rve_seed)
+        # plot the microstructure in the output folder
+        microstructure.plot_microstructure(
+            save_figure=True,
+            fig_name=f"rve_{rve_seed}.png")
+        microstructure.crate_rgmsh(num_discrete=self.mesh_partition)
+        microstructure.to_crate_format(
+            file_name=f"microstructure_{rve_seed}.rgmsh.npy")
+        # configure the microstructure info of the input file
+        crate_adapter.change_size_of_rve(self.size)
+        crate_adapter.replace_discretization_file(
+            file_path=f"microstructure_{rve_seed}.rgmsh.npy")
+        # configure the material properties of the input file
+        self.hardening_law.calculate_hardening_table()
+        table = self.hardening_law.hardening_law_table
+        # new table
+        new_table = np.zeros((table.shape[1], 2))
+        new_table[:, 0] = table[1, :]
+        new_table[:, 1] = table[0, :]
+        # change the material properties of the matrix
+        crate_adapter.change_matrix_material_properties(
+            young_modulus=self.youngs_modulus_matrix,
+            poisson_ratio=self.poisson_ratio_matrix,
+            hardening_law_table=new_table)
+        # change the material properties of the fiber
+        crate_adapter.change_particle_material_properties(
+            young_modulus=self.youngs_modulus_fiber,
+            poisson_ratio=self.poisson_ratio_fiber)
+
+        # change the clustering scheme
+        crate_adapter.change_clustering_scheme(
+            n_matrix_clusters=clusters[0],
+            n_particle_clusters=clusters[1])
+        # write the input file
+        output_file = f"job_{self.job_number}_rve_{rve_seed}_cluster_{clusters[0]}_{clusters[1]}.dat"
+        sim_file_path = Path(output_file).absolute()
+        crate_adapter.write_file(output_file)
+        # print information
+        if self.print_info:
+            if Path(output_file).exists():
+                # check the input file is successfully written or not
+                print(f"Input file is written to {output_file}")
+                print(f"Path: {Path(output_file).absolute()}")
+            else:
+                print(f"Error: input file is not written to {output_file}")
+
+        # change the directory back to the main folder
+        os.chdir(self.main_folder)
+
+        self.sim_file_path = sim_file_path
+        return sim_file_path.as_posix(), self.cwd
+
+    def run_simulation(self
+                       ) -> None:
+        """run the simulation"""
+        cratepy.crate_simulation(arg_input_file_path=self.sim_file_path,
+                                 arg_discret_file_dir=self.cwd,
+                                 is_null_stdout=False)

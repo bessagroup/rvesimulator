@@ -384,7 +384,7 @@ def simulation_script(sim_info):
         name="Step-1",
         previous="Initial",
         timePeriod=time_period,
-        nlgeom=ON,
+        # nlgeom=ON,
     )
     model.fieldOutputRequests["F-Output-1"].setValues(
         variables=(

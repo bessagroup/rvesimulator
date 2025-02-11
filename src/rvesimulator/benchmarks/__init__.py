@@ -1,4 +1,4 @@
-from .structure_property_linkage import StrucPropSVE
+from .structure_property_linkage import StrucPropDNS
 from .cddm_rve import CDDM_RVE
 from .elastic_2d import ElasticRVE2D
 from .hollow_plate_sve import (ElasticRegularLoads, VonMisesPlasticPathLoads,
