@@ -12,6 +12,9 @@ import time
 from pathlib import Path
 from typing import Any, Dict, Tuple
 import numpy as np
+import pandas as pd
+import pickle
+import shutil
 # local
 import rvesimulator
 from rvesimulator.abaqus2py.abaqus_simulator import AbaqusSimulator
@@ -277,7 +280,7 @@ class StrucPropDNS(Py3RVEBase):
         return results
 
 
-class StrucPropSVESCA:
+class StrucPropSCA:
     """ Structure property linkage simulation with tension loading using SCA
     """
 
@@ -393,6 +396,8 @@ class StrucPropSVESCA:
         microstructure.plot_microstructure(
             save_figure=True,
             fig_name=f"rve_{rve_seed}.png")
+        # get the real volume fraction
+        self.vol_frac = microstructure.vol_frac
         microstructure.crate_rgmsh(num_discrete=self.mesh_partition)
         microstructure.to_crate_format(
             file_name=f"microstructure_{rve_seed}.rgmsh.npy")
@@ -422,7 +427,7 @@ class StrucPropSVESCA:
             n_matrix_clusters=clusters[0],
             n_particle_clusters=clusters[1])
         # write the input file
-        output_file = f"job_{self.job_number}_rve_{rve_seed}_cluster_{clusters[0]}_{clusters[1]}.dat"
+        output_file = f"point_{self.job_number}.dat"
         sim_file_path = Path(output_file).absolute()
         crate_adapter.write_file(output_file)
         # print information
@@ -440,9 +445,89 @@ class StrucPropSVESCA:
         self.sim_file_path = sim_file_path
         return sim_file_path.as_posix(), self.cwd
 
-    def run_simulation(self
+    def run_simulation(self,
+                       delete_vtk=True,
                        ) -> None:
         """run the simulation"""
         cratepy.crate_simulation(arg_input_file_path=self.sim_file_path,
                                  arg_discret_file_dir=self.cwd,
                                  is_null_stdout=False)
+
+        results = self.read_back_results()
+        dir_path, filename = os.path.split(self.sim_file_path)
+        base_name = os.path.splitext(filename)[0]
+        # delete files with large memories
+        if delete_vtk:
+            folder_names = ["offline_stage", "post_processing"]
+
+            for fold_name in folder_names:
+                offline_path = os.path.join(
+                    dir_path, base_name, f"{fold_name}/")
+                # delete
+                if os.path.exists(offline_path):
+                    shutil.rmtree(offline_path)
+                    print(f"{offline_path} has been removed.")
+                else:
+                    print(f"{offline_path} does not exist.")
+            # remove the .voxout file
+            voxout_path = os.path.join(
+                dir_path, base_name, f"{base_name}.voxout")
+            if os.path.exists(voxout_path):
+                os.remove(voxout_path)
+                print(f"{voxout_path} has been removed.")
+        else:
+            print("The source files are kept")
+
+        return results
+
+    def read_back_results(self, ) -> Dict:
+        """read back the results of the simulation
+
+        Returns
+        -------
+        Dict
+            _description_
+        """
+        # get the output data
+        # get the result file path
+        dir_path, filename = os.path.split(self.sim_file_path)
+
+        # Remove the original extension and create new paths
+        base_name = os.path.splitext(filename)[0]
+        new_path_hes = os.path.join(dir_path, base_name, f"{base_name}.hres")
+        new_path_voxel = os.path.join(
+            dir_path, base_name, f"{base_name}.voxout")
+
+        results = pd.read_csv(new_path_hes, delim_whitespace=True)
+        voxout = pd.read_csv(new_path_voxel, delim_whitespace=True)
+
+        # get the results for strain [length, 2, 2]
+        strain = np.zeros((len(results), 2, 2))
+        strain[:, 0, 0] = results["strain_11"]
+        strain[:, 0, 1] = results["strain_12"]
+        strain[:, 1, 0] = results["strain_21"]
+        strain[:, 1, 1] = results["strain_22"]
+        # for stress [length, 2, 2]
+        stress = np.zeros((len(results), 2, 2))
+        stress[:, 0, 0] = results["stress_11"]
+        stress[:, 0, 1] = results["stress_12"]
+        stress[:, 1, 0] = results["stress_21"]
+        stress[:, 1, 1] = results["stress_22"]
+        # save for the peeq from the voxout file
+        mean_voxout3 = voxout.mean(axis=1)
+        mean_voxout3 = mean_voxout3.values.reshape(-1, 3)
+        # get the peeq
+        peeq = mean_voxout3[:, 1]
+        # VON MISES
+        von_mises = mean_voxout3[:, 0]
+        # save the results to a pickle file
+        results = {
+            "strain": strain,
+            "stress": stress,
+            "PEEQ": peeq,
+            "VonMises": von_mises,
+        }
+        # save to results to the folder where the hres file is
+        with open(f"{dir_path}/{base_name}/sca_results.pkl", "wb") as f:
+            pickle.dump(results, f)
+        return results
