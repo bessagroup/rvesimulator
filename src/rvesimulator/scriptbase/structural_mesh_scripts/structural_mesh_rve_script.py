@@ -16,15 +16,11 @@ def simulation_script(sim_info):
     job_name = str(sim_info["job_name"])
     num_cpu = sim_info["num_cpu"]
 
-    length = (
-        sim_info["len_end"] - sim_info["len_start"]
-    ) - 2 * sim_info["radius_mu"]
-    width = (
-        sim_info["wid_end"] - sim_info["wid_start"]
-    ) - 2 * sim_info["radius_mu"]
+    length = sim_info["length"]
+    width = sim_info["width"]
     center = [
-        (sim_info["len_end"] + sim_info["len_start"]) / 2.0,
-        (sim_info["wid_end"] + sim_info["wid_start"]) / 2.0,
+        sim_info["length"] / 2.0,
+        sim_info["width"] / 2.0,
     ]
 
     # material properties
@@ -73,8 +69,17 @@ def simulation_script(sim_info):
     # ==========================  Meshing ========================== #
     part.seedPart(size=mesh_size, deviationFactor=0.1, minSizeFactor=0.1)
     # Apply mesh controls for structured meshing
-    part.setMeshControls(regions=part.faces,
-                         elemShape=QUAD, technique=STRUCTURED)
+    if sim_info["element_type"] == "CPS4R":
+        part.setMeshControls(regions=part.faces,
+                             elemShape=QUAD, technique=STRUCTURED)
+    elif sim_info["element_type"] == "CPE4R":
+        elemType1 = mesh.ElemType(elemCode=CPE4R, elemLibrary=STANDARD,
+                                  secondOrderAccuracy=OFF, hourglassControl=DEFAULT,
+                                  distortionControl=DEFAULT)
+        part.setElementType(regions=(part.faces[:],), elemTypes=(elemType1, ))
+        part.setMeshControls(regions=part.faces,
+                             elemShape=QUAD, technique=STRUCTURED)
+
     # Generate the mesh
     part.generateMesh()
 
@@ -92,13 +97,15 @@ def simulation_script(sim_info):
     index = np.where(microstructure_descriptor == 1)
     index = index[0] + 1
     # create the set for the elements with the value 0
-    part.Set(name='matrix', elements=part.elements.sequenceFromLabels(index.tolist()))
+    part.Set(name='matrix',
+             elements=part.elements.sequenceFromLabels(index.tolist()))
 
     # get the index with the value 1
     index = np.where(microstructure_descriptor == 2)
     index = index[0] + 1
     # create the set for the elements with the value 1
-    part.Set(name='fiber', elements=part.elements.sequenceFromLabels(index.tolist()))
+    part.Set(name='fiber',
+             elements=part.elements.sequenceFromLabels(index.tolist()))
 
     # create sets for edges
     s = part.edges
@@ -375,17 +382,32 @@ def simulation_script(sim_info):
             "the number of nodes between the two sides are not the same")
 
     #  ==========================  Create step ========================== #
-    model.StaticStep(name="Step-1", previous="Initial")
-    step = model.StaticStep(
-        initialInc=0.01,
-        maxInc=1.0,
-        maxNumInc=100000,
-        minInc=1e-20,
-        name="Step-1",
-        previous="Initial",
-        timePeriod=time_period,
-        nlgeom=ON,
-    )
+    if sim_info["solver_type"] == "linear":
+        model.StaticStep(name="Step-1", previous="Initial")
+        step = model.StaticStep(
+            initialInc=0.01,
+            maxInc=1.0,
+            maxNumInc=100000,
+            minInc=1e-20,
+            name="Step-1",
+            previous="Initial",
+            timePeriod=time_period,
+        )
+    elif sim_info["solver_type"] == "nonlinear":
+        model.StaticStep(name="Step-1", previous="Initial")
+        step = model.StaticStep(
+            initialInc=0.01,
+            maxInc=1.0,
+            maxNumInc=100000,
+            minInc=1e-20,
+            name="Step-1",
+            previous="Initial",
+            timePeriod=time_period,
+            nlgeom=ON,
+        )
+    else:
+        raise ValueError("solver type is not defined")
+
     model.fieldOutputRequests["F-Output-1"].setValues(
         variables=(
             "S",

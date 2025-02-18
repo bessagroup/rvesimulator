@@ -13,13 +13,16 @@ from .base import MicrostructureGenerator
 class AmorphousParticles(MicrostructureGenerator):
 
     def __init__(self,
+                 length: int,
+                 width: int,
                  mesh_partition_length: int,
                  mesh_partition_width: int,
                  vol_req: List[float],
                  sigma: float,
                  ):
         """ Amorphous particles microstructure generator"""
-
+        self.length = length
+        self.width = width
         self.mesh_partition_length = mesh_partition_length
         self.mesh_partition_width = mesh_partition_width
         # define the shape of the image
@@ -116,6 +119,10 @@ class AmorphousParticles(MicrostructureGenerator):
         else:
             plt.show()
 
+    def to_abaqus_format(self, file_name="micro_structure_info.json"):
+
+        pass
+
     def gaussian_filter(self,
                         shape: Tuple,
                         sigma: float) -> np.ndarray:
@@ -190,3 +197,7 @@ class AmorphousParticles(MicrostructureGenerator):
         """
         binary_image = pattern > threshold
         return np.mean(binary_image) - desired_volume_fraction
+
+    @property
+    def vol_frac(self):
+        return np.sum(self.vol_req)

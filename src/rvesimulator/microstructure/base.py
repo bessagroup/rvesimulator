@@ -56,6 +56,19 @@ class MicrostructureGenerator:
         raise NotImplementedError("The function should be implemented \
                                   in sub-class \n")
 
+    def crate_rgmsh(self):
+        """create rgmsh file
+
+        Raises
+        ------
+        NotImplementedError
+            error report
+        """
+
+        raise NotImplementedError("The function should be implemented \
+                                  in sub-class \n")
+
+
     def to_abaqus_format(self,
                          file_name: str = "micro_structure_info.json") -> None:
         """convert microstructure to abaqus format
