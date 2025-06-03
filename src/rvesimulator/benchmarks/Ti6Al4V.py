@@ -582,8 +582,8 @@ class Ti6Al4V_3D(Py3RVEBase):
         try:
             simulator.run(py_func=self.folder_info["sim_func"],
                           py_script=self.folder_info["sim_script"],
-                          post_py_func=self.folder_info["post_func"],
-                          post_py_script=self.folder_info["post_script"],
+                        #   post_py_func=self.folder_info["post_func"],
+                        #   post_py_script=self.folder_info["post_script"],
                           num_cpu=self.num_cpu,
                           delete_odb=delete_odb)
             results = simulator.read_back_results()

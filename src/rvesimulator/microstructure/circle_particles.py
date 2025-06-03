@@ -61,6 +61,7 @@ class CircleParticles(MicrostructureGenerator):
         dist_min_factor: float = 1.1,
         stirring_iters: int = 100,
         print_log: bool = False,
+        mini_radius_to_size: float = 0.02,
     ) -> None:
         """Initialization
 
@@ -99,6 +100,8 @@ class CircleParticles(MicrostructureGenerator):
         self.num_fibers_max = num_fiber_max
         self.num_cycles_max = num_cycle_max
         self.stirring_iters = stirring_iters
+
+        self.mini_radius_to_size = mini_radius_to_size
 
 
     def _parameter_initialization(self) -> None:
@@ -240,6 +243,7 @@ class CircleParticles(MicrostructureGenerator):
             wid_end=self.width - self.radius_mu,
             radius_mu=self.radius_mu,
             radius_std=0,
+            r_min_factor=self.mini_radius_to_size,
             rng=self.rng,
         )
         # update the volume fraction information
@@ -274,6 +278,7 @@ class CircleParticles(MicrostructureGenerator):
                     wid_end=self.width,
                     radius_mu=self.radius_mu,
                     radius_std=self.radius_std,
+                    r_min_factor=self.mini_radius_to_size,
                     rng=self.rng,
                 )
                 # check the location of the fiber and
@@ -295,6 +300,7 @@ class CircleParticles(MicrostructureGenerator):
                             wid_end=self.width,
                             radius_mu=self.radius_mu,
                             radius_std=self.radius_std,
+                            r_min_factor=self.mini_radius_to_size,
                             rng=self.rng,
                         )
                         new_fiber = self.new_positions(
@@ -316,6 +322,7 @@ class CircleParticles(MicrostructureGenerator):
                             wid_end=self.width,
                             radius_mu=self.radius_mu,
                             radius_std=self.radius_std,
+                            r_min_factor=self.mini_radius_to_size,
                             rng=self.rng,
                         )
                         new_fiber = self.new_positions(
@@ -1050,6 +1057,7 @@ class CircleParticles(MicrostructureGenerator):
         radius_mu: float,
         radius_std: float,
         rng,
+        r_min_factor: float = 0.02,
     ) -> np.ndarray:
         """generate random fibers with different radiis
 
@@ -1080,7 +1088,7 @@ class CircleParticles(MicrostructureGenerator):
         y = rng.uniform(wid_start, wid_end, 1)
         r = rng.normal(radius_mu, radius_std, 1)
         # the radius is too small for mesh
-        while r <= 0.02*(len_end - len_start - 2*radius_mu):
+        while r <= r_min_factor*(len_end - len_start - 2*radius_mu):
             r = rng.normal(radius_mu, radius_std, 1)
         fiber = np.array([x, y, r])
         return fiber

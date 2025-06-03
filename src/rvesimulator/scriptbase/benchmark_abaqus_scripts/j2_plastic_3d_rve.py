@@ -15,7 +15,7 @@ from driverUtils import executeOnCaeStartup
 from odbAccess import *
 from scipy.optimize import linear_sum_assignment
 from scipy.spatial import distance
-
+from regionToolset import Region
 
 # create a new model
 def create_sphere(model, sphere_center, radius, index):
@@ -474,8 +474,16 @@ def j2_plastic_3d_rve(dict):
 
     # mesh for the RVE ==========================================================
     # set all regions to be tet mesh
-    pickedRegions = part.cells[:]
-    part.setMeshControls(regions=pickedRegions, elemShape=TET, technique=FREE)
+    # pickedRegions = 
+    pickedRegions = Region(cells=part.cells[:])
+    # element control
+    elemType1 = mesh.ElemType(elemCode=C3D20R, elemLibrary=STANDARD)
+    elemType2 = mesh.ElemType(elemCode=C3D15, elemLibrary=STANDARD)
+    elemType3 = mesh.ElemType(elemCode=C3D10, elemLibrary=STANDARD)
+
+    part.setElementType(regions=pickedRegions, elemTypes=(elemType1, elemType2, 
+    elemType3))
+    part.setMeshControls(regions=part.cells[:], elemShape=TET, technique=FREE,)
     part.seedPart(size=Mesh_size, deviationFactor=0.1, minSizeFactor=0.1)
     part.generateMesh()
 
