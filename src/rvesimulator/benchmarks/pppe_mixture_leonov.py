@@ -628,6 +628,8 @@ class PPPEMixtureCohesive(Py3RVEBase):
         young_modulus_cohesive: float = 1.0e5,
         power_law_exponent_cohesive: float = 1.0,
         radius_cohesive_factor: float = 1.02,
+        mini_radius_to_size: float = 0.0004,
+        mini_dist_factor: float = 1.3,
         damage_onset_criteria: str = "MaxStress",
     ) -> None:
         """update simulation information
@@ -673,6 +675,8 @@ class PPPEMixtureCohesive(Py3RVEBase):
         self.radius_mu = radius_mu
         self.radius_std = radius_std
         self.vol_req = vol_req
+        self.mini_radius_to_size = mini_radius_to_size
+        self.mini_dist_factor = mini_dist_factor
         # material properties
         self.paras_pp = paras_pp
         self.paras_pe = paras_pe
@@ -811,7 +815,8 @@ class PPPEMixtureCohesive(Py3RVEBase):
             radius_mu=self.radius_mu,
             radius_std=self.radius_std,
             vol_req=self.vol_req,
-            dist_min_factor=1.2,
+            mini_radius_to_size=self.mini_radius_to_size,
+            dist_min_factor=self.mini_dist_factor,
         )
         self.microstructure.generate_microstructure(seed=self.seed)
         self.microstructure.to_abaqus_format()
