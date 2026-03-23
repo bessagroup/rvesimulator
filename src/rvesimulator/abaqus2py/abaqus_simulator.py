@@ -116,12 +116,12 @@ class AbaqusSimulator(Simulator, AssertInputs):
         file_name = self.job_name + ".inp"
         if "subroutine_path" not in self.sim_info.keys():
             command = (
-                f"abaqus job={file_name} cpus={num_cpu} -interactive"
+                f"abaqus job={file_name} cpus={num_cpu} double=both -interactive"
             )
         else:
             command = (
                 f"abaqus job={file_name} cpus={num_cpu} "
-                f"user={self.sim_info['subroutine_path']} -interactive"
+                f"user={self.sim_info['subroutine_path']} double=both -interactive"
             )
         start_time = time.perf_counter()
         os.system(command)
