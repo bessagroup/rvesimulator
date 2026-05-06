@@ -189,10 +189,27 @@ def simulation_script(sim_info):
 
     # material properties ---------------------------------------------------------
     # material property for fiber part
+    # paras_pp: List = [
+    #         797.97, # Young's modulus
+    #         0.42, # Poisson's ratio
+    #         0.2579, # ductile damage initiation strain 1
+    #         0.33333, # ductile damage initiation strain 2
+    #         0., # ductile damage initiation strain 3
+    #         0.000237, # fracture energy for damage evolution
+    #         9.15e-10 # density of the material
+    #     ],
     material_fiber = model.Material(name="fiber")
     material_fiber.Elastic(
         table=((youngs_modulus_fiber, poisson_ratio_fiber),))
     material_fiber.Plastic(table=(hardening_table_fiber))
+    material_fiber.DuctileDamageInitiation(
+                table=((
+                    0.2579,
+                    0.33333,
+                    0.0,
+                    ), ))
+    material_fiber.ductileDamageInitiation.DamageEvolution(
+        type=ENERGY, table=((0.000237, ), ))
     model.HomogeneousSolidSection(
         name="fiber", material="fiber", thickness=None
     )
